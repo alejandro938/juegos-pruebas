@@ -2474,7 +2474,7 @@
     var h = conTitulo ? '<h4>' + esc(t('trucos2')) + '</h4>' : '';
     h += '<div class="fila"><span style="color:#E0708A">' + esc(t('trucosAviso')) + '</span></div>';
     h += '<div class="fila"><span><b>' + (P.truco.on ? '🎛 ON' : '🎛 OFF') + '</b></span><span><button class="btn peq" type="button" data-truco="on">' + (P.truco.on ? esc(t('trNinguno')) : esc(t('trTodos'))) + '</button></span></div>';
-    Object.keys(t('tr')).forEach(function (k) {
+    Object.keys(t('tr')).filter(function (k) { return k === 'vidas'; }).forEach(function (k) {   /* (27-sep) TALLER: solo vidas infinitas */
       h += '<div class="fila' + (P.truco[k] ? ' hecha' : '') + '"><span>' + esc(t('tr')[k]) + '</span><span><button class="btn peq' + (P.truco[k] ? '' : ' ghost') + '" type="button" data-truco="' + k + '">' + esc(P.truco[k] ? '✓ ' + t('on') : t('off')) + '</button></span></div>';
     });
     return h;
@@ -2483,7 +2483,7 @@
     [].forEach.call(cont.querySelectorAll('[data-truco]'), function (b) {
       b.onclick = function () {
         var k = b.getAttribute('data-truco');
-        if (k === 'on') { P.truco.on = !P.truco.on; if (!P.truco.on) Object.keys(t('tr')).forEach(function (x) { P.truco[x] = false; }); else { P.truco.vidas = true; P.truco.casas = true; } }
+        if (k === 'on') { P.truco.on = !P.truco.on; if (!P.truco.on) Object.keys(t('tr')).forEach(function (x) { P.truco[x] = false; }); else { P.truco.vidas = true; } }
         else { P.truco[k] = !P.truco[k]; if (P.truco[k]) P.truco.on = true; }
         guardar(); aplicaTrucos(); if (despues) despues();
       };
@@ -2491,6 +2491,7 @@
   }
   // Los trucos se pueden cambiar EN MEDIA PARTIDA: se aplican al momento
   function aplicaTrucos() {
+    Object.keys(P.truco).forEach(function (k) { if (k !== 'on' && k !== 'vidas') P.truco[k] = false; });
     if (!J) return;
     var on = P.truco.on;
     J.truco = on;
