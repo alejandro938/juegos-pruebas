@@ -353,6 +353,7 @@ var MOTOR = (function () {
   // un enemigo dado la vuelta (lo usan la casa espejo y los ayudantes del Gran Tasador)
   function espejoEnemigo(e, W) {
     var o = JSON.parse(JSON.stringify(e));
+    o.espejo = !e.espejo;                              // (27-sep, P14) dado la vuelta: posEnemigo, choca y el bicho 'h' lo miran
     if (o.tipo === 'h') { o.x = W - 2 - e.x; o.min = W - 2 - e.max; o.max = W - 2 - e.min; o.dir = -(e.dir || 1); }
     else o.x = W * 8 - e.x - anchoSpr(e.spr);
     if (o.tipo === 'p' || o.tipo === 'a') { var an = anchoSpr(e.spr); o.min = W * 8 - e.max - an; o.max = W * 8 - e.min - an; o.fase = (e.fase || 0) + (e.max - e.min); }
@@ -536,7 +537,7 @@ var MOTOR = (function () {
       aire: Math.round(AIRE * (def.aire || 1)), aireMax: Math.round(AIRE * (def.aire || 1)),
       enemigos: (def.enemigos || []).map(function (e) {
         var o = JSON.parse(JSON.stringify(e));
-        o.fr = 0; o.f = 0;
+        o.fr = 0; o.f = 0; ponEspejoH(o);                // (27-sep, P14) el 'h' al revés empieza en f 3 (espejo exacto de f 0)
         if (o.tipo === 'h') o.y = o.fila * 8;
         return o;
       }),
@@ -1059,7 +1060,7 @@ var MOTOR = (function () {
         if (e.lento && (s.t & 1)) return;
         if (e.dir > 0) { if (e.f < 3) e.f++; else if (e.x < e.max) { e.x++; e.f = 0; } else e.dir = -1; }
         else { if (e.f > 0) e.f--; else if (e.x > e.min) { e.x--; e.f = 3; } else e.dir = 1; }
-        e.fr = e.f;
+        e.fr = e.espejo ? 3 - e.f : e.f;                 // (27-sep, P14) al revés, el fotograma del original (3 − f)
         if (e.come) comeCosas(s, e);                              // (25-sep, 148/149) aspiradora y termitas
       } else if (e.tipo === 'm') {
         var hu = s.huella && s.huella.length >= 60 ? s.huella[0] : null;
@@ -1130,13 +1131,15 @@ var MOTOR = (function () {
     if (s.jefe && !s.jefe.vencido) mueveJefe(s, s.jefe);          // (25-sep, 138-144) el jefe, con su propio reloj
   }
   function posEnemigo(e) {
-    if (e.tipo === 'h') return { x: e.x * 8 + e.f * 2, y: e.y, flip: e.dir < 0 };
+    if (e.tipo === 'h') return { x: e.x * 8 + e.f * 2 + (e.espejo ? 10 - anchoSpr(e.spr) : 0), y: e.y, flip: e.dir < 0 };   // (27-sep, P14) al revés: en W·8 − x − ancho
     // (25-sep) los monstruos nuevos que andan miran hacia donde van (y en la casa espejo, al revés: dir empieza en -1)
     var gira = e.tipo === 'suegra' || e.tipo === 'perro' || e.tipo === 'cofre' || e.tipo === 'okupa' || e.tipo === 'generoso' || e.tipo === 'gente';
-    return { x: e.x, y: e.y, flip: gira ? (e.dir || 1) < 0 : false };
+    return { x: e.x, y: e.y, flip: gira ? (e.dir || 1) < 0 : !!e.espejo };   // (27-sep, P14) el que no gira, en espejo, mirando al revés
   }
+  // (27-sep, P14) el bicho 'h' dado la vuelta empieza en f 3: es el sitio espejo exacto del f 0 del original
+  function ponEspejoH(o) { if (o.tipo === 'h' && o.espejo) { o.f = 3; o.fr = 0; } }
   function choca(w, e) {
-    var a = mascara('agente', w.f), p = posEnemigo(e), b = mascara(e.spr, e.fr);
+    var a = mascara('agente', e.espejo ? 3 - w.f : w.f), p = posEnemigo(e), b = mascara(e.spr, e.fr);   // (27-sep, P14) en espejo, el fotograma 3 − f
     var ax = w.x * 8 + w.f * 2, ay = w.y;
     if (ax + a.ancho <= p.x || p.x + b.ancho <= ax || ay + a.alto <= p.y || p.y + b.alto <= ay) return false;
     var tabla = {};
@@ -1157,7 +1160,20 @@ var MOTOR = (function () {
   }
   function claveBonus(s, b) { return s.def.id + ':' + b.x + ',' + b.y; }
   // En la 2.ª vuelta (y en la 4.ª…) las casas salen en ESPEJO (idea 6)
-  function defDe(j, n) { var d = SALAS[n]; return (j.espejo || j.vuelta % 2 === 1) ? espejo(d) : d; }
+  function defDe(j, n) { var d = SALAS[n]; if (esLeyenda(j)) return defLeyenda(d); return (j.espejo || j.vuelta % 2 === 1) ? espejo(d) : d; }   // (27-sep, P14) + la Leyenda
+  /* (27-sep, P14 · PLAN 5.4) EL MODO LEYENDA (tras el final, en otra ranura): el mismo viaje con las casas EN ESPEJO, dadas la vuelta
+     sobre la marcha (espejo) pero con su ID DE SIEMPRE (lo vendido, las estrellas, los secretos, las salidas… se guardan con el id
+     original: nada de «-espejo», que no casaría con lo vendido) y con menos aire: AIRE_LEYENDA (×0,85), salvo las casas de
+     AIRE_LEYENDA_CASA (la que no sale con menos aire se queda en 0,9 o 1). Las calles y las salas de bonus no se dan la vuelta. */
+  var AIRE_LEYENDA = 0.85, AIRE_LEYENDA_CASA = {};
+  function esLeyenda(j) { return !!(j && j.av && j.av.leyenda); }
+  function aireLeyenda(id) { var k = AIRE_LEYENDA_CASA[id]; return k != null ? k : AIRE_LEYENDA; }
+  function defLeyenda(d) {
+    if (!d || !d.mapa || d.tesoro || d.calle) return d;
+    var e = espejo(d); e.id = d.id; e.leyenda = true;
+    e.aire = Math.round((d.aire || 1) * aireLeyenda(d.id) * 1000) / 1000;
+    return e;
+  }
   function empezarSala(j, n) {
     j.n = n; j.s = nuevaSala(defDe(j, n)); j.s.n = n; j.w = nuevoAgente(j.s.def); j.salida = false; j.enTesoro = false; j.racha = 1; j.propina = 0;
     if (j.dos) { j.w2 = nuevoAgente(j.s.def); j.w2.x = Math.min(j.s.ancho - 3, j.w2.x + 2); j.llaves1 = 0; j.llaves2 = 0; j.gana = 0; }
@@ -1239,7 +1255,7 @@ var MOTOR = (function () {
     s.bonus.forEach(function (b) {
       if (b.cogido || b.comida || (b.alFinal && s.quedan > 0)) return;   // (comida: se la tragó la aspiradora)
       if (!celdas.some(function (c) { return c[0] === b.x && c[1] === b.y; })) { if (!traeIman(j, s, b, cx, cy)) return; ev.push('imanTrae'); }   // (26-sep, 51) o te la trae el imán gigante
-      b.cogido = true; ev.push('bonus', 'bonus_' + b.tipo);
+      b.cogido = true; ev.push('bonus', 'bonus_' + (b.tipo === 'dobleSalto' && botasYa(j) ? 'monedaBotas' : b.tipo));   // (27-sep, P13) con las Botas, el poder s es una moneda
       if (s.calle && j.av && !b.extra) (j.av.premios = j.av.premios || {})[claveBonus(s, b)] = 1;   // (26-sep) en la calle ya no vuelve a salir
       if (b.muelle && j.av) { (j.av.muelleHechos = j.av.muelleHechos || {})[b.muelle] = 1; ev.push('muelleSecreto'); }   // (25-sep, 2b)
       if (b.tipo === 'gema') sumar(j, BONUS.gema, ev, quien);
@@ -1250,7 +1266,7 @@ var MOTOR = (function () {
       else if (b.tipo === 'reloj') s.congelado = BONUS.reloj;
       else if (b.tipo === 'botas') w.botas = poderDe(j);           // (25-sep, idea 179) poderDe = PODER sin mejoras
       else if (b.tipo === 'paraguas') w.paraguas = poderDe(j);
-      else if (b.tipo === 'dobleSalto') w.doble = poderDe(j);
+      else if (b.tipo === 'dobleSalto') { if (botasYa(j)) sumar(j, MONEDA_BOTAS, ev, quien); else w.doble = poderDe(j); }   // (27-sep, P13) con las Botas: +500 (= 5 🪙)
       else if (b.tipo === 'goma') w.goma = poderDe(j);
       else if (b.tipo === 'arena') s.lento = poderDe(j);
       else if (b.tipo === 'globo') w.globo = poderDe(j);
@@ -1370,7 +1386,71 @@ var MOTOR = (function () {
   }
   // Un paso de juego. Devuelve los sucesos: salto, llave, palanca, cae, vida, muerte, salida…
   // inp2: los mandos del jugador 2 (solo con 2 jugadores)
+  /* ── (27-sep, P8 · PLAN-JUEGO-UNICO 5.1) «LA PRIMERA VEZ»: el juego enseña jugando. La primera vez que pasa algo nuevo
+     (la primera llave, un bicho cerca, una cinta, el suelo que se deshace, una palanca, el aire que se acaba, la puerta del
+     jefe cerrada, las Botas en una casa que las pide…), paso() añade el suceso 'primera:<clave>', UNA vez por partida.
+     Solo si la pantalla lo pide con j.avisos = lo ya visto en este aparato (P.vistos): lo que ya está ahí no se repite.
+     Sin j.avisos (el robot, que no llama a paso(); las pruebas del motor; la demo) no se mira nada. La pantalla lo enseña
+     en una línea, sin parar el juego, y lo apunta en P.vistos. Las claves (y su texto en T.es.primera): ── */
+  var PRIMERA = ['llave', 'bicho', 'pisa', 'cinta', 'derrumbe', 'hunde', 'agua', 'viento', 'hielo', 'oscuro', 'color', 'puertaColor',
+    'llaveFalsa', 'prensa', 'rayo', 'muelle', 'gravedad', 'palanca', 'aire', 'puertaJefe', 'valla', 'botas'];
   function paso(j, inp, inp2) {
+    var ev = pasoBase(j, inp, inp2);
+    if (j.avisos && typeof j.avisos === 'object' && !j.dos) primeraVez(j, ev);   // (27-sep, P8)
+    return ev;
+  }
+  // (27-sep, P8) las letras que tiene la sala (se mira una vez por sala) y si hay alguna de `chs` cerca del agente
+  function letrasSala8(s) {
+    if (s.letras8) return s.letras8;
+    var l = {}; (s.mapa || []).forEach(function (f) { for (var i = 0; i < f.length; i++) l[f[i]] = 1; });
+    return (s.letras8 = l);
+  }
+  function letraCerca8(s, w, chs, r) {
+    var y0 = w.y >> 3, y, x, f;
+    for (y = y0 - 1; y <= y0 + 3; y++) { f = s.mapa[y]; if (!f) continue; for (x = w.x - r; x <= w.x + 1 + r; x++) if (f[x] && chs.indexOf(f[x]) >= 0) return true; }
+    return false;
+  }
+  function primeraVez(j, ev) {
+    var s = j.s, w = j.w, vis = j.avisos; if (!s || !w || !s.mapa) return;
+    var dados = j.avisosDados = j.avisosDados || {};
+    var falta = function (k) { return !vis[k] && !dados[k]; };
+    var da = function (k) { dados[k] = 1; ev.push('primera:' + k); };
+    var hay = function (e) { return ev.indexOf(e) >= 0; };
+    var casa = !s.calle && !s.tesoro, L = letrasSala8(s), ax = w.x * 8 + (w.f || 0) * 2 + 5, ay = w.y + 8;
+    var cerca = function (x, y, rx) { return Math.abs(x - ax) <= rx && Math.abs(y - ay) <= 28; };
+    var bicho = function (e, pis) { if (e.fuera || !mata(e) || pisable(e) !== pis) return false; var p = posEnemigo(e); return cerca(p.x + 5, p.y + 8, 64); };   // (27-sep, P8) a 8 casillas
+    // lo que ya pasa en este paso
+    if (falta('llave') && hay('llave')) da('llave');
+    if (falta('llaveFalsa') && hay('llaveFalsa')) da('llaveFalsa');
+    if (falta('puertaJefe') && hay('puertaCerrada') && w.puertaDef && w.puertaDef.pideVendidas) da('puertaJefe');
+    if (w.muerto || j.salida) return;
+    // lo que tiene la sala (al llegar)
+    if (falta('gravedad') && s.luna) da('gravedad');
+    if (falta('oscuro') && casa && s.oscuro && !s.luz) da('oscuro');
+    if (falta('agua') && s.agua) da('agua');
+    if (falta('viento') && s.viento && s.viento.length) da('viento');
+    if (falta('prensa') && s.prensas && s.prensas.length) da('prensa');
+    if (falta('rayo') && ((s.rayos && s.rayos.length) || L.L)) da('rayo');
+    // lo que está cerca del agente
+    if (falta('bicho') && casa && s.enemigos.some(function (e) { return bicho(e, false); })) da('bicho');
+    if (falta('pisa') && s.enemigos.some(function (e) { return bicho(e, true); })) da('pisa');
+    if (falta('palanca') && (s.palancas || []).some(function (p) { return cerca(p.x * 8 + 4, p.y * 8 + 4, 32); })) da('palanca');
+    if (falta('cinta') && (L['<'] || L['>']) && letraCerca8(s, w, '<>', 2)) da('cinta');
+    if (falta('derrumbe') && L.C && letraCerca8(s, w, 'C', 2)) da('derrumbe');
+    if (falta('hunde') && L.S && letraCerca8(s, w, 'S', 2)) da('hunde');
+    if (falta('hielo') && L.H && letraCerca8(s, w, 'H', 2)) da('hielo');
+    if (falta('muelle') && L.T && letraCerca8(s, w, 'T', 3)) da('muelle');
+    if (falta('color') && (L.R || L.A || L['*']) && letraCerca8(s, w, 'RA*', 4)) da('color');
+    if (falta('puertaColor') && (L.M || L.N || L.Q) && letraCerca8(s, w, 'MNQmnq', 4)) da('puertaColor');
+    if (falta('valla') && s.calle && L.V && !s.vallaAbierta && letraCerca8(s, w, 'V', 5)) da('valla');
+    if (falta('puertaJefe') && s.calle && j.av && (s.def.puertas || []).some(function (p) {
+      return p.pideVendidas && cerca(p.x * 8 + 8, p.y * 8 + 8, 40) && cuentaAv(j.av, s.def.mundo || '').vendidas < p.pideVendidas;
+    })) da('puertaJefe');
+    // el aire que se acaba y las Botas en una casa (o calle) que las pide
+    if (falta('aire') && casa && !j.aireInf && s.aire > 0 && s.aire < s.aireMax * 0.3) da('aire');
+    if (falta('botas') && j.av && j.av.dobleSalto && s.def && s.def.dobleSalto) da('botas');
+  }
+  function pasoBase(j, inp, inp2) {   // (27-sep, P8) el paso de siempre (antes se llamaba paso)
     var s = j.s, w = j.w, ev = [];
     if ((w.muerto && !j.dos) || j.salida) return ev;
     s.t++;
@@ -1787,6 +1867,7 @@ var MOTOR = (function () {
     if (opc.mejoras && typeof opc.mejoras === 'object') j.mejoras = { aire: +opc.mejoras.aire || 0, propina: +opc.mejoras.propina || 0, poder: +opc.mejoras.poder || 0 };
     if (opc.peques) { j.peques = true; j.inmortal = true; }      // (182)
     if (opc.moderno) j.moderno = true;                          // (25-sep, 2b) perdón al borde y salto guardado
+    if (opc.botas) j.botasTenidas = true;                       // (27-sep, P13) el jugador ya tiene las Botas (en alguna ranura): lo dice la pantalla
   }
   // Al empezar cada casa (y al volver a empezarla tras morir): la regla del desafío y la mejora del aire
   function modosSala(j) {
@@ -1797,7 +1878,7 @@ var MOTOR = (function () {
     if (r === 'apagon') s.oscuro = true;                      // a oscuras, como el reto de la semana
     else if (r === 'xxl') w.grande = 1;                       // aguantas un golpe (como la seta)
     else if (r === 'iman') s.iman = s.aireMax;                // imán toda la visita
-    else if (r === 'muelle') w.doble = s.aireMax;             // doble salto toda la visita
+    else if (r === 'muelle') { if (botasYa(j)) w.botas = s.aireMax; else w.doble = s.aireMax; }   // doble salto toda la visita · (27-sep, P13) con las Botas: salto alto
   }
   // (177) el COFRE de cada día de la semana (lunes = 0): además de sus monedas de siempre, algo distinto cada día
   var COFRES = [['lunes', 'monedas', 50], ['martes', 'iman', 0], ['miercoles', 'vida', 0], ['jueves', 'xp', 60], ['viernes', 'botas', 0], ['sabado', 'seta', 0], ['domingo', 'monedas', 120]];
@@ -1986,6 +2067,11 @@ var MOTOR = (function () {
      que la mira el robot (mansion-escape-room-mapa.js lee la misma marca). El motor no lee la marca: M.paso con una casa marcada
      y sin nada más sigue siendo un salto (lo que espera la prueba del robot). */
   function dobleSiempre(j) { return !!(j && ((j.av && j.av.dobleSalto) || j.dobleSalto)); }
+  /* (27-sep, P13) ¿el jugador YA TIENE las Botas? (el doble salto de siempre, o fuera de la aventura, opc.botas: las tiene en alguna
+     ranura). Entonces el poder `s` (doble salto 10 s) da MONEDA_BOTAS puntos (= 5 🪙: 100 puntos, una moneda) y el desafío
+     «zapatos de muelle» da el salto alto (botas) en vez del doble salto. Sin Botas, todo como antes (la «probadita»). */
+  var MONEDA_BOTAS = 500;
+  function botasYa(j) { return dobleSiempre(j) || !!(j && j.botasTenidas); }
   /* (27-sep, P5 · PLAN-JUEGO-UNICO M7) LOS ACTOS: LA VUELTA A NERJA, DE NOCHE. Una puerta con `acto: 'vuelta'` está cerrada («El
      dueño está de viaje»: suceso 'deViaje') hasta que se abre ese acto; lo abre VENDER la casa de la puerta con `abreActo: 'vuelta'`
      (el Cometa) → j.av.actos.vuelta = 1 (se guarda). La NOCHE de la vuelta dura hasta vencer al Tasador (av.terminada); las puertas
@@ -2014,6 +2100,8 @@ var MOTOR = (function () {
     j.enTesoro = false; j.salida = false; j.enCasa = null;
     // (25-sep, 2b) las calles pisadas (el mapa del mundo las ilumina) · en la calle ya no hay visita con muelle
     (j.av.pisadas = j.av.pisadas || {})[id] = 1; j.revisita = false;
+    // (27-sep, P10) la primera vez que pisas un mundo empieza su cuenta de muertes («sin morir»; las partidas de antes, sin cuenta)
+    var mdo = d.mundo || ''; if (mdo && j.av.mundos && !j.av.mundos[mdo]) j.av.mundos[mdo] = { muertes: 0 };
     // (25-sep, secretos) la calle sabe de la aventura (puertas con condición) y si es de noche; lo que ya hiciste sigue hecho
     s.av = j.av; s.noche = !!j.noche || nocheVuelta(j.av);   // (27-sep, P5) + la noche de la vuelta
     reaplicaTrucos(j); marcaObjetos(j); marcaPremios(j);
@@ -2039,12 +2127,15 @@ var MOTOR = (function () {
       // t0 (el tiempo jugado al entrar: lo apunta la pantalla), superado }
       dobleSalto: false, mundos: {},
       // (27-sep, P5) los ACTOS ya abiertos ({ vuelta: 1 } al vencer al Cometa)
-      actos: {} };
+      actos: {},
+      // (27-sep, P10) lo hecho con trucos (clave → 1): no suma al % (lo apunta la pantalla)
+      conTrucos: {} };
     if (opc.moderno) j.moderno = true;                 // (25-sep, 2b) el modo moderno (perdón al borde y salto guardado)
     CALLES.forEach(function (c) { (c.puertas || []).forEach(function (p) { j.av.mundoDe[p.casa] = c.mundo || ''; }); });
     // (26-sep, revisión R1) sobre una COPIA: si no, la partida y lo guardado compartían premios, trucos, vendidas… y lo que
     // cogías se apuntaba en lo guardado sin sus vidas ni sus puntos (al «Menú» + «Continuar», el premio se perdía)
     var g = opc.guardado && typeof opc.guardado === 'object' ? copia(opc.guardado) : null;
+    j.av.leyenda = !!(opc.leyenda || (g && g.leyenda));   // (27-sep, P14) el Modo Leyenda (nueva o guardada)
     if (g && g.pantalla && calle(g.pantalla)) {
       j.puntos = +g.puntos || 0; j.vidas = g.vidas != null ? +g.vidas : 2; j.corazones = +g.corazones || 0;
       j.proxVida = Math.max(VIDA_EXTRA, (Math.floor(j.puntos / VIDA_EXTRA) + 1) * VIDA_EXTRA);
@@ -2056,6 +2147,7 @@ var MOTOR = (function () {
       var cb = casaBotas(); j.av.dobleSalto = !!g.dobleSalto || !!(cb && j.av.vendidas[cb]);
       j.av.mundos = g.mundos && typeof g.mundos === 'object' ? g.mundos : mundosDeAntes(j.av, g.pantalla);
       j.av.actos = g.actos && typeof g.actos === 'object' ? g.actos : actosDeAntes(j.av.vendidas);   // (27-sep, P5) las de antes: por lo vendido
+      j.av.conTrucos = g.conTrucos && typeof g.conTrucos === 'object' ? g.conTrucos : {};              // (27-sep, P10) lo hecho con trucos
       if (g.terminada) j.av.terminada = true;          // (26-sep, fase B) la aventura ya acabada sigue guardada («Terminada ★»)
       ponCalle(j, g.pantalla, g.x, g.y, g.dir);
       // se sigue delante de la puerta de la casa que acabas de vender · (26-sep, A1) con unos pasos de protección
@@ -2075,7 +2167,9 @@ var MOTOR = (function () {
       premios: j.av.premios || {}, bajadas: j.av.bajadas || {}, jefeHoy: j.av.jefeHoy || {},   // (26-sep) · (revisión) + jefeHoy
       terminada: !!j.av.terminada,                       // (26-sep, fase B) acabada: no se borra, se queda como «Terminada ★»
       actos: j.av.actos || {},                           // (27-sep, P5) los actos (la vuelta a Nerja)
-      dobleSalto: !!j.av.dobleSalto, mundos: j.av.mundos || {} });   // (26-sep, P4) las Botas del Doble Salto y lo de cada mundo
+      conTrucos: j.av.conTrucos || {},                   // (27-sep, P10) lo hecho con trucos: no suma al %
+      dobleSalto: !!j.av.dobleSalto, mundos: j.av.mundos || {},
+      leyenda: j.av.leyenda ? true : undefined });   // (27-sep, P14) solo si es Leyenda (las de siempre, igual que antes)   // (26-sep, P4) las Botas del Doble Salto y lo de cada mundo
   }
   // Al cruzar un borde: a la pantalla vecina, por el borde contrario, a la misma altura (o columna)
   function cambiaPantalla(j, lado) {
@@ -2132,11 +2226,16 @@ var MOTOR = (function () {
   function vendeCasa(j, id) {
     if (!id || !j.av || j.av.vendidas[id]) return false;
     var c = casaPorId(id); if (c && c.def.superbonus) return false;
-    j.av.vendidas[id] = 1; j.av.cifras.push((id.length * 7 + id.charCodeAt(0)) % 10);
+    j.av.vendidas[id] = 1;   // (27-sep, P10) ya NO se apunta una cifra por CASA (el av.cifras de antes se queda tal cual): la da cada JEFE
     // (26-sep, P4) vencer al JEFE de un mundo: «MUNDO SUPERADO» (lo saca la pantalla, con la cifra de la caja fuerte que da ese
     // jefe) · la puerta con `da: 'dobleSalto'` (el Gorila) da además las BOTAS DEL DOBLE SALTO, para siempre
     var mj = mundoDeJefe(id);
-    if (mj) { j.superado = { mundo: mj, jefe: id, cifra: j.av.cifras[j.av.cifras.length - 1], botas: false }; var mm = j.av.mundos = j.av.mundos || {}; (mm[mj] = mm[mj] || {}).superado = 1; }
+    if (mj) {
+      // (27-sep, P10) la cifra de la caja fuerte es la de ESE jefe (cifraJefe: 7 jefes, 7 cifras)
+      j.superado = { mundo: mj, jefe: id, cifra: cifraJefe(id), botas: false }; var mm = j.av.mundos = j.av.mundos || {}, me = mm[mj] = mm[mj] || {}; me.superado = 1;
+      // (27-sep, P10) «SIN MORIR» por mundo: ninguna muerte desde que entraste en él (y sin trucos) → su medalla
+      if (me.muertes === 0 && !j.trucoUsado && !j.inmortal && !j.peques) { me.sinMorir = 1; j.superado.sinMorir = true; }
+    }
     // (27-sep, P5) vender la casa de la puerta con `abreActo` (el Cometa) abre ese acto: la VUELTA A NERJA, DE NOCHE
     var ac = actoQueAbre(id); if (ac && !(j.av.actos && j.av.actos[ac])) { (j.av.actos = j.av.actos || {})[ac] = 1; if (j.superado && j.superado.jefe === id) j.superado.acto = ac; else j.actoNuevo = ac; }
     if (id === casaBotas() && !j.av.dobleSalto) { j.av.dobleSalto = true; if (j.superado && j.superado.jefe === id) j.superado.botas = true; else j.botasNuevas = true; }
@@ -2152,6 +2251,7 @@ var MOTOR = (function () {
   // Tras «muerte»: devuelve true si aún quedan vidas (y reinicia la sala entera, como el original).
   function trasMorir(j) {
     rompeRacha(j);                                               // (25-sep, idea 178) morir apaga el «modo fuego»
+    muereEnMundo(j);                                             // (27-sep, P10) «sin morir» por mundo: una muerte más en este mundo
     if (j.vidas <= 0 && !j.vidasInf) return false;
     if (!j.vidasInf) j.vidas--;                                  // modo truco: vidas infinitas
     // en la calle: vuelves a la última BANDERA de control si está en esta misma calle; si no, por donde entraste
@@ -2405,7 +2505,7 @@ var MOTOR = (function () {
   function cambiaFase(s, J, ev) {
     if (J.tipo === 'gorila' && J.fase >= 2 && J.rompe) { J.rompe.forEach(function (c) { if (s.mapa[c[1]]) s.mapa[c[1]][c[0]] = ' '; }); ev.push('derrumbe'); }
     if (J.tipo === 'granTasador' && J.fase === 2) {
-      (J.ayudantes || []).forEach(function (e) { var o = copia(e); o.fr = 0; o.f = 0; if (o.tipo === 'h') o.y = o.fila * 8; o.ayudante = true; s.enemigos.push(o); });
+      (J.ayudantes || []).forEach(function (e) { var o = copia(e); o.fr = 0; o.f = 0; ponEspejoH(o); if (o.tipo === 'h') o.y = o.fila * 8; o.ayudante = true; s.enemigos.push(o); });
       ev.push('jefeLlama');
     }
     if (J.tipo === 'granTasador' && J.fase === 3) { s.enemigos.forEach(function (e) { if (e.ayudante) e.fuera = true; }); ev.push('jefeGrua'); }
@@ -2633,14 +2733,14 @@ var MOTOR = (function () {
   }
   // (148) la aspiradora se come las monedas por donde pasa · (149) las termitas se comen la madera (O) cada 48 pasos
   function comeCosas(s, e) {
-    var px = e.x * 8 + e.f * 2, an = anchoSpr(e.spr), al = SPR[e.spr] ? SPR[e.spr][0].length : 8;
+    var px = e.x * 8 + e.f * 2 + (e.tipo === 'h' && e.espejo ? 10 - anchoSpr(e.spr) : 0), an = anchoSpr(e.spr), al = SPR[e.spr] ? SPR[e.spr][0].length : 8;   // (27-sep, P14)
     if (e.come === 'monedas' && s.bonus) s.bonus.forEach(function (b) {
       if (b.tipo !== 'moneda' || b.cogido || b.comida) return;
       if (b.x * 8 < px + an && px < b.x * 8 + 8 && b.y * 8 < e.y + al && e.y < b.y * 8 + 8) { b.comida = true; e.comio = (e.comio || 0) + 1; e.aviso = 'comeMoneda'; }
     });
     if (e.come === 'madera' && s.mapa && s.t % 48 === 0) {
       var fila = (e.y >> 3) + 1;
-      [px + 3, px + 13].forEach(function (p) { var cx = p >> 3; if (s.mapa[fila] && s.mapa[fila][cx] === 'O') { s.mapa[fila][cx] = ' '; e.aviso = 'termita'; } });
+      (e.espejo ? [px + an - 14, px + an - 4] : [px + 3, px + 13]).forEach(function (p) { var cx = p >> 3; if (s.mapa[fila] && s.mapa[fila][cx] === 'O') { s.mapa[fila][cx] = ' '; e.aviso = 'termita'; } });
     }
   }
   // al pisar un bicho: el COMBO (100, 200, 400… y vida al 8.º) y lo suyo de cada uno
@@ -3012,6 +3112,229 @@ var MOTOR = (function () {
     banderaPaso(j, s, w, ev);
   }
 
+  /* ══ (27-sep, P9 · PLAN-JUEGO-UNICO 4 y 5.4) EL MAPA DE LA PAUSA Y VIAJAR ══════════════════════════════════════════════════
+     · mapaPausa(av, opc): cada mundo con su % y sus calles: «estás aquí», las pisadas, y un «?» en la calle donde aún falta algo
+       (NUNCA dice qué); con las casas de cada calle (las vendidas, con sus ★: Rejugar y Contrarreloj). Lo secreto sin encontrar
+       no se enseña, y las calles secretas no salen hasta que las pisas (su «?» sale en la calle desde la que se llega).
+     · paradasAv(av): las paradas del AUTOBÚS: la primera calle de cada mundo, la calle de su jefe, la Parada y el Camino (las
+       calles con una puerta de autobús a otra calle que no es secreta). viajaAv(j, id): solo a una parada YA PISADA, solo desde
+       la calle y solo en la aventura; se llega delante de la puerta del jefe (o donde empieza la calle), unos pasos protegido.
+     ══ (27-sep, P10 · 4 y 5.4) EL %, LA CAJA FUERTE, LA CASA DEL DÍA, EL RANGO Y «SIN MORIR» POR MUNDO ══════════════════════════
+     · porcentaje(av, opc): 50 por las casas que cuentan, los jefes y la Gran Villa · 20 por las estrellas (3 por casa; 2 si la casa
+       no tiene bonus, porque la 3.ª es cogerlos todos) · 30 por los secretos: casas secretas, túneles, salas de bonus, calles
+       secretas, estatuillas, cartas, postales y llaves raras (cuando las haya: `objetos` con ese tipo), corazones y los secretos
+       de dentro de casas y calles. Vacío = 0; completo = 100; si falta algo, nunca 100. Lo hecho CON TRUCOS (av.conTrucos, lo
+       apunta la pantalla) no suma. opc: { estrellas (las del aparato, P.estrellas: solo cuentan las de casas vendidas en ESTA
+       partida), cogidos (los de la partida viva; lo guardado ya los lleva) }. Por mundo, igual (con las partes que tenga).
+     · cifraJefe / cifrasJefes: cada JEFE da una cifra de la caja fuerte (7 jefes, 7 cifras). Ya no se apunta una por casa: el
+       av.cifras de las partidas de antes se queda tal cual (no se borra nada).
+     · casaDelDiaAv / retoSemanaAv: siempre una casa YA VENDIDA (ni jefes ni túneles); `previa` (la de hoy, o la de esta semana,
+       guardada) la mantiene aunque vendas más. casasVendidasAv: las vendidas, en el orden del viaje (también para 2 jugadores).
+     · rangoPct: el rango del agente sube con el % (RANGOS: 0, 10, 25, 50, 75 y 100).
+     · «Sin morir» por mundo: desde que entras en un mundo se cuentan sus muertes (av.mundos[m].muertes, en ponCalle y trasMorir);
+       vencer a su jefe sin ninguna (y sin trucos) → av.mundos[m].sinMorir y j.superado.sinMorir (la pantalla da la medalla). Las
+       partidas de antes no tienen la cuenta de los mundos ya empezados: esos no dan medalla (no se sabe si murieron). ══ */
+  var CIFRA_JEFE = { 'jefe-nerja': 4, 'jefe-edificio': 7, 'jefe-urba': 1, 'jefe-recreativos': 9, 'jefe-museo': 3, 'jefe-galaxia': 6, 'jefe-final': 2 };
+  var PCT_PARTES = { casas: 50, estrellas: 20, secretos: 30 };
+  var RANGOS = [0, 10, 25, 50, 75, 100];
+  var OBJ_COLECCION = { estatuilla: 'estatuillas', carta: 'cartas', postal: 'postales', llaveRara: 'llavesRaras' };
+  function cifraJefe(id) { id = String(id || ''); return CIFRA_JEFE[id] != null ? CIFRA_JEFE[id] : (id.length * 7 + (id.charCodeAt(0) || 0)) % 10; }
+  function esJefe(id) {
+    if (JEFES.some(function (q) { return q[0] === id; }) || mundoDeJefe(id)) return true;
+    var d = casaPorId(id); return !!(d && d.def.jefe);
+  }
+  function cifrasJefes(av) {
+    var v = (av && av.vendidas) || {};
+    return JEFES.map(function (q) { return { jefe: q[0], mundo: q[2], cifra: cifraJefe(q[0]), tiene: !!v[q[0]] }; });
+  }
+  function rangoPct(p) { var i = 0; while (i + 1 < RANGOS.length && (+p || 0) >= RANGOS[i + 1]) i++; return i; }
+  // lo que tiene dentro una casa (o una calle): las ★ posibles, sus secretos, sus corazones y sus objetos de colección
+  var SALA_INFO = {};
+  function infoCasa(def) {
+    var k = (def.calle ? 'calle:' : '') + def.id;
+    if (!SALA_INFO[k]) {
+      var s = null; try { s = nuevaSala(def); } catch (e) { s = null; }
+      SALA_INFO[k] = { max: s && propios(s).length ? 3 : 2, sec: s ? secretosTotal(s) : (def.trucos || []).length,
+        corazones: s ? s.bonus.filter(function (b) { return b.tipo === 'corazon' && !b.extra; }).map(function (b) { return def.id + ':' + b.x + ',' + b.y; }) : [],
+        objetos: (def.objetos || []).filter(function (o) { return OBJ_COLECCION[o.tipo] && o.id != null; }).map(function (o) { return { tipo: o.tipo, id: o.id }; }) };
+    }
+    return SALA_INFO[k];
+  }
+  // TODO lo que suma al %, una vez (se rehace si cambian las calles o las casas): { k, parte, mundo, calle, id, n, acto… }
+  var UNI = { k: '', l: null };
+  function claveUni() {
+    return CALLES.length + '|' + CALLES.map(function (c) { return c.id + ':' + (c.puertas || []).length; }).join(',') + '|' + NORMALES.length + '|' + RETRO.length + '|' + NUEVAS.length + '|' + GALAXIA.length;
+  }
+  function universo() {
+    var ku = claveUni(); if (UNI.k === ku && UNI.l) return UNI.l;
+    SALA_INFO = {};
+    var l = [], visto = {}, sec = secretasDeCalles();
+    var mete = function (it) { if (visto[it.k]) return; visto[it.k] = 1; l.push(it); };
+    var dentro = function (def, c, clave) {
+      var inf = infoCasa(def), m = c.mundo || '';
+      if (inf.sec) mete({ k: 's:' + clave, parte: 'secretos', mundo: m, calle: c.id, n: inf.sec, clave: clave });
+      inf.corazones.forEach(function (kc) { mete({ k: 'k:' + kc, parte: 'secretos', mundo: m, calle: c.id, clave: kc }); });
+      inf.objetos.forEach(function (o) { mete({ k: 'o:' + o.tipo + ':' + o.id, parte: 'secretos', mundo: m, calle: c.id, tipo: o.tipo, id: o.id }); });
+    };
+    var deCasa = function (id, c, parte, p) {
+      var d = casaPorId(id); if (!d || d.def.superbonus || visto['v:' + id]) return;
+      var m = c.mundo || '', acto = (p && p.acto) || '';
+      mete({ k: 'v:' + id, parte: parte, mundo: m, calle: c.id, id: id, acto: acto });
+      if (parte === 'casas') mete({ k: 'e:' + id, parte: 'estrellas', mundo: m, calle: c.id, id: id, n: infoCasa(d.def).max, acto: acto });
+      dentro(d.def, c, id);
+    };
+    CALLES.forEach(function (c) {
+      var m = c.mundo || '', secreta = !!(c.secreta || sec[c.id]);
+      if (secreta) mete({ k: 'c:' + c.id, parte: 'secretos', mundo: m, calle: c.id, id: c.id });
+      (c.puertas || []).forEach(function (p) {
+        if (!p.casa) return;
+        var jefe = JEFES.some(function (q) { return q[0] === p.casa; });
+        deCasa(p.casa, c, (!c.secreta && !condicionPuerta(p)) || jefe ? 'casas' : 'secretos', p);   // (la cuenta de cuentaAv, y los jefes)
+      });
+      (c.zonas || []).forEach(function (z) { if (z.casa) deCasa(z.casa, c, 'secretos', null); });
+      (c.bajadas || []).forEach(function (b, i) { if (b.casa) mete({ k: 'b:' + c.id + ':' + i, parte: 'secretos', mundo: m, calle: c.id }); });
+      (c.tuberias || []).forEach(function (p) { if (p.a) mete({ k: 't:' + p.a, parte: 'secretos', mundo: m, calle: c.id, id: p.a }); });
+      dentro(c, c, 'calle:' + c.id);
+    });
+    UNI.k = ku; UNI.l = l; return l;
+  }
+  // cuánto de ESO está hecho (0/1, o las ★ y los secretos de dentro). crudo: sin mirar lo hecho con trucos (para el «?» del mapa)
+  function hechoItem(av, it, opc, crudo) {
+    var ct = crudo ? {} : (av.conTrucos || {}), t = it.k.charAt(0), vend = av.vendidas || {};
+    if (ct[it.k]) return 0;
+    if (t === 'v') return vend[it.id] ? 1 : 0;
+    if (t === 'e') return !vend[it.id] || ct['v:' + it.id] ? 0 : Math.min(it.n, Math.max(1, +((opc && opc.estrellas) || {})[it.id] || 0));
+    if (t === 's') return Math.min(it.n, Math.max(0, +(av.secretos || {})[it.clave] || 0));
+    if (t === 'b') return (av.bajadas || {})[it.k.slice(2)] ? 1 : 0;
+    if (t === 't') return (av.tuberias || {})[it.id] ? 1 : 0;
+    if (t === 'c') return (av.pisadas || {})[it.id] ? 1 : 0;
+    if (t === 'o') return (av[OBJ_COLECCION[it.tipo]] || {})[it.id] ? 1 : 0;
+    if (t === 'k') return ((opc && opc.cogidos) || av.cogidos || {})[it.clave] ? 1 : 0;
+    return 0;
+  }
+  function porcentaje(av, opc) {
+    av = av || {}; opc = opc || {};
+    var tot = {}, por = {};
+    var suma = function (o, parte, h, n) { var x = o[parte] = o[parte] || { h: 0, t: 0 }; x.h += h; x.t += n; };
+    universo().forEach(function (it) {
+      var n = it.n || 1, h = Math.min(n, hechoItem(av, it, opc, false));
+      suma(tot, it.parte, h, n); suma(por[it.mundo] = por[it.mundo] || {}, it.parte, h, n);
+    });
+    var calc = function (o) {
+      var peso = 0, r = 0, todo = true;
+      Object.keys(PCT_PARTES).forEach(function (k) { var x = o[k]; if (!x || !x.t) return; peso += PCT_PARTES[k]; r += PCT_PARTES[k] * x.h / x.t; if (x.h < x.t) todo = false; });
+      if (!peso) return 0;
+      return todo ? 100 : Math.max(0, Math.min(99, Math.floor(100 * r / peso)));
+    };
+    var mundos = {}; Object.keys(por).forEach(function (m) { mundos[m] = { pct: calc(por[m]), partes: por[m] }; });
+    Object.keys(PCT_PARTES).forEach(function (k) { tot[k] = tot[k] || { h: 0, t: 0 }; });
+    return { pct: calc(tot), partes: tot, mundos: mundos };
+  }
+  // lo hecho que se puede apuntar «con trucos» (casas, túneles, salas de bonus, calles secretas, objetos y corazones): la pantalla
+  // lo mira al empezar y al guardar una partida con trucos, y lo nuevo va a av.conTrucos (no suma al %)
+  function hechosAv(av, opc) {
+    var r = {}; av = av || {};
+    universo().forEach(function (it) { var t = it.k.charAt(0); if (t !== 'e' && t !== 's' && hechoItem(av, it, opc, true)) r[it.k] = 1; });
+    return r;
+  }
+  function paradasAv(av) {
+    av = av || {};
+    var pis = av.pisadas || {}, sec = secretasDeCalles(), r = [], por = {}, ix = {};
+    var pon = function (c, tipo, x, y) {
+      if (!c || c.secreta || sec[c.id]) return;
+      var o = por[c.id];
+      if (!o) { o = por[c.id] = { calle: c.id, nombre: c.nombre || c.id, mundo: c.mundo || '', tipos: [], pisada: !!pis[c.id] || av.pantalla === c.id, aqui: av.pantalla === c.id, x: null, y: null }; r.push(o); }
+      if (o.tipos.indexOf(tipo) < 0) o.tipos.push(tipo);
+      if (x != null && o.x == null) { o.x = x; o.y = y; }
+    };
+    ordenMundos().forEach(function (m) {
+      var c0 = null; CALLES.forEach(function (c) { if (!c0 && !c.secreta && !sec[c.id] && (c.mundo || '') === m) c0 = c; });
+      pon(c0, 'mundo');
+      var jf = jefeDe(m), cj = jf && calle(jf.calle), pj = cj && (cj.puertas || []).filter(function (q) { return q.casa === jf.casa; })[0];
+      if (pj) pon(cj, 'jefe', pj.x, pj.y);
+    });
+    CALLES.forEach(function (c) { (c.puertas || []).forEach(function (q) { if (q.calle && calle(q.calle) && !calle(q.calle).secreta && !sec[q.calle]) pon(c, c.valla && c.valla.pideVendidas ? 'camino' : 'parada'); }); });
+    CALLES.forEach(function (c, i) { ix[c.id] = i; });
+    return r.sort(function (a, b) { return ix[a.calle] - ix[b.calle]; });
+  }
+  function viajaAv(j, id) {
+    if (!j || !j.av || !j.s || !j.s.calle || j.enCasa || j.enTesoro || j.dos || id === j.av.pantalla) return false;
+    var p = paradasAv(j.av).filter(function (q) { return q.calle === id; })[0];
+    if (!p || !p.pisada) return false;
+    if (!ponCalle(j, id, p.x != null ? p.x : null, p.x != null ? p.y * 8 : null, 1)) return false;
+    if (p.x != null) j.w.enPuerta = true;
+    protege(j);
+    return true;
+  }
+  function mapaPausa(av, opc) {
+    av = av || {}; opc = opc || {};
+    var p = porcentaje(av, opc), vend = av.vendidas || {}, pis = av.pisadas || {}, sec = secretasDeCalles(), est = opc.estrellas || {}, falta = {};
+    universo().forEach(function (it) {
+      if (it.acto && !actoAbierto(av, it.acto) && !(it.id && vend[it.id])) return;          // «de viaje»: aún no se puede
+      if (hechoItem(av, it, opc, true) < (it.n || 1)) falta[it.calle] = 1;
+    });
+    CALLES.forEach(function (c) {                                                          // la calle secreta sin pisar: «?» en la de al lado
+      if (c.secreta || sec[c.id]) return;
+      Object.keys(c.salidas || {}).forEach(function (l) { var s2 = c.salidas[l]; if (s2 && sec[s2] && !pis[s2]) falta[c.id] = 1; });
+      (c.puertas || []).forEach(function (q) { if (q.calle && sec[q.calle] && !pis[q.calle]) falta[c.id] = 1; });
+    });
+    var mundos = [], idx = {};
+    CALLES.forEach(function (c) {
+      var m = c.mundo || '';
+      if (idx[m] == null) {
+        var mm = (av.mundos || {})[m] || {}, jf = jefeDe(m);
+        idx[m] = mundos.length;
+        mundos.push({ id: m, pct: (p.mundos[m] || {}).pct || 0, calles: [], visto: false, superado: !!mm.superado || !!(jf && vend[jf.casa]), sinMorir: !!mm.sinMorir });
+      }
+      var o = mundos[idx[m]], secr = !!(c.secreta || sec[c.id]);
+      var pisada = !!pis[c.id] || av.pantalla === c.id || (c.puertas || []).some(function (q) { return q.casa && vend[q.casa]; });
+      if (secr && !pisada) return;
+      if (pisada) o.visto = true;
+      var casas = [];
+      (c.puertas || []).concat((c.zonas || []).map(function (z) { return { casa: z.casa, zona: true }; })).forEach(function (q) {
+        var d = q.casa && casaPorId(q.casa); if (!d || d.def.superbonus) return;
+        if ((secr || condicionPuerta(q) || q.zona) && !vend[q.casa]) return;               // lo secreto sin vender no se desvela
+        var mx = infoCasa(d.def).max;
+        casas.push({ id: q.casa, vendida: !!vend[q.casa], estrellas: vend[q.casa] ? Math.min(mx, Math.max(1, +est[q.casa] || 0)) : 0, max: mx,
+          jefe: esJefe(q.casa), deViaje: !!(q.acto && !actoAbierto(av, q.acto) && !vend[q.casa]) });
+      });
+      o.calles.push({ id: c.id, nombre: c.nombre || c.id, aqui: av.pantalla === c.id, pisada: pisada, secreta: secr, falta: pisada && !!falta[c.id], casas: casas });
+    });
+    return { pct: p.pct, partes: p.partes, rango: rangoPct(p.pct), mundos: mundos, paradas: paradasAv(av), cifras: cifrasJefes(av) };
+  }
+  // las casas VENDIDAS (en el orden del viaje), sin túneles; opc.sinJefes: tampoco los jefes (2 jugadores, la casa del día)
+  function casasVendidasAv(vend, opc) {
+    vend = vend || {}; opc = opc || {};
+    var r = [], visto = {};
+    CALLES.forEach(function (c) {
+      (c.puertas || []).concat(c.zonas || []).forEach(function (q) {
+        var id = q.casa; if (!id || visto[id] || !vend[id]) return; visto[id] = 1;
+        var d = casaPorId(id); if (!d || d.def.superbonus || (opc.sinJefes && esJefe(id))) return;
+        r.push(id);
+      });
+    });
+    return r;
+  }
+  function hashTxt(txt) { var h = 0; String(txt).split('').forEach(function (ch) { h = (h * 31 + ch.charCodeAt(0)) >>> 0; }); return h; }
+  function casaDelDiaAv(fecha, vend, previa) {
+    var l = casasVendidasAv(vend, { sinJefes: true }); if (!l.length) return '';
+    if (previa && l.indexOf(previa) >= 0) return previa;
+    return l[hashTxt(fecha) % l.length];
+  }
+  function retoSemanaAv(fecha, vend, previa) {
+    var l = casasVendidasAv(vend, { sinJefes: true }); if (!l.length) return '';
+    if (previa && l.indexOf(previa) >= 0) return previa;
+    var i = hashTxt('semana ' + retoSemana(fecha).semana) % l.length;
+    if (l.length > 1 && l[i] === casaDelDiaAv(fecha, vend)) i = (i + 1) % l.length;       // (otra que la del día)
+    return l[i];
+  }
+  // (P10) una muerte en la aventura: a la cuenta del mundo de la calle en la que estás (o de la que entraste en la casa)
+  function muereEnMundo(j) {
+    var av = j && j.av; if (!av || !av.mundos) return;
+    var c = calle(av.pantalla), me = c && av.mundos[c.mundo || ''];
+    if (me && me.muertes != null) me.muertes++;
+  }
+
   return {
     ANCHO: ANCHO, ALTO: ALTO, SALTO: SALTO, CAIDA_MORTAL: CAIDA_MORTAL, AIRE: AIRE, DERRUMBE: DERRUMBE, RACHA: RACHA,
     AVATARES: ['agente', 'androide', 'agenta', 'turista', 'mago', 'astronauta', 'ninja', 'guerrero'], PUNTOS_LLAVE: PUNTOS_LLAVE, VIDA_EXTRA: VIDA_EXTRA, BONUS: BONUS, SPR: SPR, SALAS: SALAS, TESORO: TESORO, PISABLE: PISABLE, MURO: MURO, MORTAL: MORTAL,
@@ -3047,8 +3370,15 @@ var MOTOR = (function () {
     // (26-sep, P4 · PLAN-JUEGO-UNICO 3.0) la regla de cada mundo y las Botas del Doble Salto
     ordenMundos: ordenMundos, jefeDe: jefeDe, mundoDeJefe: mundoDeJefe, casaBotas: casaBotas, vallaAbiertaAv: vallaAbiertaAv, atajoAbierto: atajoAbierto,
     secretosMundo: secretosMundo, objetivoAv: objetivoAv, dobleSiempre: dobleSiempre, saleDe: saleDe,
+    botasYa: botasYa, MONEDA_BOTAS: MONEDA_BOTAS, esLeyenda: esLeyenda, defLeyenda: defLeyenda, aireLeyenda: aireLeyenda, AIRE_LEYENDA: AIRE_LEYENDA, AIRE_LEYENDA_CASA: AIRE_LEYENDA_CASA,   // (27-sep, P13 y P14)
     // (27-sep, P5) los actos: la vuelta a Nerja, de noche
-    actoAbierto: actoAbierto, nocheVuelta: nocheVuelta, actoQueAbre: actoQueAbre, mundoDeActo: mundoDeActo, actosDeAntes: actosDeAntes
+    actoAbierto: actoAbierto, nocheVuelta: nocheVuelta, actoQueAbre: actoQueAbre, mundoDeActo: mundoDeActo, actosDeAntes: actosDeAntes,
+    // (27-sep, P8) los avisos de «la primera vez»
+    primeraVez: primeraVez, PRIMERA: PRIMERA,
+    // (27-sep, P9) el mapa de la pausa y el autobús · (P10) el %, la caja fuerte, la casa del día, el rango y «sin morir» por mundo
+    mapaPausa: mapaPausa, paradasAv: paradasAv, viajaAv: viajaAv, porcentaje: porcentaje, hechosAv: hechosAv, rangoPct: rangoPct, RANGOS: RANGOS,
+    PCT_PARTES: PCT_PARTES, cifraJefe: cifraJefe, cifrasJefes: cifrasJefes, CIFRA_JEFE: CIFRA_JEFE, casaDelDiaAv: casaDelDiaAv, retoSemanaAv: retoSemanaAv,
+    casasVendidasAv: casasVendidasAv, esJefe: esJefe
   };
 })();
 if (typeof module !== 'undefined') module.exports = MOTOR;
