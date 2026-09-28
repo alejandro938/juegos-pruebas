@@ -36,13 +36,13 @@ h1{font-family:'Playfair Display',serif;font-weight:900;text-align:center;font-s
 .pl .x{background:none;border:0;color:var(--mute);font-size:18px;cursor:pointer}
 .turn{text-align:center;font:900 26px 'Playfair Display',serif;margin:6px 0 0;min-height:36px}
 .msg{text-align:center;color:var(--mute);font-size:14px;min-height:20px;margin-top:4px}
-.stage{display:flex;justify-content:center;margin:18px 0 6px}
-.scene{--d:180px;--h:90px;width:var(--d);height:var(--d);perspective:800px}
+.stage{display:flex;justify-content:center;margin:34px 0 44px}
+.scene{--d:min(170px,42vw);--h:calc(var(--d) / 2);width:var(--d);height:var(--d);perspective:800px}
 .cube{width:100%;height:100%;position:relative;transform-style:preserve-3d;transform:rotateX(-20deg) rotateY(25deg);transition:transform 1.6s cubic-bezier(.15,.7,.25,1)}
 .cube.bounce{animation:bounce 1.6s ease-out}
 @keyframes bounce{0%{translate:0 0}20%{translate:0 -50px}45%{translate:0 0}60%{translate:0 -16px}75%{translate:0 0}}
-.f{position:absolute;inset:0;background:linear-gradient(145deg,#fff,#e8edf5);border:1px solid #cbd5e1;border-radius:28px;display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);padding:24px;box-shadow:inset 0 0 18px rgba(15,23,42,.15)}
-.f i{width:30px;height:30px;border-radius:50%;background:#0f172a;place-self:center;box-shadow:inset 0 3px 4px rgba(0,0,0,.5)}
+.f{position:absolute;inset:0;background:linear-gradient(145deg,#fff,#e8edf5);border:1px solid #cbd5e1;border-radius:calc(var(--d) * .16);display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);padding:calc(var(--d) * .13);box-shadow:inset 0 0 18px rgba(15,23,42,.15)}
+.f i{width:calc(var(--d) * .17);height:calc(var(--d) * .17);border-radius:50%;background:#0f172a;place-self:center;box-shadow:inset 0 3px 4px rgba(0,0,0,.5)}
 .f6 i{background:var(--red)}
 .f1{transform:translateZ(var(--h))}.f6{transform:rotateY(180deg) translateZ(var(--h))}
 .f2{transform:rotateY(90deg) translateZ(var(--h))}.f5{transform:rotateY(-90deg) translateZ(var(--h))}

@@ -89,7 +89,7 @@ input[type=range]::-moz-range-thumb{height:24px;width:24px;border:0;border-radiu
 .place h4{font-size:14px}.place p{font-size:11px;color:var(--mute);margin-top:2px}
 .tag{display:inline-block;background:var(--soft);color:#334155;font-size:10px;font-weight:600;border-radius:10px;padding:2px 7px;margin:4px 4px 0 0}
 /* dado 3D */
-.scene{width:var(--d,150px);height:var(--d,150px);perspective:700px;margin:22px 0 14px}
+.scene{width:var(--d,150px);height:var(--d,150px);perspective:700px;margin:34px 0 40px}
 .score{width:100%;border-collapse:collapse;font-size:13px}
 .score th{font:700 10px Inter;color:var(--mute);text-transform:uppercase;padding:4px;text-align:center}
 .score th:first-child,.score td:first-child{text-align:left}
@@ -535,7 +535,7 @@ const FACE_ROT={1:[0,0],2:[0,-90],3:[-90,0],4:[90,0],5:[0,90],6:[0,180]};
 const MODES=['low','high','race']; const RACE_TO=30;
 S.game=store.get('game'); S.setup={mode:'low',dice:1,rounds:3}; S.rot=[];
 function cubeHTML(){ return `<div class="scene"><div class="cube">${[1,2,3,4,5,6].map(v=>`<div class="f f${v}">${PIPS[v].map(p=>`<i style="grid-area:${Math.ceil(p/3)}/${(p-1)%3+1}"></i>`).join('')}</div>`).join('')}</div></div>`; }
-function buildDice(n){ const size=n===1?170:n===2?130:100; $('dice').style.setProperty('--d',size+'px'); $('dice').innerHTML=Array.from({length:n},cubeHTML).join(''); $('dice').querySelectorAll('.scene').forEach(s=>s.style.setProperty('--d',size+'px')); S.rot=Array.from({length:n},()=>[-20,25]); }
+function buildDice(n){ const size=Math.min(n===1?170:n===2?130:95, Math.floor((Math.min(innerWidth,390)-60)/n*0.62)); $('dice').style.setProperty('--d',size+'px'); $('dice').innerHTML=Array.from({length:n},cubeHTML).join(''); $('dice').querySelectorAll('.scene').forEach(s=>s.style.setProperty('--d',size+'px')); S.rot=Array.from({length:n},()=>[-20,25]); }
 function saveGame(){ store.set('game',S.game); }
 function curRound(g){ // ronda abierta = la primera en la que no han tirado todos
   const n=g.players.length; let r=1; while(g.rolls.filter(x=>x.r===r).length>=n) r++; return r; }
