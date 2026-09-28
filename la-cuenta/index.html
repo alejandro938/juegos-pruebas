@@ -89,16 +89,28 @@ input[type=range]::-moz-range-thumb{height:24px;width:24px;border:0;border-radiu
 .place h4{font-size:14px}.place p{font-size:11px;color:var(--mute);margin-top:2px}
 .tag{display:inline-block;background:var(--soft);color:#334155;font-size:10px;font-weight:600;border-radius:10px;padding:2px 7px;margin:4px 4px 0 0}
 /* dado 3D */
-.scene{width:110px;height:110px;perspective:600px;margin:14px 0}
+.scene{width:var(--d,150px);height:var(--d,150px);perspective:700px;margin:22px 0 14px}
+.score{width:100%;border-collapse:collapse;font-size:13px}
+.score th{font:700 10px Inter;color:var(--mute);text-transform:uppercase;padding:4px;text-align:center}
+.score th:first-child,.score td:first-child{text-align:left}
+.score td{padding:6px 4px;border-top:1px solid var(--soft);text-align:center}
+.score td.tot{font-weight:900;font-size:15px;color:var(--blue2)}
+.score tr.now td:first-child{color:var(--blue2);font-weight:800}
+.score tr.hi td.tot{color:var(--green)}.score tr.lo td.tot{color:var(--red)}
+.score td.cur{background:var(--sky)}
+#gMode button{text-align:left;padding:10px 12px}
 .cube{width:100%;height:100%;position:relative;transform-style:preserve-3d;transform:rotateX(-20deg) rotateY(25deg);transition:transform 1.6s cubic-bezier(.15,.7,.25,1)}
 .cube.bounce{animation:bounce 1.6s ease-out}
 @keyframes bounce{0%{translate:0 0}20%{translate:0 -38px}45%{translate:0 0}60%{translate:0 -12px}75%{translate:0 0}}
 .f{position:absolute;inset:0;background:linear-gradient(145deg,#fff,#e2e8f0);border:1px solid #cbd5e1;border-radius:18px;display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);padding:14px;box-shadow:inset 0 0 14px rgba(15,23,42,.12)}
 .f i{width:18px;height:18px;border-radius:50%;background:var(--dark);place-self:center;box-shadow:inset 0 2px 3px rgba(0,0,0,.5)}
 .f1 i{background:var(--red)}
-.f1{transform:translateZ(55px)}.f6{transform:rotateY(180deg) translateZ(55px)}
-.f2{transform:rotateY(90deg) translateZ(55px)}.f5{transform:rotateY(-90deg) translateZ(55px)}
-.f3{transform:rotateX(90deg) translateZ(55px)}.f4{transform:rotateX(-90deg) translateZ(55px)}
+.scene{--h:calc(var(--d,150px) / 2)}
+.f{padding:calc(var(--d,150px) * .13);border-radius:calc(var(--d,150px) * .16)}
+.f i{width:calc(var(--d,150px) * .17);height:calc(var(--d,150px) * .17)}
+.f1{transform:translateZ(var(--h))}.f6{transform:rotateY(180deg) translateZ(var(--h))}
+.f2{transform:rotateY(90deg) translateZ(var(--h))}.f5{transform:rotateY(-90deg) translateZ(var(--h))}
+.f3{transform:rotateX(90deg) translateZ(var(--h))}.f4{transform:rotateX(-90deg) translateZ(var(--h))}
 .dl{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--soft);font-size:13px}
 .dl:last-child{border:0}
 .dl b{font-size:18px}
@@ -251,17 +263,21 @@ footer{flex-shrink:0;background:var(--soft);border-top:1px solid var(--line);pad
       <div class="wheel" id="wheel"></div>
       <button class="btn dark" id="spinBtn" style="padding:14px;font-size:15px"></button>
     </section>
-    <section data-tabs="spin" style="display:flex;flex-direction:column;align-items:center;gap:10px;border-top:1px solid var(--line);padding-top:16px">
-      <div class="bigmsg" id="dieTurn" style="font-size:15px;color:var(--blue2)"></div>
-      <div class="scene"><div class="cube" id="cube">
-        <div class="f f1"></div><div class="f f2"></div><div class="f f3"></div><div class="f f4"></div><div class="f f5"></div><div class="f f6"></div>
-      </div></div>
-      <div class="bigmsg" id="dieMsg" style="font-size:16px" aria-live="polite"></div>
-      <button class="btn" id="dieBtn" style="padding:14px;font-size:15px;width:100%"></button>
+    <!-- DADO: partida -->
+    <section data-tabs="spin" id="gSetup" class="card" style="display:flex;flex-direction:column;gap:10px;border-top:3px solid var(--gold)">
+      <span class="lbl" id="t_gameSetup" style="margin:0"></span>
+      <div class="seg" id="gMode" style="flex-direction:column"></div>
+      <div class="row"><span style="font-size:13px" id="t_diceN"></span><div class="seg" id="gDice" style="width:60%"><button data-v="1" class="on">1</button><button data-v="2">2</button><button data-v="3">3</button></div></div>
+      <div class="row" id="gRoundsRow"><span style="font-size:13px" id="t_roundsN"></span><div class="seg" id="gRounds" style="width:60%"><button data-v="1">1</button><button data-v="3" class="on">3</button><button data-v="5">5</button></div></div>
+      <button class="btn dark" id="gStart" style="padding:13px"></button>
     </section>
-    <section data-tabs="spin">
-      <div class="row"><span class="lbl" id="t_diceLog" style="margin:0"></span><button class="link" id="dieNew"></button></div>
-      <div class="card" id="dieLog" style="margin-top:8px"></div>
+    <section data-tabs="spin" id="gPlay" style="display:flex;flex-direction:column;align-items:center;gap:8px">
+      <div class="row" style="width:100%"><span class="lbl" id="gInfo" style="margin:0"></span><button class="link" id="gNew"></button></div>
+      <div class="bigmsg" id="dieTurn" style="font-size:20px;color:var(--blue2)"></div>
+      <div id="dice" style="display:flex;gap:22px;justify-content:center;flex-wrap:wrap"></div>
+      <div class="bigmsg" id="dieMsg" style="font-size:17px" aria-live="polite"></div>
+      <button class="btn" id="dieBtn" style="padding:16px;font-size:16px;width:100%"></button>
+      <div class="card" style="width:100%;overflow-x:auto"><table class="score" id="score"></table></div>
     </section>
 
     <!-- DÓNDE COMER -->
@@ -358,9 +374,7 @@ function applyLang(){
   $('payer').placeholder=T('payerPh'); $('dDesc').placeholder=T('desc');
   $('dSave').textContent=T('save'); $('dShare').textContent=T('share'); $('dClear').textContent=T('clear');
   $('pName').placeholder=T('placeName'); $('pZone').placeholder=T('placeZone'); $('pUrl').placeholder=T('placeUrl'); $('pAdd').textContent=T('add');
-  $('newBill').textContent='↺ '+T('newBill');
-  $('t_diceLog').textContent=T('diceLog'); $('dieNew').textContent='↺ '+T('diceNew');
-  $('spinBtn').textContent=T('spin'); $('dieBtn').textContent='🎲 '+T('dice'); $('noTipHint').textContent=T('noTipHint');
+  $('newBill').textContent='↺ '+T('newBill');  $('spinBtn').textContent=T('spin'); $('dieBtn').textContent='🎲 '+T('dice'); $('noTipHint').textContent=T('noTipHint');
   $('liveLink').textContent=T('liveLink')+' →'; $('liveLink').href=HOUSES_URL;
   sel.value=S.lang;
   renderAll();
@@ -509,43 +523,79 @@ $('spinBtn').onclick=()=>{
 };
 
 // ---------- dado ----------
-// puntos de cada cara en una rejilla 3×3 (1..9)
+// Partida de dados: quien la crea elige el juego, los dados y las rondas.
+// Cada ronda empieza a 0 para todos; cuando han tirado todos, se cierra y pasa a la siguiente.
 const PIPS={1:[5],2:[1,9],3:[1,5,9],4:[1,3,7,9],5:[1,3,5,7,9],6:[1,3,4,6,7,9]};
-for(let v=1;v<=6;v++){ const f=document.querySelector('.f'+v); f.innerHTML=PIPS[v].map(p=>`<i style="grid-area:${Math.ceil(p/3)}/${(p-1)%3+1}"></i>`).join(''); }
-// giro que deja cada cara de frente
 const FACE_ROT={1:[0,0],2:[0,-90],3:[-90,0],4:[90,0],5:[0,90],6:[0,180]};
-let rx=-20, ry=25;
-S.dice=store.get('dice')||[];
-S.dieWho=null; // si se toca un nombre, tira ese
-// por turnos: le toca al que menos veces ha tirado (vuelve a empezar la vuelta sin parar)
-function nextRoller(){ if(!S.names.length) return null; if(S.dieWho&&S.names.includes(S.dieWho)) return S.dieWho;
-  const c=n=>S.dice.filter(d=>d.n===n).length; return S.names.reduce((a,n)=>c(n)<c(a)?n:a,S.names[0]); }
-function renderDice(){
-  const who=nextRoller();
-  $('dieTurn').innerHTML=S.names.length?`${esc(T('diceTurn').replace('{n}',who))}<div class="chips" style="justify-content:center">${S.names.map(n=>`<button data-dw="${esc(n)}" class="${n===who?'on':''}">${esc(n)}</button>`).join('')}</div>`:'';
-  $('dieTurn').querySelectorAll('[data-dw]').forEach(b=>b.onclick=()=>{S.dieWho=b.dataset.dw;renderDice();});
-  // el más alto / bajo según la última tirada de cada uno
-  const lastIdx={}; S.dice.forEach((d,k)=>{lastIdx[d.n||('#'+k)]=k;});
-  const latest=Object.values(lastIdx).map(k=>S.dice[k].v), hi=Math.max(...latest), lo=Math.min(...latest), many=latest.length>1&&hi!==lo;
-  const isLast=k=>Object.values(lastIdx).includes(k);
-  $('dieLog').innerHTML=S.dice.length?S.dice.map((d,k)=>[d,k]).reverse().map(([d,k])=>{const H=many&&isLast(k)&&d.v===hi,L=many&&isLast(k)&&d.v===lo;
-    return `<div class="dl ${H?'hi':''} ${L?'lo':''}"><span><small style="color:var(--mute)">${k+1}.</small> ${esc(d.n||T('diceRoll').replace('{k}',k+1))}${H?' · '+esc(T('diceHigh')):''}${L?' · '+esc(T('diceLow')):''}</span><b>${d.v}</b></div>`;}).join(''):`<p class="empty">—</p>`;
+const MODES=['low','high','race']; const RACE_TO=30;
+S.game=store.get('game'); S.setup={mode:'low',dice:1,rounds:3}; S.rot=[];
+function cubeHTML(){ return `<div class="scene"><div class="cube">${[1,2,3,4,5,6].map(v=>`<div class="f f${v}">${PIPS[v].map(p=>`<i style="grid-area:${Math.ceil(p/3)}/${(p-1)%3+1}"></i>`).join('')}</div>`).join('')}</div></div>`; }
+function buildDice(n){ const size=n===1?170:n===2?130:100; $('dice').style.setProperty('--d',size+'px'); $('dice').innerHTML=Array.from({length:n},cubeHTML).join(''); $('dice').querySelectorAll('.scene').forEach(s=>s.style.setProperty('--d',size+'px')); S.rot=Array.from({length:n},()=>[-20,25]); }
+function saveGame(){ store.set('game',S.game); }
+function curRound(g){ // ronda abierta = la primera en la que no han tirado todos
+  const n=g.players.length; let r=1; while(g.rolls.filter(x=>x.r===r).length>=n) r++; return r; }
+function sumOf(g,p,r){ return g.rolls.filter(x=>x.n===p&&(r==null||x.r===r)).reduce((a,x)=>a+x.v.reduce((s,y)=>s+y,0),0); }
+function gameOver(g){ const r=curRound(g)-1; if(r<1) return false;
+  if(g.mode==='race') return g.players.some(p=>g.rolls.filter(x=>x.n===p&&x.r<=r).reduce((a,x)=>a+x.v.reduce((s,y)=>s+y,0),0)>=RACE_TO); // solo al cerrar ronda: todos tiran lo mismo
+  return r>=g.rounds; }
+function nextRoller(){ const g=S.game; if(!g) return null; const r=curRound(g), done=g.rolls.filter(x=>x.r===r).map(x=>x.n);
+  if(S.dieWho&&g.players.includes(S.dieWho)&&!done.includes(S.dieWho)) return S.dieWho;
+  return g.players.find(p=>!done.includes(p)); }
+function renderSetup(){
+  $('gMode').innerHTML=MODES.map(m=>`<button data-m="${m}" class="${S.setup.mode===m?'on':''}">${esc(T('mode_'+m).replace('{x}',RACE_TO))}</button>`).join('');
+  $('gMode').querySelectorAll('button').forEach(b=>b.onclick=()=>{S.setup.mode=b.dataset.m;renderDice();});
+  $('gRoundsRow').hidden=S.setup.mode==='race';
 }
+['gDice','gRounds'].forEach(id=>$(id).querySelectorAll('button').forEach(b=>b.onclick=()=>{
+  $(id).querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b)); S.setup[id==='gDice'?'dice':'rounds']=+b.dataset.v;}));
+function renderDice(){
+  const g=S.game;
+  $('gSetup').hidden=!!g || S.tab!=='spin'; $('gPlay').hidden=!g || S.tab!=='spin';
+  $('t_gameSetup').textContent='🎲 '+T('gameSetup'); $('t_diceN').textContent=T('diceN'); $('t_roundsN').textContent=T('roundsN');
+  $('gStart').textContent=T('start'); $('gNew').textContent='↺ '+T('gameSetup');
+  renderSetup();
+  if(!g) return;
+  if($('dice').children.length!==g.dice) buildDice(g.dice);
+  const r=curRound(g), over=gameOver(g), who=over?null:nextRoller();
+  const lastR=over?r-1:r, maxR=g.mode==='race'?Math.max(lastR,1):g.rounds;
+  $('gInfo').textContent=T('mode_'+g.mode).replace('{x}',RACE_TO)+' · '+(g.mode==='race'?T('round')+' '+lastR:T('roundOf').replace('{r}',Math.min(lastR,g.rounds)).replace('{t}',g.rounds));
+  $('dieTurn').innerHTML=over?'':`${esc(T('diceTurn').replace('{n}',who))}<div class="chips" style="justify-content:center">${g.players.map(p=>{const done=g.rolls.some(x=>x.r===r&&x.n===p);return `<button data-dw="${esc(p)}" class="${p===who?'on':''}" ${done?'disabled style="opacity:.4"':''}>${esc(p)}</button>`;}).join('')}</div>`;
+  $('dieTurn').querySelectorAll('[data-dw]').forEach(b=>b.onclick=()=>{S.dieWho=b.dataset.dw;renderDice();});
+  $('dieBtn').hidden=over; $('dieBtn').textContent='🎲 '+T('dice');
+  // marcador: una columna por ronda (la abierta empieza a 0) + total
+  const cols=Array.from({length:maxR},(_,i)=>i+1);
+  const tots=g.players.map(p=>sumOf(g,p)), hi=Math.max(...tots), lo=Math.min(...tots), diff=hi!==lo;
+  $('score').innerHTML=`<tr><th></th>${cols.map(c=>`<th>${c}</th>`).join('')}<th>${esc(T('totalCol'))}</th></tr>`+
+    g.players.map((p,i)=>`<tr class="${p===who?'now':''} ${diff&&tots[i]===hi?'hi':''} ${diff&&tots[i]===lo?'lo':''}"><td>${esc(p)}</td>${cols.map(c=>{const x=g.rolls.find(y=>y.n===p&&y.r===c);return `<td class="${c===r&&!over?'cur':''}">${x?x.v.reduce((a,b)=>a+b,0):(c<=r&&!over?0:(c<r?0:'·'))}</td>`;}).join('')}<td class="tot">${tots[i]}</td></tr>`).join('');
+  if(over){
+    const win=g.mode==='race'?Math.max(...tots):g.mode==='high'?hi:lo, names=g.players.filter((p,i)=>tots[i]===win).join(', ');
+    $('dieMsg').textContent=T(g.mode==='low'?'endLow':g.mode==='high'?'endHigh':'endRace').replace('{n}',names).replace('{x}',RACE_TO);
+  }
+}
+$('gStart').onclick=()=>{
+  if(S.names.length<2){toast(T('needNames'));return;}
+  S.game={mode:S.setup.mode,dice:S.setup.dice,rounds:S.setup.mode==='race'?0:S.setup.rounds,players:[...S.names],rolls:[]};
+  saveGame(); $('dieMsg').textContent=''; buildDice(S.game.dice); renderDice();
+};
+$('gNew').onclick=()=>{ if(S.game&&S.game.rolls.length&&!gameOver(S.game)&&!confirm(T('confirmGame'))) return; S.game=null; saveGame(); $('dieMsg').textContent=''; $('dice').innerHTML=''; renderDice(); };
 $('dieBtn').onclick=()=>{
-  const cube=$('cube'); $('dieBtn').disabled=true; $('dieMsg').textContent='';
-  const who=nextRoller(), res=1+Math.floor(Math.random()*6), [fx,fy]=FACE_ROT[res];
-  // varias vueltas completas y termina en la cara que ha salido
-  const turns=2+Math.floor(Math.random()*2);
-  rx=Math.ceil(rx/360)*360+360*turns+fx; ry=Math.ceil(ry/360)*360+360*turns+fy;
-  cube.classList.remove('bounce'); void cube.offsetWidth; cube.classList.add('bounce');
-  cube.style.transform=`rotateX(${rx}deg) rotateY(${ry}deg)`;
+  const g=S.game; if(!g||gameOver(g)) return;
+  const who=nextRoller(); if(!who) return;
+  $('dieBtn').disabled=true; $('dieMsg').textContent='';
+  const res=Array.from({length:g.dice},()=>1+Math.floor(Math.random()*6));
+  $('dice').querySelectorAll('.cube').forEach((cube,k)=>{
+    const [fx,fy]=FACE_ROT[res[k]], turns=2+Math.floor(Math.random()*2); let [rx,ry]=S.rot[k];
+    rx=Math.ceil(rx/360)*360+360*turns+fx; ry=Math.ceil(ry/360)*360+360*(turns+k%2)+fy; S.rot[k]=[rx,ry];
+    cube.classList.remove('bounce'); void cube.offsetWidth; cube.classList.add('bounce');
+    cube.style.transform=`rotateX(${rx}deg) rotateY(${ry}deg)`;
+  });
   setTimeout(()=>{
-    S.dice.push({n:who,v:res}); store.set('dice',S.dice); S.dieWho=null;
-    $('dieMsg').textContent=(who?who+': ':'')+T('dieRes').replace('{n}',res);
+    const r=curRound(g); g.rolls.push({r,n:who,v:res}); saveGame(); S.dieWho=null;
+    const tot=res.reduce((a,b)=>a+b,0);
+    $('dieMsg').textContent=who+': '+T('dieRes').replace('{n}',res.length>1?res.join(' + ')+' = '+tot:tot);
     $('dieBtn').disabled=false; renderDice(); if(navigator.vibrate)navigator.vibrate(80);
   },1650);
 };
-$('dieNew').onclick=()=>{S.dice=[];store.set('dice',S.dice);$('dieMsg').textContent='';renderDice();};
 
 // ---------- dónde comer ----------
 S.myPlaces=store.get('places')||[]; S.filter='';

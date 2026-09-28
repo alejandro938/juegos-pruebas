@@ -234,5 +234,24 @@ cs:['Hází: {n}','Všichni už hodili','Hody','Nové kolo','nejvyšší','nejni
 ro:['Aruncă: {n}','Au aruncat toți','Aruncări','Rundă nouă','cel mai mare','cel mai mic','Aruncarea {k}']
 };
 for(const l in EXTRA4) EXTRA4_KEYS.forEach((k,i)=>I18N[l][k]=EXTRA4[l][i]);
+// 28-sep (5): partidas de dados con modos, dados y rondas.
+const EXTRA5_KEYS=['gameSetup','mode_low','mode_high','mode_race','diceN','roundsN','start','round','roundOf','totalCol','endLow','endHigh','endRace','confirmGame'];
+const EXTRA5={
+es:['Nueva partida','El que menos saque paga','Gana el que más saque','Carrera: el primero a {x} puntos','Dados','Rondas','Empezar la partida','Ronda','Ronda {r} de {t}','Total','Paga {n} 😅','¡Gana {n}! 🏆','¡{n} llega a {x}! 🏁','¿Dejar esta partida a medias y empezar otra?'],
+en:['New game','Lowest score pays','Highest score wins','Race: first to {x} points','Dice','Rounds','Start the game','Round','Round {r} of {t}','Total','{n} pays 😅','{n} wins! 🏆','{n} reaches {x}! 🏁','Leave this game unfinished and start another?'],
+de:['Neues Spiel','Wer am wenigsten würfelt, zahlt','Wer am meisten würfelt, gewinnt','Rennen: Wer zuerst {x} Punkte hat','Würfel','Runden','Spiel starten','Runde','Runde {r} von {t}','Gesamt','{n} zahlt 😅','{n} gewinnt! 🏆','{n} erreicht {x}! 🏁','Dieses Spiel abbrechen und ein neues beginnen?'],
+fr:['Nouvelle partie','Le plus petit score paie','Le plus gros score gagne','Course : le premier à {x} points','Dés','Manches','Commencer la partie','Manche','Manche {r} sur {t}','Total','{n} paie 😅','{n} gagne ! 🏆','{n} atteint {x} ! 🏁','Abandonner cette partie et en commencer une autre ?'],
+it:['Nuova partita','Chi fa meno punti paga','Vince chi fa più punti','Corsa: il primo a {x} punti','Dadi','Giri','Inizia la partita','Giro','Giro {r} di {t}','Totale','Paga {n} 😅','Vince {n}! 🏆','{n} arriva a {x}! 🏁','Lasciare questa partita a metà e iniziarne un’altra?'],
+pt:['Novo jogo','Quem tirar menos paga','Ganha quem tirar mais','Corrida: o primeiro a {x} pontos','Dados','Rondas','Começar o jogo','Ronda','Ronda {r} de {t}','Total','Paga {n} 😅','Ganha {n}! 🏆','{n} chega a {x}! 🏁','Deixar este jogo a meio e começar outro?'],
+nl:['Nieuw spel','Wie het minst gooit, betaalt','Wie het meest gooit, wint','Race: wie het eerst {x} punten heeft','Dobbelstenen','Rondes','Spel starten','Ronde','Ronde {r} van {t}','Totaal','{n} betaalt 😅','{n} wint! 🏆','{n} haalt {x}! 🏁','Dit spel onafgemaakt laten en een nieuw beginnen?'],
+sv:['Nytt spel','Lägst poäng betalar','Högst poäng vinner','Race: först till {x} poäng','Tärningar','Omgångar','Starta spelet','Omgång','Omgång {r} av {t}','Totalt','{n} betalar 😅','{n} vinner! 🏆','{n} når {x}! 🏁','Avbryta det här spelet och börja ett nytt?'],
+no:['Nytt spill','Lavest poengsum betaler','Høyest poengsum vinner','Løp: først til {x} poeng','Terninger','Runder','Start spillet','Runde','Runde {r} av {t}','Totalt','{n} betaler 😅','{n} vinner! 🏆','{n} når {x}! 🏁','Avbryte dette spillet og starte et nytt?'],
+da:['Nyt spil','Laveste point betaler','Højeste point vinder','Løb: først til {x} point','Terninger','Runder','Start spillet','Runde','Runde {r} af {t}','I alt','{n} betaler 😅','{n} vinder! 🏆','{n} når {x}! 🏁','Afbryde dette spil og starte et nyt?'],
+fi:['Uusi peli','Pienimmät pisteet maksaa','Suurimmat pisteet voittaa','Kilpa: ensimmäisenä {x} pisteeseen','Nopat','Kierrokset','Aloita peli','Kierros','Kierros {r}/{t}','Yhteensä','{n} maksaa 😅','{n} voittaa! 🏆','{n} saavuttaa {x}! 🏁','Jätetäänkö peli kesken ja aloitetaan uusi?'],
+pl:['Nowa gra','Kto wyrzuci najmniej, płaci','Wygrywa, kto wyrzuci najwięcej','Wyścig: pierwszy do {x} punktów','Kostki','Rundy','Zacznij grę','Runda','Runda {r} z {t}','Razem','Płaci {n} 😅','Wygrywa {n}! 🏆','{n} dochodzi do {x}! 🏁','Przerwać tę grę i zacząć nową?'],
+cs:['Nová hra','Kdo hodí nejméně, platí','Vyhrává, kdo hodí nejvíc','Závod: první na {x} bodů','Kostky','Kola','Začít hru','Kolo','Kolo {r} z {t}','Celkem','Platí {n} 😅','Vyhrává {n}! 🏆','{n} dosáhl {x}! 🏁','Přerušit tuto hru a začít novou?'],
+ro:['Joc nou','Cine dă cel mai puțin plătește','Câștigă cine dă cel mai mult','Cursă: primul la {x} puncte','Zaruri','Runde','Începe jocul','Runda','Runda {r} din {t}','Total','Plătește {n} 😅','Câștigă {n}! 🏆','{n} ajunge la {x}! 🏁','Lăsați acest joc neterminat și începeți altul?']
+};
+for(const l in EXTRA5) EXTRA5_KEYS.forEach((k,i)=>I18N[l][k]=EXTRA5[l][i]);
 // «Tira Paula»: corto y directo (pedido de Alejandro)
 Object.entries({es:'Tira {n}',en:'{n} rolls',de:'{n} würfelt',fr:'{n} lance',it:'Tira {n}',pt:'Lança {n}',nl:'{n} gooit',sv:'{n} slår',no:'{n} kaster',da:'{n} slår',fi:'{n} heittää',pl:'Rzuca {n}',cs:'Hází {n}',ro:'Aruncă {n}'}).forEach(([l,v])=>I18N[l].diceTurn=v);
