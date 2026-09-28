@@ -7,6 +7,9 @@ var LLAVES_CASAS = [
     id: "jardin",
     nombre: "El Jardín de la Villa",
     tema: "jardin",
+    carteles: [
+      [5,14,"dCartelJardin"]
+    ],
     trucos: [
       {"tipo":"cuadro","x":6,"y":13,"hace":"premio","premio":[4,13,"diamante"]}
     ],
@@ -86,12 +89,14 @@ var LLAVES_CASAS = [
     ],
     enemigos: [
       {"tipo":"h","spr":"barril","x":8,"fila":13,"min":6,"max":10,"dir":1},
+      {"tipo":"manso","hace":"timido","spr":"barril","x":200,"y":104,"min":176,"max":216,"premio":"rubi"},
       {"tipo":"h","spr":"rata","x":21,"fila":7,"min":20,"max":22,"dir":-1},
       {"tipo":"h","spr":"barril","x":6,"fila":7,"min":5,"max":7,"dir":1,"lento":true}
     ],
     dir: -1
   },
   {
+    dibujos: {"T":"trampTendedero"},
     id: "azotea",
     nombre: "La Azotea",
     tema: "azotea",
@@ -126,15 +131,19 @@ var LLAVES_CASAS = [
     enemigos: [
       {"tipo":"v","spr":"gaviota","x":96,"y":30,"min":20,"max":96,"dy":2},
       {"tipo":"v","spr":"gaviota","x":136,"y":80,"min":20,"max":96,"dy":-3},
-      {"tipo":"v","spr":"presidente","x":118,"y":8,"min":8,"max":56,"dy":1,"vecino":true,"minFinal":40,"dyFinal":2}
+      {"tipo":"v","spr":"presidente","x":118,"y":8,"min":8,"max":56,"dy":1,"vecino":true,"minFinal":40,"dyFinal":2},
+      {"tipo":"f","spr":"pelota","cols":[48,80],"y0":8,"yFin":40,"vel":2,"espera":32,"fase":0,"presi":2}
     ]
   },
   {
     id: "cala",
     nombre: "La Cala del Cangrejo",
     tema: "cala",
+    mareaBaja: [
+      [16,14,"diamante"]
+    ],
     trucos: [
-      {"tipo":"baldosa","x":27,"y":15,"hace":"monedas","celdas":[[26,11],[27,11],[28,11]]}
+      {"tipo":"baldosa","x":27,"y":15,"dibujo":"baldosaX","hace":"monedas","celdas":[[26,11],[27,11],[28,11]]}
     ],
     huellasPista: [
       [5,8],
@@ -174,10 +183,25 @@ var LLAVES_CASAS = [
     enemigos: [
       {"tipo":"h","spr":"cangrejo","x":6,"fila":13,"min":6,"max":13,"dir":1},
       {"tipo":"h","spr":"cangrejo","x":24,"fila":13,"min":16,"max":25,"dir":-1},
-      {"tipo":"g","spr":"gigante","x":104,"y":16}
+      {"tipo":"g","spr":"gigante","x":104,"y":16},
+      {"tipo":"manso","hace":"concha","spr":"cangrejo","x":208,"y":104,"min":200,"max":216}
     ]
   },
   {
+    pinta: [
+      [10,15,"fondoPiscina"],
+      [11,15,"fondoPiscina"],
+      [12,15,"fondoPiscina"],
+      [13,15,"fondoPiscina"],
+      [14,15,"fondoPiscina"],
+      [15,15,"fondoPiscina"],
+      [16,15,"fondoPiscina"],
+      [17,15,"fondoPiscina"],
+      [18,15,"fondoPiscina"],
+      [19,15,"fondoPiscina"],
+      [20,15,"fondoPiscina"],
+      [21,15,"fondoPiscina"]
+    ],
     id: "piscina",
     nombre: "La Piscina Infinita",
     tema: "piscina",
@@ -226,6 +250,12 @@ var LLAVES_CASAS = [
     id: "cuevas",
     nombre: "Las Cuevas de Nerja",
     tema: "cueva",
+    crece: [
+      {"x":16,"yBase":11,"alto":3,"periodo":96,"fase":0}
+    ],
+    trucos: [
+      {"tipo":"orden","modo":"golpe","dibujo":"estalactitaNota","celdas":[[1,4,"do"],[3,4,"mi"],[5,4,"sol"]],"hace":"premio","premio":[2,7,"diamante"]}
+    ],
     huellasPista: [
       [22,7],
       [23,7],
@@ -271,7 +301,7 @@ var LLAVES_CASAS = [
       {"x":3,"y":13,"tipo":"azulejo"}
     ],
     trucos: [
-      {"tipo":"objeto","x":26,"y":11,"obj":"azulejo","hace":"premio","premio":[24,10,"estrella"]}
+      {"tipo":"objeto","x":26,"y":11,"obj":"azulejo","dibujo":"filaAzulejos","hace":"premio","premio":[24,10,"estrella"]}
     ],
     aire: 1.3,
     mapa: [
@@ -310,6 +340,7 @@ var LLAVES_CASAS = [
     nombre: "El Puerto Deportivo",
     clima: "lluvia",
     tema: "puerto",
+    zarpa: {"propina":1000},
     muelle: [
       [23,6,"diamante"]
     ],
@@ -385,8 +416,8 @@ var LLAVES_CASAS = [
       "WWWWWWFFFFFFFFFFFFFFFFFFFFFFFFFW"
     ],
     rayos: [
-      {"x1":21,"x2":21,"y1":11,"y2":11,"periodo":48,"encendido":24,"fase":0},
-      {"x1":21,"x2":21,"y1":14,"y2":14,"periodo":48,"encendido":24,"fase":24}
+      {"x1":21,"x2":21,"y1":11,"y2":11,"periodo":48,"encendido":24,"fase":0,"dibujo":"fuego"},
+      {"x1":21,"x2":21,"y1":14,"y2":14,"periodo":48,"encendido":24,"fase":24,"dibujo":"fuego"}
     ],
     enemigos: [
       {"tipo":"h","spr":"robot","x":14,"fila":13,"min":11,"max":19,"dir":1},
@@ -403,7 +434,7 @@ var LLAVES_CASAS = [
       {"x":25,"y":6,"tipo":"llaveInglesa"}
     ],
     trucos: [
-      {"tipo":"objeto","x":5,"y":14,"obj":"llaveInglesa","hace":"monedas","celdas":[[8,13],[9,13],[10,13],[11,13]]}
+      {"tipo":"objeto","x":5,"y":14,"obj":"llaveInglesa","dibujo":"cocheCapo","hace":"monedas","celdas":[[8,13],[9,13],[10,13],[11,13]]}
     ],
     meta: {"x":1,"y":13},
     aire: 1.2,
@@ -435,7 +466,7 @@ var LLAVES_CASAS = [
       {"tipo":"cristal","x":176,"y":112,"ancho":2,"eje":"v","min":40,"max":112,"vel":2,"fase":0}
     ],
     enemigos: [
-      {"tipo":"h","spr":"cocheRojo","x":20,"fila":14,"min":15,"max":24,"dir":-1},
+      {"tipo":"h","spr":"cocheRojo","x":20,"fila":14,"min":15,"max":24,"dir":-1,"espera":24,"fase":0,"aviso":16},
       {"tipo":"h","spr":"robot","x":19,"fila":8,"min":18,"max":20,"dir":1},
       {"tipo":"h","spr":"furgoneta","x":3,"fila":11,"min":2,"max":7,"dir":1,"lento":true}
     ]
@@ -445,6 +476,9 @@ var LLAVES_CASAS = [
     nombre: "El Faro",
     clima: "lluvia",
     tema: "faro",
+    rachas: [
+      {"zona":[16,1,27,4],"sentido":-1,"periodo":96,"on":16,"fase":40,"sonido":"sirena"}
+    ],
     muelle: [
       [3,7,"diamante"]
     ],
@@ -543,8 +577,8 @@ var LLAVES_CASAS = [
     prensas: [
       {"x":6,"arriba":12,"abajo":13,"periodo":48,"fase":0}
     ],
-    viento: [
-      [19,1,30,4,-1]
+    rachas: [
+      {"zona":[19,1,30,4],"sentido":-1,"periodo":96,"on":64,"fase":0}
     ],
     enemigos: [
       {"tipo":"h","spr":"robot","x":10,"fila":13,"min":9,"max":14,"dir":1},
@@ -558,6 +592,9 @@ var LLAVES_CASAS = [
     id: "mercadillo",
     nombre: "El Mercadillo",
     tema: "mercado",
+    palancas: [
+      {"x":4,"y":13,"hace":"crea","paga":150,"celdas":[[9,9],[10,9]]}
+    ],
     muelle: [
       [2,6,"diamante"]
     ],
@@ -633,8 +670,8 @@ var LLAVES_CASAS = [
       {"tipo":"h","spr":"rata","x":17,"fila":7,"min":15,"max":18,"dir":-1,"lento":true},
       {"tipo":"v","spr":"gaviota","x":224,"y":20,"min":8,"max":64,"dy":2},
       {"tipo":"v","spr":"medusa","x":8,"y":100,"min":64,"max":120,"dy":1},
-      {"tipo":"a","spr":"gaviota","x":8,"y":8,"min":8,"max":8,"baja":16},
-      {"tipo":"a","spr":"gaviota","x":232,"y":8,"min":232,"max":232,"baja":16},
+      {"tipo":"a","spr":"gaviota","x":8,"y":8,"min":8,"max":8,"baja":16,"aviso":12},
+      {"tipo":"a","spr":"gaviota","x":232,"y":8,"min":232,"max":232,"baja":16,"aviso":12,"unaVez":true},
       {"tipo":"cofre","spr":"cofreTrampa","x":160,"y":104,"min":160,"max":160}
     ]
   },
@@ -647,7 +684,7 @@ var LLAVES_CASAS = [
       [8,1,"diamante"]
     ],
     trucos: [
-      {"tipo":"baldosa","x":1,"y":13,"hace":"monedas","celdas":[[2,10],[3,10],[4,10]]}
+      {"tipo":"baldosa","x":1,"y":13,"dibujo":"brocal","hace":"monedas","celdas":[[2,10],[3,10],[4,10]]}
     ],
     aire: 2,
     sombras: [
@@ -726,6 +763,7 @@ var LLAVES_CASAS = [
     ]
   },
   {
+    dibujos: {"E":"escEnredadera"},
     id: "invernadero",
     nombre: "El Invernadero",
     tema: "invernadero",
@@ -734,8 +772,8 @@ var LLAVES_CASAS = [
     ],
     trucos: [
       {"tipo":"alReves","hace":"premio","premio":[3,5,"diamante"]},
-      {"tipo":"objeto","x":2,"y":6,"obj":"regadera","hace":"crea","pone":"E","celdas":[[3,1],[3,2],[3,3],[3,4],[3,5],[3,6]]},
-      {"tipo":"objeto","x":2,"y":6,"obj":"regadera","hace":"premio","premio":[2,1,"vida"]}
+      {"tipo":"objeto","x":2,"y":6,"obj":"regadera","dibujo":"macetaGrande","hace":"crea","pone":"E","celdas":[[3,1],[3,2],[3,3],[3,4],[3,5],[3,6]]},
+      {"tipo":"objeto","x":2,"y":6,"obj":"regadera","dibujo":"macetaGrande","hace":"premio","premio":[2,1,"vida"]}
     ],
     objetos: [
       {"x":29,"y":12,"tipo":"regadera"}
@@ -781,8 +819,8 @@ var LLAVES_CASAS = [
     trucos: [
       {"tipo":"baldosa","x":25,"y":5,"hace":"premio","premio":[29,4,"rubi"]}
     ],
-    viento: [
-      [21,1,30,4,-1]
+    rachas: [
+      {"zona":[21,1,30,4],"sentido":-1,"periodo":80,"on":48,"fase":0,"manga":[22,4]}
     ],
     aire: 1.5,
     mapa: [
@@ -827,7 +865,9 @@ var LLAVES_CASAS = [
     tema: "sanjuan",
     oscuro: true,
     trucos: [
-      {"tipo":"baldosa","x":24,"y":11,"hace":"monedas","celdas":[[21,9],[22,9],[23,9]]}
+      {"tipo":"baldosa","x":24,"y":11,"hace":"monedas","celdas":[[21,9],[22,9],[23,9]]},
+      {"tipo":"encima","x":13,"y":14,"n":3,"hace":"premio","premio":[14,13,"diamante"]},
+      {"tipo":"saltaBicho","a":6,"n":7,"hace":"premio","premio":[22,12,"diamante"]}
     ],
     aire: 1.5,
     sombras: [
@@ -870,10 +910,12 @@ var LLAVES_CASAS = [
       {"tipo":"v","spr":"murcielago","x":60,"y":40,"min":24,"max":64,"dy":1},
       {"tipo":"h","spr":"pato","x":19,"fila":5,"min":19,"max":21,"dir":1},
       {"tipo":"v","spr":"presidente","x":210,"y":16,"min":16,"max":80,"dy":1,"vecino":true,"minFinal":40,"dyFinal":2},
-      {"tipo":"dueno","spr":"fantasmaDueno","x":232,"y":64,"k":3}
+      {"tipo":"dueno","spr":"fantasmaDueno","x":232,"y":64,"k":3},
+      {"tipo":"manso","hace":"empuja","spr":"cocheRojo","x":176,"y":112,"min":176,"max":200,"dir":1,"fuerza":3}
     ]
   },
   {
+    dibujos: {"E":"escLibros"},
     id: "granvilla",
     nombre: "La Gran Villa Stela Mare",
     tema: "villa",
@@ -943,7 +985,8 @@ var LLAVES_CASAS = [
     palancas: [
       {"x":2,"y":23,"hace":"abre","celdas":[[43,29],[43,30]]},
       {"x":40,"y":12,"hace":"cae","celdas":[[24,13],[25,13]]},
-      {"x":16,"y":15,"golpe":true,"hace":"crea","pone":"E","celdas":[[15,13],[15,14],[15,15],[15,16],[15,17],[15,18]]}
+      {"x":16,"y":15,"golpe":true,"dibujo":"libroPalanca","hace":"crea","pone":"E","celdas":[[15,13],[15,14],[15,15],[15,16],[15,17],[15,18]]},
+      {"x":28,"y":24,"hace":"para","a":{"tipo":"c","cols":[22,26],"bajoDe":20},"pasos":75,"unaVez":true,"dibujo":"lampara"}
     ],
     checkpoint: [
       32,
@@ -983,6 +1026,7 @@ var LLAVES_TESOROS = [
     sombras: [
       [21,1,30,5]
     ],
+    hazDibujo: "rojo",
     haz: [
       [15,13,16,14],
       [15,7,16,8]
@@ -1039,6 +1083,9 @@ var LLAVES_TESOROS = [
     enemigos: [
 
     ],
+    trucos: [
+      {"tipo":"orden","modo":"pisa","dibujo":"cristalNota","celdas":[[3,13,0],[9,13,4],[21,13,7],[27,13,12]],"hace":"premio","premio":[2,12,"diamante"]}
+    ],
     mapa: [
       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
       "W                          W   W",
@@ -1070,6 +1117,8 @@ var LLAVES_TESOROS = [
     enemigos: [
 
     ],
+    tragaperras: {"rodillos":[[25,8],[27,8],[29,8]],"premio":3000,"par":300},
+    valeFila: {"2":1000,"4":500,"7":200,"10":200},
     oscuro: true,
     lamparas: [
       [1,1],
@@ -1086,7 +1135,7 @@ var LLAVES_TESOROS = [
       "W                          W o W",
       "W       <<<<<<<<<<<<<<<<<FFFFFFW",
       "W  o     o  o  o  o            W",
-      "W    o       o       FF        W",
+      "W    o       o       FF  B B B W",
       "WWWWWWF>>>>>>>>>>>>>>>>        W",
       "W    W     o  o  o  o          W",
       "W   aW  FF  o   o         o    W",
@@ -1176,6 +1225,115 @@ var LLAVES_TESOROS = [
     trucos: [
       {"tipo":"baldosa","x":13,"y":9,"n":3,"hace":"monedas","celdas":[[12,6],[13,6],[14,6],[15,6],[16,6],[17,6],[18,6],[19,6]]}
     ]
+  },
+  {
+    id: "anillos",
+    nombre: "Los Anillos",
+    tema: "espacio",
+    tesoro: true,
+    soloTuberia: true,
+    gravedad: "baja",
+    aire: 0.3,
+    enemigos: [
+
+    ],
+    pinta: [
+      [14,1,"planetaAnillos"],
+      [4,5,"asteroide"],
+      [27,5,"asteroide"]
+    ],
+    mapa: [
+      "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+      "W                              W",
+      "W         o  o  o  o           W",
+      "W      o                o      W",
+      "W    o     d       d      o    W",
+      "W                              W",
+      "W          FFFFFFFFFF          W",
+      "W  o                        o  W",
+      "W o  o                    o  o W",
+      "W  FFFFFF              FFFFFF  W",
+      "W                              W",
+      "W        o  o      o  o        W",
+      "W         FFFF    FFFF         W",
+      "W   o          @          o    W",
+      "W  o  o                  o  o  W",
+      "WFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFW"
+    ]
+  },
+  {
+    id: "mudanza",
+    nombre: "La Mudanza",
+    tema: "trastero",
+    tesoro: true,
+    soloCasa: true,
+    aire: 0.35,
+    enemigos: [
+
+    ],
+    cajas: [
+      [9,13],
+      [21,13]
+    ],
+    pinta: [
+      [14,13,"camionMudanza"],
+      [2,13,"cajaMudanza"],
+      [28,13,"cajaMudanza"]
+    ],
+    mapa: [
+      "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+      "W                              W",
+      "W                              W",
+      "W                              W",
+      "W                              W",
+      "W                              W",
+      "W                              W",
+      "W                              W",
+      "W                              W",
+      "W  o o                   o o   W",
+      "W   o                     o    W",
+      "W  FFFF                  FFFF  W",
+      "W                              W",
+      "W  o  o    o    @    o  o  o   W",
+      "W  o o o    o  o  o  o   o o o W",
+      "WFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFW"
+    ]
+  },
+  {
+    id: "subasta",
+    nombre: "La Subasta",
+    tema: "casino",
+    tesoro: true,
+    soloCasa: true,
+    aire: 0.4,
+    enemigos: [
+
+    ],
+    subasta: {"cada":48,"sube":0.5,"tope":4},
+    pinta: [
+      [15,7,"subastador"],
+      [13,7,"atril"],
+      [4,12,"etiquetaPrecio"],
+      [26,12,"etiquetaPrecio"]
+    ],
+    mapa: [
+      "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+      "W                              W",
+      "W                              W",
+      "W                              W",
+      "W                              W",
+      "W                              W",
+      "W                              W",
+      "W              d               W",
+      "W               o              W",
+      "W            FFFFFF            W",
+      "W        b             b       W",
+      "W       FFFF        FFFF       W",
+      "W    e    o o      o o    e    W",
+      "W   FFFF  o    @      o  FFFF  W",
+      "W  o o o o o o o  o o o o o o  W",
+      "WFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFW"
+    ]
   }
 ];
 /* Las 20 casas RETRO (modo homenaje; planos nuestros) */
@@ -1194,7 +1352,7 @@ var LLAVES_RETRO = [
       {"tipo":"baldosa","x":8,"y":15,"n":3,"hace":"monedas","celdas":[[7,11],[8,11],[9,11]]}
     ],
     vapor: [
-      [17,10,19,12]
+      {"zona":[17,10,19,12],"periodo":48,"on":32,"fase":0}
     ],
     mapa: [
       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
@@ -1216,7 +1374,7 @@ var LLAVES_RETRO = [
     ],
     enemigos: [
       {"tipo":"h","spr":"robot","x":14,"fila":13,"min":11,"max":22,"dir":1},
-      {"tipo":"h","spr":"rata","x":9,"fila":10,"min":7,"max":12,"dir":1,"lento":true},
+      {"tipo":"r","spr":"rata","vel":1,"ciclo":240,"escondida":32,"agujeros":[[8,80],[88,80],[214,80],[160,80]]},
       {"tipo":"h","spr":"gato","x":23,"fila":7,"min":20,"max":25,"dir":-1,"lento":true}
     ]
   },
@@ -1232,6 +1390,9 @@ var LLAVES_RETRO = [
     ],
     fantasmas: [
       [26,11]
+    ],
+    objetos: [
+      {"x":3,"y":13,"tipo":"pescado","a":"pinguino","pasos":75,"cerca":3}
     ],
     mapa: [
       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
@@ -1289,7 +1450,7 @@ var LLAVES_RETRO = [
       "WFFFFFFFFFFFFFFFFFFFFFFFFFFFIIIW"
     ],
     enemigos: [
-      {"tipo":"v","spr":"gaviota","x":96,"y":24,"min":16,"max":104,"dy":4},
+      {"tipo":"v","spr":"gaviota","x":96,"y":24,"min":16,"max":104,"dy":4,"espera":26,"fase":0,"aviso":12},
       {"tipo":"v","spr":"gaviota","x":104,"y":96,"min":24,"max":112,"dy":-2},
       {"tipo":"v","spr":"gaviota","x":192,"y":48,"min":16,"max":104,"dy":-2},
       {"tipo":"v","spr":"gaviota","x":200,"y":72,"min":24,"max":112,"dy":4}
@@ -1301,6 +1462,9 @@ var LLAVES_RETRO = [
     tema: "jardin",
     paleta: "mina",
     aire: 0.72,
+    palancas: [
+      {"x":8,"y":5,"hace":"abre","retardo":45,"celdas":[[6,1],[6,2]]}
+    ],
     sombras: [
       [27,10,30,11]
     ],
@@ -1346,6 +1510,9 @@ var LLAVES_RETRO = [
     ],
     trucos: [
       {"tipo":"paciente","x":3,"y":4,"hace":"premio","premio":[4,5,"vida"]}
+    ],
+    palancas: [
+      {"x":29,"y":14,"hace":"para","a":0,"modo":"sube","pasos":60,"recarga":300,"dibujo":"timbre"}
     ],
     mapa: [
       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
@@ -1419,6 +1586,9 @@ var LLAVES_RETRO = [
     nombre: "La Tina",
     tema: "jardin",
     paleta: "tina",
+    adornos: [
+      [27,13,"banera"]
+    ],
     aire: 0.72,
     sombras: [
       [1,5,4,6]
@@ -1438,6 +1608,9 @@ var LLAVES_RETRO = [
       [5,6]
     ],
     agua: {"arriba":13,"abajo":16,"periodo":80,"fase":60},
+    plataformas: [
+      {"tipo":"patito","x":120,"y":122,"ancho":1,"sigueAgua":6}
+    ],
     mapa: [
       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
       "W                              W",
@@ -1450,7 +1623,7 @@ var LLAVES_RETRO = [
       "W                              W",
       "W    e   K  FFF    K    FFF    W",
       "W        K           b         W",
-      "WFFFFFFFFFFF   FFFFFFFFF   FFFFW",
+      "WFFFFFFFFFFF    FFFFFFFF   FFFFW",
       "W                              W",
       "W     @     FFF    K    FFF    W",
       "W        K  FFFK     K  FFF    W",
@@ -1547,6 +1720,7 @@ var LLAVES_RETRO = [
     ]
   },
   {
+    dibujos: {"T":"trampSeta","tele":"teleTronco"},
     id: "r10",
     nombre: "El Bosque Encantado",
     tema: "jardin",
@@ -1595,6 +1769,10 @@ var LLAVES_RETRO = [
     reflejo: {"x0":20,"y0":7,"x1":22,"y1":8,"px":27,"py":7},
     objetos: [
       {"x":30,"y":8,"tipo":"carta","id":4}
+    ],
+    palancas: [
+      {"x":5,"y":14,"hace":"para","a":"mitad","pasos":60,"recarga":300,"dibujo":"clavija"},
+      {"x":26,"y":14,"hace":"para","a":"mitad","pasos":60,"recarga":300,"dibujo":"clavija"}
     ],
     mapa: [
       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
@@ -1656,7 +1834,7 @@ var LLAVES_RETRO = [
     ],
     enemigos: [
       {"tipo":"g","spr":"gigante","x":128,"y":32},
-      {"tipo":"h","spr":"barril","x":12,"fila":13,"min":10,"max":19,"dir":1},
+      {"tipo":"r","spr":"barril","vel":2,"ciclo":192,"tramos":[[116,32,78,32],[78,32,78,48],[78,48,16,48],[16,48,16,80],[16,80,56,80],[56,80,56,104],[56,104,200,104]]},
       {"tipo":"h","spr":"robot","x":4,"fila":6,"min":3,"max":8,"dir":1},
       {"tipo":"v","spr":"ameba","x":152,"y":56,"min":48,"max":96,"dy":4}
     ]
@@ -1665,6 +1843,12 @@ var LLAVES_RETRO = [
     id: "r13",
     nombre: "La Refinería",
     tema: "jardin",
+    velos: [
+      {"zona":[21,7,22,8],"tipo":"chorro","periodo":48,"on":24,"fase":0}
+    ],
+    trucos: [
+      {"tipo":"orden","modo":"golpe","dibujo":"valvula","celdas":[[6,2,"sol"],[8,2,"mi"],[12,2,"do"]],"hace":"premio","premio":[2,5,"diamante"]}
+    ],
     paleta: "refineria",
     aire: 0.72,
     sombras: [
@@ -1675,8 +1859,8 @@ var LLAVES_RETRO = [
     ],
     meta: {"x":29,"y":1},
     rayos: [
-      {"x1":14,"x2":14,"y1":1,"y2":2,"periodo":80,"encendido":24,"fase":0},
-      {"x1":25,"x2":25,"y1":1,"y2":2,"periodo":80,"encendido":24,"fase":40}
+      {"x1":14,"x2":14,"y1":1,"y2":2,"periodo":80,"encendido":24,"fase":0,"dibujo":"vapor"},
+      {"x1":25,"x2":25,"y1":1,"y2":2,"periodo":80,"encendido":24,"fase":40,"dibujo":"vapor"}
     ],
     mapa: [
       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
@@ -1728,13 +1912,13 @@ var LLAVES_RETRO = [
       "WWWWWFFF    FFFFFFFFFFFFFFFFFFFW",
       "W         BBK                  W",
       "W       BBBB             K     W",
-      "WFFFFFFFFFFFFFFFFF    FFFFFFFFFW",
+      "WFFFFFFFFFFFFF  FF    FFFFFFFFFW",
       "Wa                  BB@        W",
       "W                 BBBB         W",
       "WFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFW"
     ],
     enemigos: [
-      {"tipo":"f","spr":"satelite","cols":[96,112,128],"y0":8,"yFin":112,"vel":4,"espera":6,"fase":0},
+      {"tipo":"f","spr":"satelite","cols":[96,112],"y0":8,"yFin":112,"vel":4,"espera":22,"fase":0,"escalon":true},
       {"tipo":"f","spr":"satelite","cols":[192,208,224],"y0":8,"yFin":112,"vel":4,"espera":6,"fase":48},
       {"tipo":"h","spr":"robot","x":20,"fila":9,"min":17,"max":22,"dir":1},
       {"tipo":"v","spr":"ameba","x":160,"y":24,"min":24,"max":72,"dy":2}
@@ -1787,6 +1971,9 @@ var LLAVES_RETRO = [
     nombre: "La Caverna Dieciséis",
     tema: "jardin",
     paleta: "caverna",
+    cristalFragil: [
+      [26,27,12]
+    ],
     aire: 1.1,
     sombras: [
       [1,4,3,5]
@@ -1840,7 +2027,12 @@ var LLAVES_RETRO = [
       [25,13,30,14]
     ],
     trucos: [
-      {"tipo":"golpes","x":18,"y":0,"n":5,"hace":"premio","premio":[19,5,"pila"]}
+      {"tipo":"golpes","x":18,"y":0,"n":5,"hace":"premio","premio":[19,5,"pila"]},
+      {"tipo":"caida","x":7,"y":12,"filas":3,"hace":"premio","premio":[6,11,"diamante"]}
+    ],
+    plataformas: [
+      {"tipo":"caja","x":96,"y":32,"ancho":2,"eje":"h","min":96,"max":192,"vel":2,"sentido":1,"fase":0},
+      {"tipo":"caja","x":96,"y":32,"ancho":2,"eje":"h","min":96,"max":192,"vel":2,"sentido":1,"fase":48}
     ],
     huellasPista: [
       [21,14],
@@ -1886,6 +2078,9 @@ var LLAVES_RETRO = [
     trucos: [
       {"tipo":"cuadro","x":16,"y":13,"hace":"premio","premio":[18,13,"esmeralda"]}
     ],
+    objetos: [
+      {"x":27,"y":14,"tipo":"huevo","a":"ameba"}
+    ],
     mapa: [
       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
       "W       K             K        W",
@@ -1908,6 +2103,7 @@ var LLAVES_RETRO = [
       {"tipo":"v","spr":"ameba","x":88,"y":16,"min":8,"max":32,"dy":4},
       {"tipo":"v","spr":"ameba","x":168,"y":24,"min":16,"max":40,"dy":-4},
       {"tipo":"v","spr":"ameba","x":176,"y":60,"min":48,"max":72,"dy":4},
+      {"tipo":"v","spr":"ameba","x":112,"y":72,"min":72,"max":88,"dy":2,"despierta":4},
       {"tipo":"h","spr":"pinguino","x":10,"fila":13,"min":8,"max":19,"dir":1}
     ]
   },
@@ -1950,7 +2146,7 @@ var LLAVES_RETRO = [
     enemigos: [
       {"tipo":"h","spr":"robot","x":14,"fila":4,"min":13,"max":18,"dir":1},
       {"tipo":"h","spr":"rata","x":20,"fila":7,"min":19,"max":21,"dir":-1,"lento":true},
-      {"tipo":"v","spr":"gaviota","x":120,"y":40,"min":24,"max":88,"dy":2},
+      {"tipo":"r","spr":"pelota","rodea":[15,3,24,3],"ciclo":96},
       {"tipo":"f","spr":"satelite","cols":[96,176],"y0":8,"yFin":104,"vel":2,"espera":16,"fase":0}
     ]
   },
@@ -2024,7 +2220,9 @@ var LLAVES_NUEVAS = [
       {"x":6,"y":13,"k":8}
     ],
     trucos: [
-      {"tipo":"cuadro","x":20,"y":13,"hace":"premio","premio":[22,13,"diamante"]}
+      {"tipo":"cuadro","x":20,"y":13,"hace":"premio","premio":[22,13,"diamante"]},
+      {"tipo":"combo","n":3,"hace":"premio","premio":[14,8,"vida"]},
+      {"tipo":"vuelta","plat":0,"hace":"premio","premio":[23,4,"diamante"],"sube":6}
     ],
     mapa: [
       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
@@ -2056,7 +2254,9 @@ var LLAVES_NUEVAS = [
       {"tipo":"h","spr":"pato","x":11,"fila":7,"min":9,"max":13,"dir":1},
       {"tipo":"h","spr":"pato","x":13,"fila":7,"min":9,"max":13,"dir":1},
       {"tipo":"v","spr":"murcielago","x":128,"y":50,"min":50,"max":90,"dy":2},
-      {"tipo":"h","spr":"aspiradora","x":22,"fila":14,"min":22,"max":26,"dir":1,"lento":true,"come":"monedas"}
+      {"tipo":"h","spr":"aspiradora","x":22,"fila":14,"min":22,"max":26,"dir":1,"lento":true,"come":"monedas"},
+      {"tipo":"manso","hace":"empuja","spr":"cocheRojo","x":112,"y":112,"min":112,"max":136,"dir":1,"fuerza":2},
+      {"tipo":"manso","hace":"empuja","spr":"cocheRojo","x":136,"y":112,"min":112,"max":136,"dir":-1,"fuerza":2}
     ]
   },
   {
@@ -2091,10 +2291,13 @@ var LLAVES_NUEVAS = [
       "W     a                        W",
       "WFFFFFFFF            FFFFFFFFFFW"
     ],
-    viento: [
-      [18,9,22,11,1],
-      [11,7,15,8,-1],
-      [13,2,18,5,1]
+    rachas: [
+      {"zona":[18,9,22,11],"sentido":1,"periodo":96,"on":64,"fase":0,"manga":[15,8]},
+      {"zona":[11,7,15,8],"sentido":-1,"periodo":96,"on":32,"fase":0,"alterna":true},
+      {"zona":[13,2,18,5],"sentido":1,"periodo":96,"on":64,"fase":48}
+    ],
+    velos: [
+      {"zona":[9,13,20,14],"tipo":"niebla","periodo":96,"on":48,"fase":24}
     ],
     enemigos: [
       {"tipo":"v","spr":"gaviota","x":120,"y":32,"min":32,"max":72,"dy":2},
@@ -2174,6 +2377,9 @@ var LLAVES_NUEVAS = [
       [9,13,12,14,-1],
       [17,13,20,14,1]
     ],
+    haz: [
+      [28,10,30,11]
+    ],
     enemigos: [
       {"tipo":"v","spr":"medusa","x":64,"y":60,"min":60,"max":110,"dy":1},
       {"tipo":"h","spr":"pato","x":18,"fila":4,"min":18,"max":22,"dir":1},
@@ -2227,6 +2433,7 @@ var LLAVES_NUEVAS = [
       {"tipo":"h","spr":"cangrejo","x":24,"fila":13,"min":24,"max":27,"dir":1},
       {"tipo":"v","spr":"gaviota","x":88,"y":50,"min":50,"max":106,"dy":1},
       {"tipo":"t","spr":"timido","x":240,"y":16,"vel":1},
+      {"tipo":"manso","hace":"vigila","spr":"turista","x":196,"y":32,"min":192,"max":206,"luz":5,"espera":32},
       {"tipo":"dueno","spr":"fantasmaDueno","x":16,"y":32,"k":1}
     ]
   },
@@ -2266,8 +2473,11 @@ var LLAVES_NUEVAS = [
     viento: [
       [1,1,24,3,-1]
     ],
+    rachas: [
+      {"zona":[23,6,30,14],"sentido":-1,"periodo":192,"on":28,"fase":123}
+    ],
     plataformas: [
-      {"tipo":"ascensor","x":208,"y":104,"ancho":3,"eje":"v","min":48,"max":104,"vel":2,"espera":36,"fase":0}
+      {"tipo":"helicoptero","x":208,"y":104,"ancho":3,"eje":"v","min":48,"max":104,"vel":2,"espera":68,"fase":0}
     ],
     palancas: [
       {"x":22,"y":8,"hace":"abre","celdas":[[19,13],[20,13],[19,14],[20,14],[12,10],[13,10],[12,11],[13,11]]}
@@ -2275,10 +2485,18 @@ var LLAVES_NUEVAS = [
     enemigos: [
       {"tipo":"h","spr":"robot","x":8,"fila":13,"min":7,"max":14,"dir":1},
       {"tipo":"h","spr":"gato","x":10,"fila":7,"min":10,"max":13,"dir":1,"lento":true},
-      {"tipo":"v","spr":"gaviota","x":40,"y":8,"min":8,"max":40,"dy":1}
+      {"tipo":"v","spr":"gaviota","x":40,"y":8,"min":8,"max":40,"dy":1},
+      {"tipo":"h","spr":"jeque","x":21,"fila":4,"min":21,"max":24,"dir":1,"lento":true,"despierta":"final"}
     ]
   },
   {
+    adornos: [
+      [20,8,"cuadroBoda"],
+      [23,8,"cuadroBebe"],
+      [26,8,"cuadroNino"],
+      [17,11,"cuadroVacaciones"],
+      [21,11,"cuadroMaletas"]
+    ],
     id: "dosplantas",
     nombre: "La Casa de Dos Plantas",
     tema: "dosplantas",
@@ -2298,12 +2516,15 @@ var LLAVES_NUEVAS = [
       [15,26],
       [9,20]
     ],
+    toboganes: [
+      {"x1":3,"x2":6,"y1":3,"y2":4,"sentido":1}
+    ],
     mapa: [
       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
       "W                              W",
       "Wh       B                     W",
-      "W               K              W",
-      "W                              W",
+      "W  FF           K              W",
+      "W    FF                        W",
       "W                           P  W",
       "W                              W",
       "WFFFFFFFFFFFFFFFFFFFFF  FFFFFFFW",
@@ -2371,7 +2592,7 @@ var LLAVES_NUEVAS = [
       [17,11]
     ],
     palancas: [
-      {"x":21,"y":10,"golpe":true,"hace":"abre","celdas":[[26,13],[26,14]]}
+      {"x":21,"y":10,"golpe":true,"dibujo":"libroPalanca","hace":"abre","celdas":[[26,13],[26,14]]}
     ],
     enemigos: [
       {"tipo":"h","spr":"gato","x":8,"fila":4,"min":8,"max":11,"dir":1,"lento":true},
@@ -2415,6 +2636,7 @@ var LLAVES_NUEVAS = [
     ],
     enemigos: [
       {"tipo":"h","spr":"robot","x":20,"fila":13,"min":20,"max":23,"dir":1},
+      {"tipo":"manso","hace":"timido","spr":"turista","x":32,"y":80,"min":24,"max":48,"premio":"rubi"},
       {"tipo":"h","spr":"gato","x":13,"fila":7,"min":13,"max":16,"dir":1},
       {"tipo":"h","spr":"rata","x":5,"fila":4,"min":5,"max":6,"dir":1,"lento":true},
       {"tipo":"v","spr":"murcielago","x":184,"y":8,"min":8,"max":24,"dy":1},
@@ -2455,7 +2677,8 @@ var LLAVES_NUEVAS = [
       {"tipo":"h","spr":"notario","x":6,"fila":7,"min":6,"max":13,"dir":1},
       {"tipo":"h","spr":"robot","x":11,"fila":13,"min":11,"max":14,"dir":1},
       {"tipo":"h","spr":"moroso","x":17,"fila":4,"min":17,"max":22,"dir":1,"lento":true,"roba":150},
-      {"tipo":"suegra","spr":"suegra","x":144,"y":80,"min":112,"max":176},
+      {"tipo":"suegra","spr":"suegra","x":144,"y":80,"min":112,"max":176,"voz":"suegra"},
+      {"tipo":"manso","hace":"notario","spr":"notario","x":184,"y":32,"min":176,"max":194,"cada":48,"seca":192},
       {"tipo":"m","spr":"agente","x":8,"y":-99},
       {"tipo":"c","spr":"inspector","x":216,"y":104,"vel":1},
       {"tipo":"t","spr":"timido","x":232,"y":16,"vel":1}
@@ -2492,14 +2715,14 @@ var LLAVES_NUEVAS = [
     ],
     plataformas: [
       {"tipo":"coche","color":"#d4af37","x":32,"y":112,"ancho":3,"eje":"h","min":32,"max":32,"vel":2},
-      {"tipo":"coche","color":"#1f3560","x":72,"y":40,"ancho":3,"eje":"h","min":72,"max":72,"vel":2},
+      {"tipo":"cocheAzul","x":72,"y":40,"ancho":3,"eje":"h","min":72,"max":152,"vel":2,"arranca":"objeto","al":[10,2]},
       {"tipo":"coche","color":"#c9ced6","x":112,"y":64,"ancho":3,"eje":"h","min":112,"max":144,"vel":2},
       {"tipo":"ascensor","x":216,"y":104,"ancho":3,"eje":"v","min":48,"max":104,"vel":2,"espera":36,"fase":0}
     ],
     enemigos: [
       {"tipo":"h","spr":"furgoneta","x":8,"fila":14,"min":6,"max":21,"dir":1},
       {"tipo":"h","spr":"cocheRojo","x":12,"fila":11,"min":10,"max":17,"dir":-1},
-      {"tipo":"h","spr":"vendedor","x":4,"fila":7,"min":2,"max":9,"dir":1}
+      {"tipo":"h","spr":"vendedor","x":4,"fila":7,"min":2,"max":9,"dir":1,"voz":"extras"}
     ]
   },
   {
@@ -2513,7 +2736,7 @@ var LLAVES_NUEVAS = [
     ],
     meta: {"x":3,"y":5},
     trucos: [
-      {"tipo":"cuadro","x":5,"y":13,"hace":"premio","premio":[4,13,"patinete"]}
+      {"tipo":"cuadro","x":5,"y":13,"dibujo":"pilaRuedas","hace":"premio","premio":[4,13,"patinete"]}
     ],
     mapa: [
       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
@@ -2544,13 +2767,15 @@ var LLAVES_NUEVAS = [
   },
   {
     id: "parking",
-    nombre: "El Parking de Seis Plantas",
+    nombre: "El Parking de Cuatro Plantas",
     tema: "garaje",
     aire: 1,
     objetos: [
       {"x":13,"y":2,"tipo":"estatuilla","id":"urba"},
-      {"x":30,"y":11,"tipo":"muelle"}
+      {"x":30,"y":11,"tipo":"muelle"},
+      {"x":20,"y":4,"tipo":"mando"}
     ],
+    maletero: {"coche":[15,14],"premio":[16,13,"diamante"]},
     mapa: [
       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
       "W           W  W               W",
@@ -2586,9 +2811,8 @@ var LLAVES_NUEVAS = [
     ],
     enemigos: [
       {"tipo":"h","spr":"furgoneta","x":9,"fila":14,"min":8,"max":17,"dir":1},
-      {"tipo":"h","spr":"cocheRojo","x":12,"fila":11,"min":6,"max":15,"dir":-1},
-      {"tipo":"h","spr":"furgoneta","x":15,"fila":8,"min":13,"max":22,"dir":1},
-      {"tipo":"h","spr":"moroso","x":6,"fila":4,"min":6,"max":11,"dir":1,"lento":true,"roba":150}
+      {"tipo":"h","spr":"moroso","x":6,"fila":4,"min":6,"max":11,"dir":1,"lento":true,"roba":150},
+      {"tipo":"r","spr":"cocheRojo","vel":2,"ciclo":320,"tramos":[[208,40,224,40],[224,40,224,64],[224,64,8,64],[8,64,8,88],[8,88,184,88],[184,88,184,112],[184,112,40,112]]}
     ]
   },
   {
@@ -2629,11 +2853,13 @@ var LLAVES_NUEVAS = [
     enemigos: [
       {"tipo":"h","spr":"kaboomKitty","x":12,"fila":13,"min":12,"max":21,"dir":1,"lento":true},
       {"tipo":"p","spr":"pelota","x":120,"y":88,"min":120,"max":160,"vel":2,"bote":20,"alto":8},
+      {"tipo":"p","spr":"pelota","x":96,"y":40,"min":96,"max":128,"vel":1,"bote":24,"alto":12,"despierta":"final"},
       {"tipo":"v","spr":"pixelPhoenix","x":136,"y":36,"min":36,"max":76,"dy":2},
       {"tipo":"v","spr":"screenSpider","x":112,"y":8,"min":8,"max":48,"dy":2}
     ]
   },
   {
+    dibujos: {"S":"sueloBunker"},
     id: "rec-marcianos",
     nombre: "La Máquina de Marcianitos",
     tema: "portales",
@@ -2743,7 +2969,8 @@ var LLAVES_NUEVAS = [
       [1,7,4,8]
     ],
     trucos: [
-      {"tipo":"paciente","x":4,"y":11,"hace":"premio","premio":[2,11,"vida"]}
+      {"tipo":"paciente","x":4,"y":11,"hace":"premio","premio":[2,11,"vida"]},
+      {"tipo":"todas","celdas":[[2,15],[5,15],[10,15],[13,15],[17,15],[20,15],[25,15],[28,15]],"hace":"premio","premio":[15,13,"diamante"]}
     ],
     barras: [
       {"x":7,"y1":13,"y2":14,"periodo":80,"cerrada":40,"fase":0},
@@ -2760,7 +2987,8 @@ var LLAVES_NUEVAS = [
       {"tipo":"h","spr":"chronoClown","x":9,"fila":13,"min":9,"max":18,"dir":1,"lento":true},
       {"tipo":"v","spr":"polterStick","x":140,"y":24,"min":24,"max":64,"dy":1},
       {"tipo":"v","spr":"gridGargoyle","x":160,"y":48,"min":48,"max":88,"dy":1},
-      {"tipo":"h","spr":"vectorViper","x":16,"fila":8,"min":16,"max":20,"dir":1}
+      {"tipo":"h","spr":"vectorViper","x":16,"fila":8,"min":16,"max":20,"dir":1},
+      {"tipo":"m","spr":"agente","x":8,"y":-99,"tecla":true}
     ]
   },
   {
@@ -2777,7 +3005,7 @@ var LLAVES_NUEVAS = [
       "W                              W",
       "WFFFFFFFFFFFFFFF    FFFFFFFFFFFW",
       "W                              W",
-      "W     K               K    oo  W",
+      "W     K               K        W",
       "W    FFFFFFFFFFFFFFFFFFFFFFTTFFW",
       "W BB                           W",
       "W        K  o o o o y         bW",
@@ -2800,22 +3028,28 @@ var LLAVES_NUEVAS = [
       {"x":23,"arriba":1,"abajo":5,"periodo":80,"fase":40}
     ],
     palancas: [
-      {"x":30,"y":8,"hace":"cae","celdas":[]}
+      {"x":30,"y":8,"hace":"cae","celdas":[],"dibujo":"botonSoltar"}
     ],
     enemigos: [
       {"tipo":"h","spr":"coinGnome","x":5,"fila":13,"min":5,"max":14,"dir":1,"lento":true},
       {"tipo":"v","spr":"powerPuck","x":80,"y":64,"min":64,"max":104,"dy":1},
       {"tipo":"h","spr":"vectorViper","x":12,"fila":8,"min":12,"max":21,"dir":1},
       {"tipo":"v","spr":"controllerCrab","x":136,"y":16,"min":16,"max":56,"dy":1},
-      {"tipo":"h","spr":"aspiradora","x":12,"fila":11,"min":12,"max":16,"dir":1,"lento":true,"come":"monedas"},
+      {"tipo":"h","spr":"aspiradora","x":12,"fila":11,"min":12,"max":16,"dir":1,"lento":true,"come":"monedas","espera":48,"fase":0,"aviso":16},
       {"tipo":"g","spr":"gigante","x":232,"y":80}
     ]
   },
   {
+    dibujos: {"tele":"ranuraMonedas"},
+    pinta: [
+      [22,12,"cajetin"]
+    ],
     id: "rec-jefe",
     nombre: "El Gran Salón",
     tema: "casino",
     aire: 0.7,
+    cuentaAtras: {"pasos":150,"premio":2000},
+    pideSaltar: true,
     mapa: [
       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
       "W     W                        W",
@@ -2990,6 +3224,9 @@ var LLAVES_NUEVAS = [
     nombre: "La Sala del Desierto",
     tema: "acueducto",
     aire: 0.7,
+    rachas: [
+      {"zona":[5,1,26,5],"sentido":1,"periodo":96,"on":32,"fase":0,"polvo":"arena"}
+    ],
     mapa: [
       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
       "W                              W",
@@ -3070,6 +3307,9 @@ var LLAVES_NUEVAS = [
     palancas: [
       {"x":6,"y":11,"hace":"luz"}
     ],
+    frenos: [
+      {"x":22,"y":14,"a":"ammit","pasos":99999,"modo":"duerme","sinMorir":true,"dibujo":"balanza"}
+    ],
     objetos: [
       {"x":1,"y":4,"tipo":"reliquia"},
       {"x":1,"y":13,"tipo":"estatuilla","id":"museo"}
@@ -3148,6 +3388,10 @@ var LLAVES_NUEVAS = [
     nombre: "La Casa del Jardinero",
     tema: "jardin",
     aire: 1.1,
+    objetos: [
+      {"x":28,"y":13,"tipo":"pieza","id":"casco"}
+    ],
+    deseo: "gafas",
     mapa: [
       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
       "W                              W",
@@ -3162,8 +3406,8 @@ var LLAVES_NUEVAS = [
       "W                              W",
       "WBB K  e   o o o  K       d   KW",
       "WFFFFFFFFFFFFFFFFFF      WWWWWWW",
-      "W                        Z     W",
-      "W@     h     K       BB  Z v a W",
+      "W@                       Z     W",
+      "W      h     K       BB  Z v a W",
       "WFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFW"
     ],
     sombras: [
@@ -3185,6 +3429,10 @@ var LLAVES_NUEVAS = [
     nombre: "La Casa sin Número",
     tema: "cala",
     aire: 0.9,
+    objetos: [
+      {"x":30,"y":2,"tipo":"llaveRara","id":"nerja"}
+    ],
+    deseo: "regadera",
     mapa: [
       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
       "W       K      g     K  P  Z v W",
@@ -3199,8 +3447,8 @@ var LLAVES_NUEVAS = [
       "W           K       K          W",
       "WBB             XX             W",
       "WFFFFFFF<<<<FFFFFFFFFFFFFFF    W",
-      "W                              W",
-      "W@   r      K        K       BBW",
+      "W@                             W",
+      "W    r      K        K       BBW",
       "WFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFW"
     ],
     sombras: [
@@ -3230,6 +3478,10 @@ var LLAVES_NUEVAS = [
     tema: "jardin",
     paleta: "ameba2",
     aire: 0.72,
+    objetos: [
+      {"x":28,"y":10,"tipo":"pieza","id":"peto"},
+      {"x":29,"y":11,"tipo":"postal","id":"edificio"}
+    ],
     mundo: "edificio",
     sombras: [
       [27,10,30,11]
@@ -3273,6 +3525,12 @@ var LLAVES_NUEVAS = [
     nombre: "El Chalet del Promotor",
     tema: "notaria",
     aire: 1.2,
+    objetos: [
+      {"x":29,"y":14,"tipo":"pieza","id":"guanteletes"},
+      {"x":25,"y":13,"tipo":"postal","id":"urba"}
+    ],
+    deseo: "muelle",
+    famoso: "futbolista",
     mapa: [
       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
       "W                              W",
@@ -3299,6 +3557,9 @@ var LLAVES_NUEVAS = [
       4,
       "vida"
     ],
+    frenos: [
+      {"x":8,"y":14,"a":"c","pasos":45,"recarga":150,"dibujo":"trituradora"}
+    ],
     palancas: [
       {"x":25,"y":11,"hace":"abre","celdas":[[8,4],[9,4],[8,5],[9,5]]}
     ],
@@ -3316,6 +3577,10 @@ var LLAVES_NUEVAS = [
     nombre: "La Máquina Prohibida",
     tema: "portales",
     aire: 1.5,
+    objetos: [
+      {"x":29,"y":4,"tipo":"pieza","id":"grebas"},
+      {"x":27,"y":2,"tipo":"postal","id":"recreativos"}
+    ],
     mapa: [
       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
       "W                         W    W",
@@ -3359,6 +3624,12 @@ var LLAVES_NUEVAS = [
     nombre: "La Cámara de las Leyendas Perdidas",
     tema: "cueva",
     aire: 1.5,
+    objetos: [
+      {"x":3,"y":14,"tipo":"pieza","id":"escudo"},
+      {"x":1,"y":13,"tipo":"llaveRara","id":"museo"}
+    ],
+    famoso: "actriz",
+    leyendaDorada: {"x":20,"y":5,"n":5},
     mapa: [
       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
       "W                              W",
@@ -3430,7 +3701,7 @@ var LLAVES_NUEVAS = [
       [1,1,30,3,1]
     ],
     vapor: [
-      [10,14,13,14]
+      {"zona":[10,14,13,14],"periodo":80,"on":48,"fase":0,"dibujo":"tobera"}
     ],
     palancas: [
       {"x":29,"y":4,"hace":"abre","celdas":[[20,7],[20,8]]}
@@ -3476,6 +3747,9 @@ var LLAVES_NUEVAS = [
     ],
     fantasmas: [
       [28,2]
+    ],
+    plataformas: [
+      {"tipo":"luna","x":120,"y":60,"ancho":2,"eje":"e","cx":128,"cy":60,"radioX":80,"radioY":44,"periodo":96,"fase":0}
     ],
     enemigos: [
       {"tipo":"h","spr":"robot","x":8,"fila":13,"min":8,"max":13,"dir":1},
@@ -3543,7 +3817,11 @@ var LLAVES_NUEVAS = [
       "W                      BB      W",
       "WFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFW"
     ],
-    jefe: {"tipo":"pulpo","vida":3,"fases":3,"cols":[9,15,21],"cuerpo":[112,8,32],"an":32,"al":24},
+    jefe: {"tipo":"pulpo","vida":3,"fases":3,"cols":[9,15,21],"cuerpo":[112,8,32],"an":32,"al":24,"charco":[13,18]},
+    plataformas: [
+      {"tipo":"cajaPescado","x":32,"y":112,"ancho":2,"eje":"v","min":80,"max":112,"vel":1,"espera":16,"fase":0},
+      {"tipo":"cajaPescado","x":88,"y":112,"ancho":2,"eje":"v","min":80,"max":112,"vel":1,"espera":16,"fase":48}
+    ],
     enemigos: [
       {"tipo":"cofre","spr":"cofreTrampa","x":232,"y":80,"min":200,"max":232}
     ]
@@ -3571,7 +3849,7 @@ var LLAVES_NUEVAS = [
       "W      E               BB      W",
       "WFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFW"
     ],
-    jefe: {"tipo":"gorila","vida":3,"fases":2,"an":24,"al":24,"min":96,"max":160,"caen":{"cols":[5,9,13,17,21],"periodo":48,"dobleEn":2},"rompe":[[8,9],[9,9],[14,9],[15,9]]},
+    jefe: {"tipo":"gorila","vida":3,"fases":2,"an":24,"al":24,"min":96,"max":160,"escalon":45,"caen":{"cols":[5,9,13,17,21],"periodo":48,"dobleEn":2},"rompe":[[8,9],[9,9],[14,9],[15,9]]},
     enemigos: [
       {"tipo":"h","spr":"termitas","x":9,"fila":8,"min":8,"max":13,"dir":1,"lento":true,"come":"madera"}
     ]
@@ -3638,7 +3916,7 @@ var LLAVES_NUEVAS = [
       "W                      BB      W",
       "WFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFW"
     ],
-    jefe: {"tipo":"reyFichas","vida":3,"fases":3,"an":24,"al":16,"x":152,"sentido":-1,"lluvia":{"cols":[4,6,8,10,12,14,16],"periodo":32,"dobleEn":2}},
+    jefe: {"tipo":"reyFichas","vida":3,"fases":3,"an":24,"al":16,"x":152,"sentido":-1,"fichasQuedan":45,"garra":{"x":120,"suelta":16},"lluvia":{"cols":[4,6,8,10,12,14,16],"periodo":32,"dobleEn":2}},
     enemigos: [
       {"tipo":"h","spr":"aspiradora","x":25,"fila":11,"min":25,"max":28,"dir":1,"lento":true,"come":"monedas"},
       {"tipo":"h","spr":"moroso","x":1,"fila":13,"min":1,"max":6,"dir":1,"lento":true,"roba":150}
@@ -3668,7 +3946,7 @@ var LLAVES_NUEVAS = [
       "W         BB           BB      W",
       "WFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFW"
     ],
-    jefe: {"tipo":"momia","vida":3,"fases":3,"an":16,"al":16,"x":144,"suelo":15,"min":96,"max":168,"vitrinas":[[104,15,96,168],[136,15,96,168],[8,12,8,48]]},
+    jefe: {"tipo":"momia","vida":3,"fases":3,"an":16,"al":16,"x":144,"suelo":15,"min":96,"max":168,"venda":96,"vitrinas":[[104,15,96,168,[{"tipo":"h","spr":"hormigaCortadora","x":11,"fila":13,"min":9,"max":11,"dir":-1,"lento":true,"pisable":true},{"tipo":"h","spr":"hormigaCortadora","x":15,"fila":13,"min":15,"max":17,"dir":1,"lento":true,"pisable":true}]],[136,15,96,168,[{"tipo":"h","spr":"hormigaCortadora","x":15,"fila":13,"min":13,"max":15,"dir":-1,"lento":true,"pisable":true},{"tipo":"h","spr":"hormigaCortadora","x":19,"fila":13,"min":19,"max":21,"dir":1,"lento":true,"pisable":true}]],[8,12,8,48]]},
     enemigos: [
       {"tipo":"dueno","spr":"fantasmaDueno","x":44,"y":76,"k":0},
       {"tipo":"perro","spr":"perroGuardian","x":216,"y":88,"min":200,"max":224}
@@ -3699,7 +3977,7 @@ var LLAVES_NUEVAS = [
       "W                      BB      W",
       "WFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFW"
     ],
-    jefe: {"tipo":"cometa","vida":3,"fases":2,"an":16,"al":16,"cx":120,"cy":40,"radio":30},
+    jefe: {"tipo":"cometa","vida":3,"fases":2,"an":16,"al":16,"cx":120,"cy":40,"radio":30,"onda":3},
     enemigos: [
 
     ]
@@ -4178,6 +4456,314 @@ var LLAVES_NUEVAS = [
       {"tipo":"generoso","spr":"generoso","x":136,"y":32,"min":128,"max":176},
       {"tipo":"h","spr":"rata","x":17,"fila":13,"min":17,"max":21,"dir":1,"lento":true}
     ]
+  },
+  {
+    id: "casa-encantada",
+    nombre: "La Casa Encantada",
+    tema: "bodega",
+    aire: 0.8,
+    soloFecha: [
+      "10-25",
+      "11-02"
+    ],
+    sombras: [
+      [1,1,3,2]
+    ],
+    oscuro: true,
+    llavesFalsas: [
+      [24,11]
+    ],
+    pinta: [
+      [2,13,"calabaza"],
+      [29,1,"telarana"],
+      [1,1,"telarana"],
+      [20,13,"lapida"],
+      [11,7,"calabaza"]
+    ],
+    enemigos: [
+      {"tipo":"h","spr":"glitchGhoul","x":12,"fila":10,"min":10,"max":21,"dir":1},
+      {"tipo":"h","spr":"polterStick","x":15,"fila":4,"min":12,"max":17,"dir":-1,"lento":true},
+      {"tipo":"h","spr":"murcielago","x":16,"fila":7,"min":10,"max":21,"dir":1},
+      {"tipo":"h","spr":"gato","x":22,"fila":13,"min":17,"max":22,"dir":-1}
+    ],
+    mapa: [
+      "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+      "W   Z    P                     W",
+      "W g Z K                        W",
+      "WFFFFFFFFFFFFFFFFFFFFFFFF    FFW",
+      "W               d     K   BB   W",
+      "W                              W",
+      "WFF    FFFFFFFFFFFCCCFFFFFFFFFFW",
+      "W   BB  K                      W",
+      "W               Y              W",
+      "WFFFFFFFFFFFCCCCFFFFFFFFF    FFW",
+      "W b              K        BB   W",
+      "W                   Y          W",
+      "WFF    FFFFFFFFFFFFFFFFFFFFFFFFW",
+      "W   BB      l @              e W",
+      "W         Y                 K  W",
+      "WFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFW"
+    ]
+  },
+  {
+    id: "casa-navidad",
+    nombre: "La Casa de Navidad",
+    tema: "villa",
+    aire: 0.6,
+    soloFecha: [
+      "12-20",
+      "01-06"
+    ],
+    sombras: [
+      [28,1,30,2]
+    ],
+    llavesFalsas: [
+      [5,5],
+      [22,13]
+    ],
+    pinta: [
+      [28,13,"arbolNavidad"],
+      [8,13,"regalo"],
+      [12,7,"munecoNieve"],
+      [5,1,"guirnalda"],
+      [17,1,"guirnalda"]
+    ],
+    enemigos: [
+      {"tipo":"h","spr":"pinguino","x":12,"fila":10,"min":9,"max":20,"dir":1},
+      {"tipo":"h","spr":"pato","x":14,"fila":4,"min":11,"max":16,"dir":-1,"lento":true},
+      {"tipo":"h","spr":"pinguino","x":15,"fila":13,"min":12,"max":17,"dir":-1,"lento":true},
+      {"tipo":"h","spr":"pinguino","x":19,"fila":4,"min":17,"max":22,"dir":1}
+    ],
+    mapa: [
+      "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+      "W             d   P        Z   W",
+      "W                       K  Z g W",
+      "WFF    FFFFFFFFFFFFFFFFFFFFFFFFW",
+      "W   BB   K                     W",
+      "W                              W",
+      "WFFFFFFFFFFFCCCFFFFFFFFFF    FFW",
+      "W                   K     BB e W",
+      "W          Y                   W",
+      "WFF    FFFFFFFFFCCCCFFFFFFFFFFFW",
+      "W g BB    K                    W",
+      "W                              W",
+      "WFFFFFFFFFFFFFFHHHFFFFFFF    FFW",
+      "W  @                      BB   W",
+      "W       Y       K              W",
+      "WFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFW"
+    ]
+  },
+  {
+    id: "sotano-programador",
+    nombre: "El Sótano del Programador",
+    tema: "jardin",
+    paleta: "almacen",
+    aire: 0.7,
+    sombras: [
+      [1,1,3,2]
+    ],
+    oscuro: true,
+    llavesFalsas: [
+      [24,11],
+      [6,5]
+    ],
+    pinta: [
+      [6,13,"ordenadorViejo"],
+      [8,13,"tazaCafe"],
+      [18,10,"bocetoAgente"],
+      [12,4,"bocetoMapa"],
+      [24,7,"bocetoAgente"]
+    ],
+    enemigos: [
+      {"tipo":"h","spr":"retroBit","x":12,"fila":10,"min":10,"max":21,"dir":1},
+      {"tipo":"h","spr":"joyBot","x":16,"fila":7,"min":10,"max":21,"dir":-1},
+      {"tipo":"h","spr":"retroBit","x":15,"fila":4,"min":12,"max":17,"dir":1,"lento":true},
+      {"tipo":"h","spr":"robot","x":22,"fila":13,"min":18,"max":23,"dir":-1}
+    ],
+    mapa: [
+      "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+      "W   Z   d    P                 W",
+      "W g Z K                        W",
+      "WFFFFFFFFFFFFFFFFFFFFFFFF    FFW",
+      "W                    K    BB   W",
+      "W                              W",
+      "WFF    FFFFFFFFFFFFFFFFFFFFFFFFW",
+      "W   BB   K                     W",
+      "W                              W",
+      "WFFFFFFFFFFFFFCCCCFFFFFFF    FFW",
+      "W              K          BB b W",
+      "W         Y                    W",
+      "WFF    FFFFFFFFFFFFFFFFFFFFFFFFW",
+      "W   BB     l  @                W",
+      "W                   Y      K   W",
+      "WFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFW"
+    ]
+  },
+  {
+    id: "espejo-total",
+    nombre: "La Casa del Espejo",
+    tema: "cristal",
+    aire: 0.7,
+    espejoTotal: true,
+    sombras: [
+      [1,1,3,2],
+      [28,1,30,2]
+    ],
+    oscuro: true,
+    llavesFalsas: [
+      [24,13],
+      [23,7]
+    ],
+    pinta: [
+      [15,13,"marcoEspejo"]
+    ],
+    enemigos: [
+      {"tipo":"h","spr":"satelite","x":9,"fila":10,"min":8,"max":13,"dir":1},
+      {"tipo":"h","spr":"satelite","x":21,"fila":10,"min":17,"max":22,"dir":-1,"espejo":true},
+      {"tipo":"h","spr":"satelite","x":10,"fila":4,"min":8,"max":13,"dir":-1},
+      {"tipo":"h","spr":"satelite","x":20,"fila":4,"min":17,"max":22,"dir":1,"espejo":true}
+    ],
+    mapa: [
+      "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+      "W   Z   P            K e   Z   W",
+      "W   Z                      Z g W",
+      "WFFFFFFFFFFFFF    FFFFFFFFFFFFFW",
+      "W              BB       K      W",
+      "W                              W",
+      "WFF    FFFFFFFFFFFFFFFFFF    FFW",
+      "W   BB              K     BB   W",
+      "W                              W",
+      "WFFFFFFFFFCCCF    FCCCFFFFFFFFFW",
+      "W              BB     K        W",
+      "W                              W",
+      "WFF    FFFFFFFFFFFFFFFFFF    FFW",
+      "W @ BBl                   BBK  W",
+      "W         Y          Y         W",
+      "WFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFW"
+    ]
+  },
+  {
+    id: "casa-miniatura",
+    nombre: "La Casa de Muñecas",
+    tema: "villa",
+    aire: 0.35,
+    ancho: 16,
+    alto: 8,
+    mini: true,
+    bonusSala: "mudanza",
+    sombras: [
+      [1,2,2,3]
+    ],
+    oscuro: true,
+    llavesFalsas: [
+      [12,3],
+      [10,6]
+    ],
+    enemigos: [
+      {"tipo":"h","spr":"rata","x":6,"fila":5,"min":4,"max":9,"dir":1,"lento":true},
+      {"tipo":"h","spr":"pato","x":5,"fila":2,"min":4,"max":6,"dir":-1,"lento":true}
+    ],
+    mapa: [
+      "WWWWWWWWWWWWWWWW",
+      "W    K       e W",
+      "W  Z  P       KW",
+      "Wg Z     K     W",
+      "WFFFFFFFFF   FFW",
+      "W@ l       BB  W",
+      "W    Y K      KW",
+      "WFFFFFFFFFFFFFFW"
+    ]
+  },
+  {
+    id: "sin-gravedad",
+    nombre: "La Sala sin Gravedad",
+    tema: "nave",
+    gravedad: "baja",
+    aire: 0.65,
+    sombras: [
+      [1,1,3,2]
+    ],
+    vapor: [
+      [18,7,19,11],
+      [26,1,27,5]
+    ],
+    oscuro: true,
+    llavesFalsas: [
+      [24,11],
+      [6,5]
+    ],
+    pinta: [
+      [22,13,"cartelGravedad"],
+      [6,10,"particulaFlota"],
+      [24,4,"particulaFlota"]
+    ],
+    enemigos: [
+      {"tipo":"h","spr":"astronauta","x":10,"fila":10,"min":8,"max":13,"dir":1},
+      {"tipo":"h","spr":"satelite","x":20,"fila":4,"min":17,"max":22,"dir":-1,"lento":true},
+      {"tipo":"h","spr":"astronauta","x":18,"fila":7,"min":15,"max":20,"dir":-1},
+      {"tipo":"h","spr":"satelite","x":16,"fila":1,"min":14,"max":19,"dir":1}
+    ],
+    mapa: [
+      "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+      "W   Z     P                    W",
+      "W g Z  K             Y         W",
+      "WFFFFFFFFFFFFFFFFFFFFFFFF    FFW",
+      "W                   K     BB   W",
+      "W b                     Y      W",
+      "WFF    FFFFFFFFFFFCCCFFFFFFFFFFW",
+      "W   BB   K                     W",
+      "W             Y              d W",
+      "WFFFFFFFFFFFFFFFFFFFFFFFF    FFW",
+      "W               K         BB   W",
+      "W          Y                   W",
+      "WFF    FFFFFFFFFFFFFFFFFFFFFFFFW",
+      "W   BB     l  @                W",
+      "W                           K  W",
+      "WFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFW"
+    ]
+  },
+  {
+    id: "tunel-1983",
+    nombre: "El Túnel del Tiempo",
+    tema: "jardin",
+    paleta: "satelites",
+    aire: 0.7,
+    bonusSala: "subasta",
+    sombras: [
+      [28,1,30,2]
+    ],
+    oscuro: true,
+    llavesFalsas: [
+      [24,11]
+    ],
+    pinta: [
+      [28,13,"tunelTiempo"],
+      [7,10,"cassette"]
+    ],
+    enemigos: [
+      {"tipo":"h","spr":"retroBit","x":14,"fila":10,"min":10,"max":21,"dir":1},
+      {"tipo":"h","spr":"satelite","x":12,"fila":4,"min":9,"max":14,"dir":1,"lento":true},
+      {"tipo":"h","spr":"joyBot","x":15,"fila":13,"min":12,"max":17,"dir":-1,"lento":true},
+      {"tipo":"h","spr":"joyBot","x":14,"fila":7,"min":12,"max":17,"dir":1}
+    ],
+    mapa: [
+      "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+      "W             e  P         Z   W",
+      "W                     K    Z g W",
+      "WFF    FFFFFFFFFFFFFFFFFFFFFFFFW",
+      "W   BB    K                    W",
+      "W                              W",
+      "WFFFFFFFFFFFFF<<<<FFFFFFF    FFW",
+      "W                  K      BB   W",
+      "W             Y                W",
+      "WFF    FFFFFFFFFFFFFCCCCFFFFFFFW",
+      "W   BB      K                b W",
+      "W                 Y            W",
+      "WFFFFFFFFFFFFFFFFFFFFFFFF    FFW",
+      "W @  l                    BB   W",
+      "W        Y     K               W",
+      "WFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFW"
+    ]
   }
 ];
 /* Las casas de LA GALAXIA (gravedad baja) */
@@ -4224,6 +4810,7 @@ var LLAVES_GALAXIA = [
     ]
   },
   {
+    dibujos: {"E":"escTallo","punta":{"E":"escTalloPunta"}},
     id: "invernadero-lunar",
     dobleSalto: true,
     nombre: "El Invernadero Lunar",
@@ -4255,7 +4842,7 @@ var LLAVES_GALAXIA = [
       [1,7,4,8]
     ],
     palancas: [
-      {"x":10,"y":6,"golpe":true,"hace":"crea","pone":"E","celdas":[[10,7],[10,8],[10,9],[10,10],[10,11],[10,12],[10,13],[10,14]]}
+      {"x":10,"y":6,"golpe":true,"dibujo":"macetaDorada","hace":"crea","pone":"E","celdas":[[10,7],[10,8],[10,9],[10,10],[10,11],[10,12],[10,13],[10,14]]}
     ],
     objetos: [
       {"x":3,"y":7,"tipo":"carta","id":10}
@@ -4273,6 +4860,12 @@ var LLAVES_GALAXIA = [
     tema: "nave",
     gravedad: "baja",
     aire: 1.1,
+    objetos: [
+      {"x":30,"y":4,"tipo":"pieza","id":"pluma"}
+    ],
+    velos: [
+      {"zona":[22,10,25,12],"tipo":"bola"}
+    ],
     mapa: [
       "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
       "W        W     W               W",
@@ -4357,7 +4950,7 @@ var LLAVES_GALAXIA = [
     ],
     meta: {"x":1,"y":1},
     plataformas: [
-      {"tipo":"cristal","x":80,"y":96,"ancho":3,"eje":"h","min":80,"max":176,"vel":2,"espera":48,"fase":0}
+      {"tipo":"vagoneta","x":80,"y":96,"ancho":3,"eje":"h","min":80,"max":176,"vel":2,"espera":48,"fase":0}
     ],
     haz: [
       [13,1,18,4]
@@ -4460,6 +5053,15 @@ var LLAVES_GALAXIA = [
 /* Las CALLES del juego seguido (de Nerja a la Galaxia) */
 var LLAVES_CALLES = [
   {
+    dibujos: {"T":"trampParaguas"},
+    adornos: [
+      [8,5,"paraguasColgado"],
+      [10,5,"paraguasColgado"],
+      [12,5,"paraguasColgado"],
+      [14,5,"paraguasColgado"],
+      [16,5,"paraguasColgado"],
+      [2,12,"portalPintado"]
+    ],
     id: "paseo",
     nombre: "El Paseo · la Calle Pintada",
     mundo: "nerja",
@@ -4496,10 +5098,12 @@ var LLAVES_CALLES = [
       [1,11,2,14]
     ],
     enemigos: [
-      {"tipo":"v","spr":"gaviota","x":120,"y":16,"min":16,"max":40,"dy":1}
+      {"tipo":"v","spr":"gaviota","x":120,"y":16,"min":16,"max":40,"dy":1},
+      {"tipo":"gente","spr":"agenta","x":120,"y":104,"min":104,"max":136,"dir":1,"hace":"ayuda","regalo":"monedas","cafe":true}
     ]
   },
   {
+    dibujos: {"E":"escPalmera","punta":{"E":"palmeraCopa"},"moneda":"datil"},
     id: "balcon-europa",
     nombre: "La Plaza del Balcón de Europa",
     mundo: "nerja",
@@ -4530,7 +5134,8 @@ var LLAVES_CALLES = [
     ],
     enemigos: [
       {"tipo":"h","spr":"gato","x":22,"fila":11,"min":21,"max":25,"dir":1,"lento":true},
-      {"tipo":"v","spr":"gaviota","x":72,"y":16,"min":16,"max":48,"dy":1}
+      {"tipo":"v","spr":"gaviota","x":72,"y":16,"min":16,"max":48,"dy":1},
+      {"tipo":"manso","hace":"timido","spr":"turista","x":120,"y":88,"min":112,"max":136,"premio":"diamante","reverencia":true}
     ]
   },
   {
@@ -4539,6 +5144,9 @@ var LLAVES_CALLES = [
     mundo: "nerja",
     tema: "cueva",
     calle: true,
+    rachas: [
+      {"zona":[20,5,26,9],"sentido":-1,"periodo":96,"on":16,"fase":0,"alterna":true}
+    ],
     bajadas: [
       {"x":21,"y":11,"casa":"superbonus-1","pista":"grieta"}
     ],
@@ -4604,7 +5212,7 @@ var LLAVES_CALLES = [
     ],
     trucos: [
       {"tipo":"baldosa","x":25,"y":13,"hace":"premio","premio":[29,11,"rubi"]},
-      {"tipo":"baldosa","x":24,"y":6,"n":1,"hace":"premio","premio":[24,4,"diamante"]}
+      {"tipo":"baldosa","x":24,"y":6,"n":1,"dibujo":"cofreFaro","hace":"premio","premio":[24,4,"diamante"]}
     ],
     enemigos: [
       {"tipo":"v","spr":"gaviota","x":88,"y":16,"min":16,"max":48,"dy":1},
@@ -4651,6 +5259,9 @@ var LLAVES_CALLES = [
     ]
   },
   {
+    especiales: [
+      {"x":24,"y":13,"casa":"casa-navidad","dibujo":"arbolNavidad","soloFecha":["12-20","01-06"]}
+    ],
     id: "burriana",
     nombre: "La Playa de Burriana y su mercadillo",
     mundo: "nerja",
@@ -4692,6 +5303,10 @@ var LLAVES_CALLES = [
     mundo: "nerja",
     tema: "sierra",
     calle: true,
+    velos: [
+      {"zona":[21,14,31,14],"tipo":"rio"},
+      {"zona":[16,1,31,9],"tipo":"niebla","periodo":96,"on":48,"fase":0}
+    ],
     mapa: [
       "                                ",
       "                                ",
@@ -4725,11 +5340,17 @@ var LLAVES_CALLES = [
     ]
   },
   {
+    especiales: [
+      {"x":18,"y":13,"casa":"casa-encantada","dibujo":"calabaza","soloFecha":["10-25","11-02"]}
+    ],
     id: "carabeo",
     nombre: "La Calle Carabeo · noche de San Juan",
     mundo: "nerja",
     tema: "sanjuan",
     calle: true,
+    trucos: [
+      {"tipo":"encima","x":8,"y":14,"n":3,"hace":"monedas","celdas":[[10,14],[11,14],[12,14]]}
+    ],
     bajadas: [
       {"x":18,"y":5,"calle":"urba-entrada","atajo":true,"pista":"moneda"}
     ],
@@ -4815,6 +5436,12 @@ var LLAVES_CALLES = [
     mundo: "edificio",
     paleta: "ladrillo",
     calle: true,
+    carteles: [
+      [7,13,"dTablonPortal"]
+    ],
+    charcos: [
+      {"x1":14,"x2":22,"y":15,"periodo":96,"mojado":48,"fase":0,"portera":[23,13],"cartel":[13,14]}
+    ],
     bajadas: [
       {"x":25,"y":8,"casa":"superbonus-2","pista":"brillo"}
     ],
@@ -4935,6 +5562,7 @@ var LLAVES_CALLES = [
     mundo: "edificio",
     paleta: "centralita",
     calle: true,
+    reto: {"en":[29,10],"x":23,"y":10,"pasos":45,"premio":500},
     mapa: [
       "WWWWWWWWWWWWWW    WWWWWWWWWWWWWW",
       "W                              W",
@@ -5072,6 +5700,19 @@ var LLAVES_CALLES = [
     ]
   },
   {
+    adornos: [
+      [6,4,"letraB"],
+      [8,4,"letraI"],
+      [10,4,"letraE"],
+      [12,4,"letraN"],
+      [14,4,"letraV"],
+      [16,4,"letraE"],
+      [18,4,"letraN"],
+      [20,4,"letraI"],
+      [22,4,"letraD"],
+      [24,4,"letraO"],
+      [26,4,"letraS"]
+    ],
     id: "urba-entrada",
     nombre: "La Entrada de la Urbanización",
     mundo: "urba",
@@ -5160,6 +5801,7 @@ var LLAVES_CALLES = [
     tema: "feria",
     calle: true,
     dobleSalto: true,
+    fuente: {"x":10,"y":15},
     bajadas: [
       {"x":11,"y":14,"casa":"superbonus-3","pista":"grieta"}
     ],
@@ -5198,6 +5840,12 @@ var LLAVES_CALLES = [
     calle: true,
     dobleSalto: true,
     clima: "lluvia",
+    velos: [
+      {"zona":[15,1,28,10],"tipo":"lluvia","periodo":96,"on":48,"fase":0}
+    ],
+    trucos: [
+      {"tipo":"hoyo","x":20,"y":15,"puntos":1000}
+    ],
     mapa: [
       "                                ",
       "                                ",
@@ -5223,10 +5871,14 @@ var LLAVES_CALLES = [
       {"x":24,"y":13,"casa":"spa"}
     ],
     enemigos: [
-      {"tipo":"v","spr":"gaviota","x":160,"y":16,"min":16,"max":40,"dy":1}
+      {"tipo":"v","spr":"gaviota","x":160,"y":16,"min":16,"max":40,"dy":1},
+      {"tipo":"manso","hace":"empuja","spr":"pelota","x":16,"y":112,"min":16,"max":104,"vel":2,"dir":1,"fuerza":3,"voz":"fore","vozDist":64}
     ]
   },
   {
+    especiales: [
+      {"x":12,"y":13,"casa":"casa-miniatura","dibujo":"casaMunecas"}
+    ],
     id: "urba-marina",
     nombre: "La Marina",
     mundo: "urba",
@@ -5261,6 +5913,9 @@ var LLAVES_CALLES = [
     ],
     trucos: [
       {"tipo":"baldosa","x":5,"y":15,"n":3,"hace":"premio","premio":[6,12,"rubi"]}
+    ],
+    plataformas: [
+      {"tipo":"delfin","x":16,"y":112,"ancho":2,"eje":"arco","min":16,"max":64,"alto":24,"vuelo":24,"espera":24,"fase":0}
     ],
     enemigos: [
       {"tipo":"h","spr":"cangrejo","x":11,"fila":13,"min":11,"max":18,"dir":1,"lento":true}
@@ -5307,6 +5962,9 @@ var LLAVES_CALLES = [
     ]
   },
   {
+    especiales: [
+      {"x":20,"y":13,"casa":"tunel-1983","dibujo":"tunelTiempo"}
+    ],
     id: "rec-entrada",
     nombre: "La Entrada de los Recreativos",
     mundo: "recreativos",
@@ -5390,6 +6048,9 @@ var LLAVES_CALLES = [
     sombras: [
       [5,4,8,5]
     ],
+    garras: [
+      {"x":23,"y":13,"suelta":[22,7]}
+    ],
     trucos: [
       {"tipo":"golpes","x":28,"y":10,"n":5,"hace":"monedas","celdas":[[25,14],[26,14],[29,14],[30,14]]}
     ],
@@ -5441,6 +6102,12 @@ var LLAVES_CALLES = [
     ]
   },
   {
+    adornos: [
+      [8,12,"esqueleto"]
+    ],
+    especiales: [
+      {"x":15,"y":13,"casa":"espejo-total","dibujo":"marcoEspejo"}
+    ],
     id: "museo-entrada",
     nombre: "La Entrada del Museo",
     mundo: "museo",
@@ -5481,7 +6148,8 @@ var LLAVES_CALLES = [
     ],
     tienda: {"x":28,"y":13},
     enemigos: [
-      {"tipo":"h","spr":"rata","x":13,"fila":13,"min":13,"max":16,"dir":1,"lento":true}
+      {"tipo":"h","spr":"rata","x":13,"fila":13,"min":13,"max":16,"dir":1,"lento":true},
+      {"tipo":"manso","hace":"vigila","spr":"turista","x":80,"y":72,"min":56,"max":104,"luz":5,"espera":32}
     ]
   },
   {
@@ -5568,6 +6236,9 @@ var LLAVES_CALLES = [
     ]
   },
   {
+    tuberias: [
+      {"x":25,"y":13,"a":"anillos"}
+    ],
     id: "cohete",
     nombre: "La Rampa de Lanzamiento",
     mundo: "galaxia",
@@ -5605,7 +6276,7 @@ var LLAVES_CALLES = [
       [25,10,29,11]
     ],
     trucos: [
-      {"tipo":"baldosa","x":6,"y":4,"n":1,"hace":"monedas","celdas":[[8,4],[8,3],[10,2],[12,2],[14,2],[16,2]]}
+      {"tipo":"baldosa","x":6,"y":4,"n":1,"dibujo":"botonRojo","hace":"monedas","celdas":[[8,4],[8,3],[10,2],[12,2],[14,2],[16,2]]}
     ],
     tienda: {"x":11,"y":13},
     enemigos: [
@@ -5613,6 +6284,9 @@ var LLAVES_CALLES = [
     ]
   },
   {
+    especiales: [
+      {"x":21,"y":13,"casa":"sin-gravedad","dibujo":"cartelGravedad"}
+    ],
     id: "muelle-espacial",
     nombre: "El Muelle Espacial",
     mundo: "galaxia",
@@ -5689,6 +6363,9 @@ var LLAVES_CALLES = [
     ],
     vapor: [
       [21,2,22,11]
+    ],
+    plataformas: [
+      {"tipo":"roca","x":64,"y":80,"ancho":3,"eje":"v","min":32,"max":80,"vel":1,"fase":48,"arranca":"pisar"}
     ],
     sombras: [
       [24,10,30,11]
@@ -5828,6 +6505,9 @@ var LLAVES_CALLES = [
     ]
   },
   {
+    especiales: [
+      {"x":15,"y":13,"casa":"sotano-programador","dibujo":"ordenadorViejo"}
+    ],
     id: "edificio-p13",
     nombre: "La planta 13",
     mundo: "edificio",
@@ -5884,6 +6564,7 @@ var LLAVES_CALLES = [
     ]
   },
   {
+    dibujos: {"moneda":"monedaGolf"},
     id: "golf-cueva",
     nombre: "La Cueva bajo el Green",
     mundo: "urba",
@@ -5891,6 +6572,7 @@ var LLAVES_CALLES = [
     calle: true,
     dobleSalto: true,
     secreta: true,
+    premioTodas: 5000,
     bajadas: [
       {"x":28,"y":12,"casa":"superbonus-9","pista":"brillo"}
     ],
@@ -5922,7 +6604,8 @@ var LLAVES_CALLES = [
     ],
     enemigos: [
       {"tipo":"v","spr":"murcielago","x":96,"y":56,"min":56,"max":80,"dy":1,"duerme":true},
-      {"tipo":"h","spr":"rata","x":12,"fila":13,"min":12,"max":17,"dir":1,"lento":true}
+      {"tipo":"h","spr":"rata","x":12,"fila":13,"min":12,"max":17,"dir":1,"lento":true},
+      {"tipo":"topo","spr":"rata","agujeros":[[40,80],[112,80],[160,80]],"asoma":24,"periodo":48}
     ]
   }
 ];

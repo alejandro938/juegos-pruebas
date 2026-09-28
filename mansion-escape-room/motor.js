@@ -358,8 +358,12 @@ var MOTOR = (function () {
     else o.x = W * 8 - e.x - anchoSpr(e.spr);
     if (o.tipo === 'p' || o.tipo === 'a') { var an = anchoSpr(e.spr); o.min = W * 8 - e.max - an; o.max = W * 8 - e.min - an; o.fase = (e.fase || 0) + (e.max - e.min); }
     // (25-sep) monstruos nuevos: su tramo (px), y el okupa su llave, su techo y hacia dónde se va
-    if ((o.tipo === 'suegra' || o.tipo === 'perro' || o.tipo === 'cofre' || o.tipo === 'generoso' || o.tipo === 'gente') && e.min != null) { var a2 = anchoSpr(e.spr); o.min = W * 8 - e.max - a2; o.max = W * 8 - e.min - a2; }
-    if (o.tipo === 'suegra' || o.tipo === 'perro' || o.tipo === 'cofre' || o.tipo === 'okupa' || o.tipo === 'generoso' || o.tipo === 'gente') o.dir = -(e.dir || 1);
+    if ((o.tipo === 'suegra' || o.tipo === 'perro' || o.tipo === 'cofre' || o.tipo === 'generoso' || o.tipo === 'gente' || o.tipo === 'manso' /* (28-sep, D6) */) && e.min != null) { var a2 = anchoSpr(e.spr); o.min = W * 8 - e.max - a2; o.max = W * 8 - e.min - a2; }
+    if (o.tipo === 'suegra' || o.tipo === 'perro' || o.tipo === 'cofre' || o.tipo === 'okupa' || o.tipo === 'generoso' || o.tipo === 'gente' || o.tipo === 'manso' /* (28-sep, D6) */) o.dir = -(e.dir || 1);
+    // (27-sep, D4) despierta, espera, fase y aviso de 'h' y 'v' pasan tal cual: ritmoH da la vuelta con o.espejo y la misma fase
+    // (27-sep, D5) el recorrido (y la rata y la chispa) se da la vuelta punto a punto; el topo, sus agujeros
+    if (o.tipo === 'r') { var aR = anchoSpr(e.spr); if (e.agujeros) o.agujeros = e.agujeros.map(function (h) { return [W * 8 - h[0] - aR, h[1]]; }); else { o.tramos = tramosD5(e).map(function (t) { return Array.isArray(t) ? [W * 8 - t[0] - aR, t[1], W * 8 - t[2] - aR, t[3]] : t; }); if (e.rodea || e.rodeaEspejo) { o.rodeaEspejo = e.rodea ? [W - 1 - e.rodea[2], e.rodea[1], W - 1 - e.rodea[0], e.rodea[3]] : null; if (!o.rodeaEspejo) delete o.rodeaEspejo; delete o.rodea; o.vueltaD5 = trozosD5(e).trozos.map(function (z) { return z.n; }); } } }
+    if (o.tipo === 'topo' && e.agujeros) { var aT = anchoSpr(e.spr); o.agujeros = e.agujeros.map(function (h) { return [W * 8 - h[0] - aT, h[1]]; }); }
     if (o.tipo === 'f' && e.cols) o.cols = e.cols.map(function (c) { return W * 8 - c - anchoSpr(e.spr); });   // (26-sep, arreglo) sus columnas, al otro lado
     if (o.tipo === 'okupa') { if (e.llave) o.llave = [W - 1 - e.llave[0], e.llave[1]]; if (e.techo) o.techo = [W - 1 - e.techo[0], e.techo[1]]; o.salida = -(e.salida || 1); }
     return o;
@@ -383,9 +387,20 @@ var MOTOR = (function () {
     // (23-sep) lo nuevo: zonas de viento (cambia de sentido) y vapor, cajas y noria
     var zona = function (z) { var o = [W - 1 - z[2], z[1], W - 1 - z[0], z[3]]; if (z.length > 4) o.push(-z[4]); return o; };
     if (def.viento) d.viento = def.viento.map(zona);
-    if (def.vapor) d.vapor = def.vapor.map(zona);
+    if (def.vapor) d.vapor = def.vapor.map(function (v) { if (Array.isArray(v)) return zona(v); var o = copia(v); o.zona = zona(v.zona.slice(0, 4)); return o; });   // (27-sep, D3) vapor con ritmo
     if (def.cascada) d.cascada = def.cascada.map(zona);
     if (def.sombras) d.sombras = def.sombras.map(zona);
+    // (27-sep, D3) EL RITMO: las rachas (su zona y su sentido al revés, en el MISMO paso: la fase no cambia), los charcos,
+    // lo que crece y los velos que solo se ven. Campo nuevo y no un 6.º valor de `viento`: zona() solo copia 5.
+    if (def.rachas) d.rachas = def.rachas.map(function (r) { var o = copia(r); o.zona = zona(r.zona.slice(0, 4)); o.sentido = -(r.sentido || 1); if (r.manga) o.manga = [W - 1 - r.manga[0], r.manga[1]]; return o; });
+    if (def.charcos) d.charcos = def.charcos.map(function (c) { var o = copia(c); o.x1 = W - 1 - c.x2; o.x2 = W - 1 - c.x1; if (c.portera) o.portera = [W - 1 - c.portera[0], c.portera[1]]; if (c.cartel) o.cartel = [W - 1 - c.cartel[0], c.cartel[1]]; return o; });
+    if (def.crece) d.crece = def.crece.map(function (c) { var o = copia(c); o.x = W - 1 - c.x; return o; });
+    if (def.velos) d.velos = def.velos.map(function (v) { var o = copia(v); o.zona = zona(v.zona.slice(0, 4)); return o; });
+    // (27-sep, D0) el RAYO de luz (haz, como las sombras), la luz del FARO y las LLAVES FALSAS se quedaban en su columna de
+    // antes: en la casa espejo el haz quemaba el aire en otro sitio y la llave falsa no estaba donde se veía la de verdad
+    if (def.haz) d.haz = def.haz.map(zona);
+    if (def.faro) d.faro = [W - 1 - def.faro[0], def.faro[1]];
+    if (def.llavesFalsas) d.llavesFalsas = def.llavesFalsas.map(function (k) { var o = k.slice(); o[0] = W - 1 - k[0]; return o; });
     if (def.premioFinal) d.premioFinal = [W - 1 - def.premioFinal[0], def.premioFinal[1], def.premioFinal[2]];
     if (def.cajas) d.cajas = def.cajas.map(function (c) { return [W - 2 - c[0], c[1]]; });
     // (25-sep, arreglo) las barras, prensas y rayos no se daban la vuelta: en la casa espejo se quedaban en su columna de antes
@@ -395,7 +410,7 @@ var MOTOR = (function () {
     if (def.lamparas) d.lamparas = def.lamparas.map(function (l) { var o = l.slice(); o[0] = W - 1 - l[0]; return o; });
     d.palancas = (def.palancas || []).map(function (p) {
       // (26-sep, idea 80) la palanca que cambia la sala lleva la letra de cada casilla (las cintas, al revés)
-      return { x: W - 1 - p.x, y: p.y, hace: p.hace, golpe: p.golpe, reversible: p.reversible, pone: p.pone, dura: p.dura, celdas: (p.celdas || []).map(function (c) { return c.length > 2 ? [W - 1 - c[0], c[1], c[2] === '<' ? '>' : c[2] === '>' ? '<' : c[2]] : [W - 1 - c[0], c[1]]; }) };
+      return { x: W - 1 - p.x, y: p.y, hace: p.hace, golpe: p.golpe, reversible: p.reversible, pone: p.pone, dura: p.dura, paga: p.paga, retardo: p.retardo /* (27-sep, D1) */, a: espejoA(p.a, W), pasos: p.pasos, recarga: p.recarga, modo: p.modo, unaVez: p.unaVez, golpea: p.golpea, dibujo: p.dibujo /* (28-sep, D7) */, celdas: (p.celdas || []).map(function (c) { return c.length > 2 ? [W - 1 - c[0], c[1], c[2] === '<' ? '>' : c[2] === '>' ? '<' : c[2]] : [W - 1 - c[0], c[1]]; }) };
     });
     // (25-sep, 2b) la salida secreta (2 de ancho, como la P), las medallas de control y los sitios de las botas de muelle
     if (def.salidaSecreta) { d.salidaSecreta = copia(def.salidaSecreta); d.salidaSecreta.x = W - 2 - def.salidaSecreta.x; }
@@ -407,18 +422,35 @@ var MOTOR = (function () {
     d.plataformas = (def.plataformas || []).map(function (p) {
       var o = JSON.parse(JSON.stringify(p)), an = p.ancho * 8;
       o.x = W * 8 - p.x - an;
-      if (p.eje === 'c') { o.cx = W * 8 - p.cx; o.inv = !p.inv; }
+      if (p.eje === 'c' || p.eje === 'e') { o.cx = W * 8 - p.cx; o.inv = !p.inv; }   // (28-sep, D8) + la órbita elíptica
+      else if (p.eje === 'arco') { o.min = W * 8 - p.max - an; o.max = W * 8 - p.min - an; o.inv = !p.inv; }   // (28-sep, D8) el delfín sale por el otro lado
+      else if (p.eje === 'h' && p.sentido) { o.min = W * 8 - p.max - an; o.max = W * 8 - p.min - an; o.sentido = -p.sentido; }   // (28-sep, D8) sentido único: al revés, en el mismo paso
       else if (p.eje === 'h' && p.espera) { o.min = W * 8 - p.max - an; o.max = W * 8 - p.min - an; o.fase = (p.fase || 0) + (p.max - p.min) / (p.vel || 1) + p.espera; }
       else if (p.eje === 'h') { o.min = W * 8 - p.max - an; o.max = W * 8 - p.min - an; o.fase = (p.fase || 0) + (p.max - p.min); }
+      if (p.al) o.al = [W - 1 - p.al[0], p.al[1]];   // (28-sep, D8) la que arranca al coger su objeto
       return o;
     });
     // (25-sep, secretos) lo nuevo también se da la vuelta: casillas sueltas → W-1-x; lo de 2 de ancho (puerta del reflejo) → W-2-x
     var cx1 = function (c) { var o = c.slice(); o[0] = W - 1 - c[0]; return o; };
     var ox1 = function (o0) { var o = JSON.parse(JSON.stringify(o0)); if (o0.x != null) o.x = W - 1 - o0.x; return o; };
     if (def.trucos) d.trucos = def.trucos.map(function (t) {
-      var o = ox1(t); if (t.celdas) o.celdas = t.celdas.map(cx1); if (t.premio) o.premio = cx1(t.premio); return o;
+      var o = ox1(t); if (t.celdas) o.celdas = t.celdas.map(cx1); if (t.premio) o.premio = cx1(t.premio);
+      if (t.tipo === 'orden') o.celdas.reverse();      // (27-sep, D1) en espejo, la melodía se toca al revés
+      return o;
     });
     if (def.objetos) d.objetos = def.objetos.map(ox1);
+    if (def.frenos) d.frenos = def.frenos.map(function (f) { var o = ox1(f); o.a = espejoA(f.a, W); return o; });   // (28-sep, D7)
+    // (28-sep, D8) el TOBOGÁN (su zona y su sentido, al revés), la GARRA (casilla del agente, 2 de ancho) y el CRISTAL que se agrieta
+    if (def.toboganes) d.toboganes = def.toboganes.map(function (z) { var o = copia(z); o.x1 = W - 1 - z.x2; o.x2 = W - 1 - z.x1; o.sentido = -(z.sentido || 1); return o; });
+    if (def.garras) d.garras = def.garras.map(function (g) { var o = copia(g); o.x = W - 2 - g.x; if (g.suelta) o.suelta = [W - 2 - g.suelta[0], g.suelta[1]]; return o; });
+    if (def.cristalFragil) d.cristalFragil = def.cristalFragil.map(function (z) { return [W - 1 - z[1], W - 1 - z[0]].concat(z.slice(2)); });
+    // (28-sep, D9) lo que SOLO SE VE: las casillas pintadas y los adornos, con su ancho en casillas (el brocal, 2; el esqueleto, 4);
+    // los adornos, además, volteados. `dibujos`, `hazDibujo` y el `dibujo` de palancas, trucos y rayos pasan tal cual. Las
+    // plataformas vagoneta, burbuja, burro y sofá se mueven como cualquier otra: el motor no mira su tipo.
+    var anD9 = function (nom) { return Math.max(1, Math.ceil(anchoSpr(nom) / 8)); };
+    if (def.pinta) d.pinta = def.pinta.map(function (p) { return [W - anD9(p[2]) - p[0], p[1], p[2]]; });
+    if (def.adornos) d.adornos = def.adornos.map(function (a) { return [W - anD9(a[2]) - a[0], a[1], a[2], !a[3]]; });
+    if (def.carteles) d.carteles = def.carteles.map(function (q) { return [W - 1 - q[0], q[1], q[2]]; });   // (28-sep, D10, 69) el cartel, centrado en su casilla
     if (def.meta) d.meta = ox1(def.meta);
     if (def.fantasmas) d.fantasmas = def.fantasmas.map(cx1);
     if (def.pasadizos) d.pasadizos = def.pasadizos.map(ox1);
@@ -433,6 +465,15 @@ var MOTOR = (function () {
     if (def.lianas) d.lianas = def.lianas.map(function (L) { var o = copia(L); o.x = W * 8 - L.x; o.inv = !L.inv; return o; });
     if (def.perroCliente) d.perroCliente = [W - 2 - def.perroCliente[0], def.perroCliente[1]];
     if (def.notario) { d.notario = copia(def.notario); d.notario.x = W - 2 - def.notario.x; }
+    // (28-sep, D2) retos y premios: las casillas sueltas, W-1-x (lo que se guarda va por índice: la clave no cambia)
+    var retoE = function (r) { var o = copia(r); if (r.x != null) o.x = W - 1 - r.x; if (r.en) o.en = cx1(r.en); return o; };
+    if (def.reto) d.reto = Array.isArray(def.reto) ? def.reto.map(retoE) : retoE(def.reto);
+    if (def.retos) d.retos = def.retos.map(retoE);
+    if (def.mareaBaja) d.mareaBaja = def.mareaBaja.map(cx1);
+    if (def.tragaperras) { d.tragaperras = copia(def.tragaperras); d.tragaperras.rodillos = def.tragaperras.rodillos.map(cx1); }
+    if (def.leyendaDorada) { d.leyendaDorada = ox1(def.leyendaDorada); d.leyendaDorada.fx = -(def.leyendaDorada.fx != null ? def.leyendaDorada.fx : 1); }
+    if (def.fuente) d.fuente = ox1(def.fuente);
+    if (def.maletero) { d.maletero = copia(def.maletero); if (def.maletero.premio) d.maletero.premio = cx1(def.maletero.premio); if (def.maletero.coche) d.maletero.coche = cx1(def.maletero.coche); }
     if (def.bonus) d.bonus = def.bonus.map(cx1); if (def.llaves) d.llaves = def.llaves.map(cx1);   // (26-sep, arreglo) los de fuera del plano
     return d;
   }
@@ -441,14 +482,23 @@ var MOTOR = (function () {
      comprobador puede saber dónde están en cada momento. Van y vuelven entre min y max (px) por su eje, a «vel» px/paso
      (en horizontal, vel 2: el agente se mueve de 2 en 2 px). { tipo:'nube'|'cristal', x, y, ancho (casillas), eje:'h'|'v', min, max, vel, fase } ── */
   function posPlat(p, t) {
+    // (28-sep, D8) la que ARRANCA al pisarla o al coger su objeto: quieta en su sitio del paso 0 hasta entonces (p.desde lo pone paso())
+    if (p.arranca) t = p.desde == null ? 0 : t - p.desde;
+    // (28-sep, D8) la que FLOTA en la marea (los patitos): su altura es la del agua menos `sigueAgua` px (p.agua lo copia nuevaSala)
+    if (p.sigueAgua && p.agua) return { x: p.x, y: nivelDe(p.agua, t) - (p.sigueAgua === true ? 6 : p.sigueAgua) };
     // (23-sep) NORIA: eje 'c' → la cabina da vueltas alrededor de (cx, cy) con su radio, una vuelta cada `periodo`
     // pasos (sin voltearse). La x va en pares, como el agente, para que al llevarle no se descuadre.
-    if (p.eje === 'c') {
+    // (28-sep, D8) eje 'e' = ÓRBITA ELÍPTICA: lo mismo con radioX y radioY (la luna del Planeta Secreto)
+    if (p.eje === 'c' || p.eje === 'e') {
       var N = p.periodo || 240, qc = (((t + (p.fase || 0)) % N) + N) % N, an = 2 * Math.PI * qc / N;
-      return { x: 2 * Math.round((p.cx + (p.inv ? -1 : 1) * Math.cos(an) * p.radio - p.ancho * 4) / 2), y: Math.round(p.cy + Math.sin(an) * p.radio) };
+      var rx = p.radioX != null ? p.radioX : p.radio, ry = p.radioY != null ? p.radioY : p.radio;
+      return { x: 2 * Math.round((p.cx + (p.inv ? -1 : 1) * Math.cos(an) * rx - p.ancho * 4) / 2), y: Math.round(p.cy + Math.sin(an) * ry) };
     }
+    if (p.eje === 'arco') return posArco(p, t);        // (28-sep, D8) el delfín
     var L = p.max - p.min, v = p.vel || 1;
     if (L <= 0) return { x: p.x, y: p.y };
+    // (28-sep, D8) SENTIDO ÚNICO (las cajas de la cinta): de min a max (sentido 1) o de max a min (-1) y vuelve a salir por el principio
+    if (p.sentido) { var qs = (((t * v + (p.fase || 0)) % L) + L) % L, ds = p.sentido > 0 ? p.min + qs : p.max - qs; return p.eje === 'h' ? { x: ds, y: p.y } : { x: p.x, y: ds }; }
     // (23-sep) ASCENSOR: con `espera`, se para esos pasos en cada punta (su `fase` va en pasos)
     if (p.espera) {
       var ida = L / v, ciclo = 2 * ida + 2 * p.espera, qa = (((t + (p.fase || 0)) % ciclo) + ciclo) % ciclo, da;
@@ -462,9 +512,34 @@ var MOTOR = (function () {
     return p.eje === 'h' ? { x: d, y: p.y } : { x: p.x, y: d };
   }
   function periodoPlat(p) {
-    if (p.eje === 'c') return p.periodo || 240;
+    if (p.arranca && p.desde == null) return 1;        // (28-sep, D8) quieta hasta que arranca
+    if (p.sigueAgua && p.agua) return p.agua.periodo || 480;
+    if (p.eje === 'c' || p.eje === 'e') return p.periodo || 240;
+    if (p.eje === 'arco') return 2 * ((p.vuelo || 24) + (p.espera || 24));
     var L = p.max - p.min; if (L <= 0) return 1;
+    if (p.sentido) return L / (p.vel || 1);           // (28-sep, D8) sentido único: una pasada
     return (2 * L) / (p.vel || 1) + (p.espera ? 2 * p.espera : 0);
+  }
+  /* (28-sep, D8) PLATAFORMA EN ARCO (el delfín): { eje: 'arco', min, max (x en px), y (su altura en reposo), alto (px), vuelo, espera,
+     fase, inv }. Espera `espera` pasos en una punta, salta en arco a la otra en `vuelo` pasos, espera y vuelve. En lo más alto de
+     cada salto (paso vuelo/2) LANZA a quien vaya encima, como el trampolín (lanzaArco). Todo sale del paso: el robot lo sigue. */
+  function arcoFase(p, t) {
+    var V = p.vuelo || 24, E = p.espera || 24, C = 2 * (V + E), q = (((t + (p.fase || 0)) % C) + C) % C;
+    var a = p.inv ? p.max : p.min, b = p.inv ? p.min : p.max;
+    if (q < E) return { x: a, k: -1, dir: 0 };
+    if (q < E + V) return { x0: a, x1: b, k: q - E, dir: b > a ? 1 : -1 };
+    if (q < 2 * E + V) return { x: b, k: -1, dir: 0 };
+    return { x0: b, x1: a, k: q - 2 * E - V, dir: a > b ? 1 : -1 };
+  }
+  function posArco(p, t) {
+    var f = arcoFase(p, t), V = p.vuelo || 24;
+    if (f.k < 0) return { x: f.x, y: p.y };
+    var u = f.k / V;
+    return { x: 2 * Math.round((f.x0 + (f.x1 - f.x0) * u) / 2), y: p.y - Math.round(4 * (p.alto || 24) * u * (1 - u)) };
+  }
+  function lanzaArco(p, t) {
+    if (p.arranca) t = p.desde == null ? 0 : t - p.desde;
+    var f = arcoFase(p, t); return f.k === ((p.vuelo || 24) >> 1) ? f.dir : 0;
   }
   function encima(w, p, pos) {   // ¿el agente está (en horizontal) sobre la plataforma?
     var ax = w.x * 8 + w.f * 2 + 1, an = p.ancho * 8;
@@ -539,18 +614,24 @@ var MOTOR = (function () {
         var o = JSON.parse(JSON.stringify(e));
         o.fr = 0; o.f = 0; ponEspejoH(o);                // (27-sep, P14) el 'h' al revés empieza en f 3 (espejo exacto de f 0)
         if (o.tipo === 'h') o.y = o.fila * 8;
+        if (typeof o.aviso === 'number') { o.avisoPasos = o.aviso; o.aviso = null; }   // (27-sep, D4) `aviso: pasos` (e.aviso es el suceso)
+        if (o.tipo === 'r' || o.tipo === 'topo') sitioD5({ t: 0 }, o);   // (27-sep, D5) ya en su sitio del paso 0
         return o;
       }),
-      palancas: (def.palancas || []).map(function (p) { return { x: p.x, y: p.y, hace: p.hace, celdas: p.celdas || [], movida: false, golpe: !!p.golpe, reversible: !!p.reversible, pone: p.pone || '', dura: p.dura || 0 }; }),
+      palancas: (def.palancas || []).map(function (p) { return { x: p.x, y: p.y, hace: p.hace, celdas: p.celdas || [], movida: false, golpe: !!p.golpe, reversible: !!p.reversible, pone: p.pone || '', dura: p.dura || 0, paga: p.paga || 0, retardo: p.retardo || 0, cuenta: 0, a: p.a, pasos: p.pasos || 0, recarga: p.recarga || 0, modo: p.modo || '', unaVez: !!p.unaVez, golpea: p.golpea || 0, dibujo: p.dibujo || '', carga: 0 }; }),   // (28-sep, D7) + parar   // (27-sep, D1) paga y retardo
       bonus: bon.map(function (b) { return { x: b[0], y: b[1], tipo: b[2], cogido: false, alFinal: b[3] === 'final' }; }),
-      plataformas: (def.plataformas || []).map(function (p) { return JSON.parse(JSON.stringify(p)); }),
+      plataformas: (def.plataformas || []).map(function (p) { var o = JSON.parse(JSON.stringify(p)); if (o.sigueAgua && def.agua) o.agua = JSON.parse(JSON.stringify(def.agua)); return o; }),   // (28-sep, D8) la que flota lleva su marea
       teles: L.teles, oscuro: !!def.oscuro, linterna: false, col: 0, iman: 0,
       // casas a oscuras: lámparas fijas que alumbran un trozo, y la luz general cuando se da al interruptor
       lamparas: (def.lamparas || []).map(function (l) { return l.slice(); }), luz: false,
       haz: (def.haz || []).map(function (h) { return h.slice(); }),   // rayos de luz: dentro, el aire se gasta 4 veces más deprisa
       // (23-sep, casas nuevas) zonas en casillas [c1, f1, c2, f2(, sentido)]: el VIENTO empuja de lado (también en el aire)
       // y el VAPOR te sube; el AGUA sube desde abajo con el tiempo ({ desde, hasta, cada }: fila de salida, tope y pasos por fila)
-      viento: (def.viento || []).map(function (v) { return v.slice(); }), vapor: (def.vapor || []).map(function (v) { return v.slice(); }),
+      viento: (def.viento || []).map(function (v) { return v.slice(); }), vapor: (def.vapor || []).map(function (v) { return Array.isArray(v) ? v.slice() : v.zona.slice(0, 4); }),
+      // (27-sep, D3) el vapor a BUFIDOS: { zona, periodo, on, fase } (sopla `on` pasos de cada `periodo`); las RACHAS de viento,
+      // los CHARCOS que se secan y lo que CRECE (estalagmita)
+      vaporRitmo: (def.vapor || []).map(function (v) { return Array.isArray(v) || !v.periodo ? null : { periodo: v.periodo, on: v.on, fase: v.fase || 0, dibujo: v.dibujo || '' }; }),
+      rachas: (def.rachas || []).map(copia), charcos: (def.charcos || []).map(copia), crece: (def.crece || []).map(copia),
       cascada: (def.cascada || []).map(function (v) { return v.slice(); }), sombras: (def.sombras || []).map(function (v) { return v.slice(); }),
       agua: def.agua ? JSON.parse(JSON.stringify(def.agua)) : null,
       prensas: (def.prensas || []).map(copia), rayos: (def.rayos || []).map(copia), barras: (def.barras || []).map(copia),
@@ -566,9 +647,13 @@ var MOTOR = (function () {
     // contrarreloj secreta, llaves fantasma, muros que se rompen (U), la luz que se apaga, pasadizos y zonas de la estrella
     s.trucos = (def.trucos || []).map(function (t) {
       return { tipo: t.tipo, x: t.x, y: t.y, n: t.n || (t.tipo === 'golpes' ? 5 : 3), celdas: (t.celdas || []).map(function (c) { return c.slice(); }),
-        hace: t.hace || '', pone: t.pone || '', premio: t.premio ? t.premio.slice() : null, obj: t.obj || '', hecho: false, cuenta: 0, dentro: false };
+        hace: t.hace || '', pone: t.pone || '', premio: t.premio ? t.premio.slice() : null, obj: t.obj || '', hecho: false, cuenta: 0, dentro: false,
+        // (27-sep, D1) encima · orden · todas · combo · vuelta · hoyo · caida
+        plat: t.plat != null ? t.plat : -1, filas: t.filas || 2, modo: t.modo || 'golpe', sube: t.sube || 0, puntos: t.puntos || 0, prog: 0, encendidas: {}, pasa: false, lado: 0, toques: {}, a: t.a /* (28-sep, D6) saltaBicho */ };
     });
-    s.objetos = (def.objetos || []).map(function (o) { return { x: o.x, y: o.y, tipo: o.tipo, id: o.id, cogido: false }; });
+    s.objetos = (def.objetos || []).map(function (o) { return { x: o.x, y: o.y, tipo: o.tipo, id: o.id, cogido: false, a: o.a, pasos: o.pasos, cerca: o.cerca }; });   // (28-sep, D7) + a, pasos, cerca
+    s.frenos = (def.frenos || []).map(function (f) { var o = copia(f); o.carga = 0; o.hecho = false; o.dentro = false; return o; });   // (28-sep, D7)
+    s.cebo = null; s.muertes = 0;
     s.lleva = {};                                   // lo que has cogido en ESTA sala (para el truco «objeto»)
     s.meta = def.meta ? { x: def.meta.x, y: def.meta.y } : null; s.crono = 0;
     s.fantasmas = {}; (def.fantasmas || []).forEach(function (f) { s.fantasmas[f[0] + ',' + f[1]] = 1; });
@@ -633,6 +718,10 @@ var MOTOR = (function () {
     if (ch === 'V') return s.vallaAbierta ? ' ' : 'B';
     if (s.barras && s.barras.length && barraCierra(s, x, y)) return 'B';        // VALLA entre mundos: muro hasta vender las casas que pide   // puerta de color: abierta si llevas su llave
     if (ch === ' ' && s.baile && s.baile.length && bailePisa(s, x, y)) return 'F';   // (26-sep, idea 15) la pista de baile, al compás
+    if (ch === ' ' && s.crece && s.crece.length && crecePisa(s, x, y)) return 'B';   // (27-sep, D3) la estalagmita que crece
+    if (ch === ' ' && s.enemigos && conchaEn(s, x, y)) return 'B';   // (28-sep, D6) el cangrejo en su concha hace de escalón
+    if (ch === ' ' && s.enemigos && escalonF(s, x, y)) return 'B';   // (28-sep, D8) el satélite caído hace de escalón
+    if (ch === ' ' && s.jefe && s.jefe.escalones && s.jefe.escalones.length && escalonEn(s, x, y)) return 'B';   // (28-sep, D11) el ladrillo del gorila, de escalón
     return ch;
   }
   function filas(w) { var r = w.y >> 3, l = [r, r + 1]; if (w.y & 7) l.push(r + 2); return l; }
@@ -680,7 +769,7 @@ var MOTOR = (function () {
   function puertaBajo(s, w) {
     if (!s.sal || w.aire !== 0 || (w.y & 7)) return null;
     var r = null;
-    (s.def.puertas || []).concat(s.def.tuberias || [], s.def.tienda ? [{ x: s.def.tienda.x, y: s.def.tienda.y, tienda: true }] : []).forEach(function (p) { if (w.x === p.x && (w.y >> 3) === p.y && puertaExiste(s, p)) r = p; });
+    (s.def.puertas || []).concat(s.def.tuberias || [], s.def.especiales || [] /* (28-sep, D13) */, s.def.tienda ? [{ x: s.def.tienda.x, y: s.def.tienda.y, tienda: true }] : []).forEach(function (p) { if (w.x === p.x && (w.y >> 3) === p.y && puertaExiste(s, p)) r = p; });
     return r;
   }
   // (25-sep, ideas 129 y 133) hay puertas que NO EXISTEN hasta que toca: la del autobús nocturno (soloNoche, con s.noche,
@@ -689,6 +778,7 @@ var MOTOR = (function () {
     if (p.soloNoche && !s.noche && !nocheVuelta(s.av)) return false;   // (27-sep, P5) en la vuelta a Nerja, el autobús nocturno sale
     if (p.acto && p.calle && !actoAbierto(s.av, p.acto)) return false;   // (27-sep, P5) el «Autobús a la Gran Villa»: solo desde la vuelta
     if (p.truco != null && !(s.trucos && s.trucos[p.truco] && s.trucos[p.truco].hecho)) return false;
+    if (p.soloFecha && !fechaDentroD13(p.soloFecha)) return false;   // (28-sep, D13) la casa encantada, la de Navidad
     return true;
   }
   // (25-sep, idea 128) ¿están vendidas TODAS las casas normales de ese mundo? (abre la puerta sin número). Normales = las de
@@ -745,6 +835,19 @@ var MOTOR = (function () {
       if (ocupa(w).some(function (q) { return q[0] === h.x && q[1] === h.y; })) return true;
       s.mapa[h.y][h.x] = 'S'; return false;
     });
+  }
+  /* (27-sep, D0 · 324 Marcianitos) los suelos S que se hunden se RECUPERAN poco a poco: cada RECUPERA_S pasos sin pisarlo, una
+     marca menos, casilla a casilla (antes s.derr solo subía: tras una ida y vuelta por el foso se hundían en 16 pasos en vez de 24).
+     Lo llama pasoBase una vez por paso; el robot no (pisa los S como firmes). */
+  var RECUPERA_S = 4;
+  function recuperaS(s) {
+    if (!s.derrT) return;
+    for (var k in s.derrT) {
+      var q = s.t - s.derrT[k];
+      if (q <= 1 || q % RECUPERA_S) continue;                 // pisado en el paso de antes, o aún no le toca
+      if (s.derr[k] > 0) s.derr[k]--;
+      if (!(s.derr[k] > 0)) { delete s.derr[k]; delete s.derrT[k]; }
+    }
   }
   // (idea 99) bajar por una TUBERÍA de la calle a su sótano de bonus (una vez cada una)
   function entrarTuberia(j, id) {
@@ -824,8 +927,8 @@ var MOTOR = (function () {
     return null;
   }
   // (23-sep) MAREA: el agua sube y baja entre dos filas (y de su superficie, en px). { arriba, abajo, periodo, fase }
-  function nivelAgua(s, t) {
-    var a = s.agua; if (!a) return 1e9;
+  function nivelAgua(s, t) { return s.agua ? nivelDe(s.agua, t) : 1e9; }
+  function nivelDe(a, t) {                         // (28-sep, D8) la marea sola (la usan también los patitos que flotan)
     var P = a.periodo || 480, q = (((t + (a.fase || 0)) % P) + P) % P, med = P / 2, fr = q < med ? q / med : (P - q) / med;
     return a.abajo * 8 - Math.round(fr * (a.abajo - a.arriba) * 8);
   }
@@ -839,6 +942,10 @@ var MOTOR = (function () {
     (s.prensas || []).concat(s.rayos || [], s.barras || []).forEach(function (p) { L = mcm(L, p.periodo || 60); });
     if (s.fantasmas && Object.keys(s.fantasmas).length) L = mcm(L, 60);     // (25-sep) llaves fantasma: 60 pasos
     (s.baile || []).forEach(function (z) { L = mcm(L, z.periodo || 48); });   // (26-sep, idea 15) la pista de baile
+    // (27-sep, D3) el ritmo: rachas, vapor a bufidos, charcos y estalagmitas (48, 80 o 96 pasos)
+    (s.rachas || []).concat(s.charcos || [], s.crece || [], (s.vaporRitmo || []).filter(Boolean)).forEach(function (r) { L = mcm(L, r.periodo || 96); });
+    if (s.rachas && s.rachas.length) L = mcm(L, 2);
+    (s.enemigos || []).forEach(function (e) { if (e.tipo === 'f' && e.escalon) L = mcm(L, cicloSat(e)); });   // (28-sep, D8) el satélite que hace de escalón
     return L;
   }
 
@@ -846,11 +953,13 @@ var MOTOR = (function () {
   function pasoAgente(s, w, inp, ev) {
     ev = ev || [];
     if (w.muerto) return ev;
-    s.col = w.col || 0; s.llc = w.llc || 0; s.cajas = w.cajas || null; s.empujon = false;
+    s.col = w.col || 0; s.llc = w.llc || 0; s.cajas = w.cajas || null; s.empujon = false; s.teleSalta = false;   // (28-sep, D8)
     var d = (inp.der ? 1 : 0) - (inp.izq ? 1 : 0), yAntes;
+    // (27-sep, D3) la ESTALAGMITA que crece te levanta con ella (si hay techo, no: te quedas y sales de lado)
+    if (s.crece && s.crece.length && ocupa(w).some(function (q) { return crecePisa(s, q[0], q[1]); }) && !techo(s, w, w.y - 8)) { w.y -= 8; if (apoyoSuelo(s, w)) { w.aire = 0; w.plat = -1; } }
     // (23-sep) VAPOR: dentro de la columna de vapor flotas y subes (4 px un paso sí y otro no) y te mueves de lado;
     // al salir por arriba caes, así que te quedas «flotando» en lo alto hasta que te apartas a un borde.
-    if (zonaDe(s.vapor, w)) {
+    if (vaporEn(s, w)) {                               // (27-sep, D3) con ritmo, solo mientras sopla
       w.plat = -1; w.salto = 0; w.jdir = 0; w.aire = 2; if (w.coyote || w.guarda) w.coyote = w.guarda = 0;   // (26-sep) el modo moderno no se guarda aquí dentro
       if (d) { w.dir = d; mover(s, w, d); }
       if (!(s.t & 1) && !techo(s, w, w.y - 4) && w.y >= 4) w.y -= 4;
@@ -902,7 +1011,11 @@ var MOTOR = (function () {
     if (w.aire === 0 && w.plat >= 0 && !s.sinPlataformas && s.plataformas[w.plat]) {
       var pl = s.plataformas[w.plat], a0 = posPlat(pl, s.t - 1), a1 = posPlat(pl, s.t), ddx = a1.x - a0.x, ddy = a1.y - a0.y;
       if (ddy < 0 && techo(s, w, w.y + ddy)) { w.plat = -1; w.aire = 2; }
+      else if (Math.abs(ddx) > 16 || Math.abs(ddy) > 16) { w.plat = -1; w.aire = 2; }   // (28-sep, D8) la de sentido único vuelve a salir por el principio: tú te quedas y caes
       else { w.y += ddy; for (var k = 0; k < Math.abs(ddx); k += 2) mover(s, w, ddx > 0 ? 1 : -1); }
+      // (28-sep, D8) el DELFÍN: en lo más alto de su salto te lanza como el trampolín (hacia donde va)
+      var la = w.plat >= 0 && pl.eje === 'arco' ? lanzaArco(pl, s.t) : 0;
+      if (la) { w.aire = 1; w.salto = 0; w.jdir = la; w.plat = -1; w.alto = 2; w.dir = la; ev.push('rebote', 'delfin'); }
     }
     if (w.aire === 0) w.dobleUsado = false;
     // (idea 30) TRAMPOLÍN (T): al pisarlo te lanza 5 filas hacia arriba (hacia donde vayas)
@@ -923,18 +1036,22 @@ var MOTOR = (function () {
         return finPaso(s, w, ev);
       }
     }
+    // (28-sep, D8) TOBOGÁN de solo bajada: de pie en él te lleva cuesta abajo (el doble de rápido) y no se salta: no se sube por él
+    var tob = w.aire === 0 ? toboganEn(s, w) : 0;
     if (w.aire === 0) {
       var c = cinta(s, w), aFavor = c && d === c;
       if (c) { if (d === 0) d = c; else if (d === -c) d = 0; }
-      if (inp.saltar || guardado) {
+      if (tob) { d = tob; if (w.dir !== d) w.dir = d; mover(s, w, d); }
+      if (!tob && teleSalta(s, w, inp)) s.teleSalta = true;   // (28-sep, D8) teletransporte que pide SALTAR: te lleva al otro en vez de saltar
+      else if ((inp.saltar || guardado) && !tob) {
         w.aire = 1; w.salto = 0; w.jdir = d; w.plat = -1; w.alto = w.botas > 0; w.rebote = false;
         if (d) w.dir = d;
         ev.push('salto');
         if (guardado) { w.guarda = 0; if (!inp.saltar) ev.push('saltoGuardado'); }
       } else if (d) {
         if (d !== w.dir) w.dir = d;
-        else { mover(s, w, d); if (aFavor) mover(s, w, d); if (w.patin > 0) mover(s, w, d); if (sobre(s, w, 'H')) w.resbala = 3; }
-      } else if (w.resbala > 0 && sobre(s, w, 'H')) {           // (idea 31) HIELO: al soltar, sigues resbalando un poco
+        else { mover(s, w, d); if (aFavor) mover(s, w, d); if (w.patin > 0) mover(s, w, d); if (resbalaEn(s, w)) w.resbala = 3; }   // (27-sep, D3) + charcos mojados
+      } else if (w.resbala > 0 && resbalaEn(s, w)) {           // (idea 31) HIELO: al soltar, sigues resbalando un poco
         w.resbala--; mover(s, w, w.dir);   // (24-sep) patinete: el doble de rápido   // (22-sep, Alejandro) andando a favor de la cinta, el doble de rápido
       }
     }
@@ -946,6 +1063,7 @@ var MOTOR = (function () {
         // (25-sep, idea 25) se ha dado con la cabeza contra un muro U: paso() lo agrieta o lo rompe (solo si hay U, para que
         // el robot no cargue con un campo más en cada posición)
         if (s.mapa[ny >> 3] && (s.mapa[ny >> 3][w.x] === 'U' || s.mapa[ny >> 3][w.x + 1] === 'U')) w.cabeza = ny >> 3;
+        if (s.def && s.def.tragaperras) w.cabezaD2 = ny >> 3;   // (28-sep, D2) el cabezazo a un rodillo
       } else {
         yAntes = w.y; w.y = ny; w.salto++;
         if (w.jdir) mover(s, w, w.jdir);
@@ -977,7 +1095,10 @@ var MOTOR = (function () {
     viento(s, w);
     if (w.aire === 0) {
       if (apoyoSuelo(s, w)) w.plat = -1;
-      else { var pd = platDebajo(s, w); if (pd >= 0) w.plat = pd; else { w.aire = 2; w.plat = -1; if (w.moderno) w.coyote = COYOTE; } }   // (2b) perdón al borde
+      else { var pd = platDebajo(s, w); if (pd >= 0) w.plat = pd; else { w.aire = 2; w.plat = -1; if (w.moderno && !tob) w.coyote = COYOTE; } }   // (28-sep, D8) al dejar el tobogán, sin perdón al borde   // (2b) perdón al borde
+      // (27-sep, D0) de pie en algo que no es hielo, ya no se resbala (antes w.resbala se quedaba puesto al salir del hielo y
+      // el robot lo contaba como otro estado: con 4 casillas de hielo, de 15 a 61 millones de posiciones)
+      if (w.resbala && w.aire === 0 && !resbalaEn(s, w)) w.resbala = 0;   // (27-sep, D3) el charco mojado resbala como el hielo
       if (w.aire === 0 && w.plat < 0 && !s.sinDerrumbe) {
         var r = (w.y >> 3) + 2;
         [w.x, w.x + 1].forEach(function (x) {
@@ -986,7 +1107,8 @@ var MOTOR = (function () {
           var k = x + ',' + r;
           s.derr[k] = (s.derr[k] || 0) + 1;
           if (cc === 'C' && s.derr[k] >= DERRUMBE) { s.mapa[r][x] = ' '; delete s.derr[k]; ev.push('derrumbe'); }
-          if (cc === 'S' && s.derr[k] >= DERRUMBE * 3) { s.mapa[r][x] = ' '; delete s.derr[k]; (s.hundidos = s.hundidos || []).push({ x: x, y: r, t: s.t }); ev.push('hunde'); }
+          if (cc === 'S') (s.derrT || (s.derrT = {}))[k] = s.t;    // (27-sep, D0) cuándo se pisó por última vez (recuperaS)
+          if (cc === 'S' && s.derr[k] >= DERRUMBE * 3) { s.mapa[r][x] = ' '; delete s.derr[k]; delete s.derrT[k]; (s.hundidos = s.hundidos || []).push({ x: x, y: r, t: s.t }); ev.push('hunde'); }
         });
       }
     }
@@ -996,22 +1118,60 @@ var MOTOR = (function () {
   function viento(s, w) {
     var z = zonaDe(s.viento, w);
     if (z && !(s.t & 1)) mover(s, w, z[4] < 0 ? -1 : 1);
+    else if (s.rachas && s.rachas.length && !(s.t & 1)) { var rs = rachaEn(s, w); if (rs) mover(s, w, rs); }   // (27-sep, D3)
+  }
+  /* (27-sep, D3) EL RITMO. Todo sale SOLO del paso (s.t), como las prensas: el robot lo lleva con periodoSala.
+     · rachas: [{ zona: [x1, y1, x2, y2], sentido, periodo, on, fase, alterna, manga: [x, y], sonido, polvo }] → sopla `on`
+       pasos de cada `periodo` hacia `sentido` (2 px un paso sí y otro no, como el viento); con `alterna`, los `on` pasos
+       siguientes sopla al otro lado. rachaFalta = pasos hasta la próxima (la manga se hincha 15 antes).
+     · vapor { zona, periodo, on, fase, dibujo } · charcos [{ x1, x2, y (la fila que se pisa), periodo, mojado, fase }]:
+       mojados resbalan como el hielo · crece [{ x, yBase, alto, periodo, fase }]: roca de 0 a `alto` casillas y se rompe. */
+  function ritmoQ(r, t) { var P = r.periodo || 96; return (((t + (r.fase || 0)) % P) + P) % P; }
+  function ritmoOn(r, t) { return ritmoQ(r, t) < (r.on != null ? r.on : (r.periodo || 96) / 2); }
+  function rachaSopla(r, t) {
+    var q = ritmoQ(r, t), on = r.on || (r.periodo || 96) / 2, sd = r.sentido < 0 ? -1 : 1;
+    if (q < on) return sd;
+    if (r.alterna && q < 2 * on) return -sd;
+    return 0;
+  }
+  function rachaFalta(r, t) { return rachaSopla(r, t) ? 0 : (r.periodo || 96) - ritmoQ(r, t); }
+  function rachaEn(s, w) {
+    for (var i = 0; i < s.rachas.length; i++) { var r = s.rachas[i], sd = rachaSopla(r, s.t); if (sd && zonaDe([r.zona], w)) return sd; }
+    return 0;
+  }
+  function vaporEn(s, w) {
+    if (!s.vapor || !s.vapor.length) return null;
+    for (var i = 0; i < s.vapor.length; i++) { var rt = s.vaporRitmo && s.vaporRitmo[i]; if (rt && !ritmoOn(rt, s.t)) continue; if (zonaDe([s.vapor[i]], w)) return s.vapor[i]; }
+    return null;
+  }
+  function charcoMojado(c, t) { return ritmoOn({ periodo: c.periodo || 96, on: c.mojado != null ? c.mojado : (c.periodo || 96) / 2, fase: c.fase }, t); }
+  function resbalaEn(s, w) {
+    if (sobre(s, w, 'H')) return true;
+    if (charcoJefe(s, w)) return true;                                           // (28-sep, D11) el charco de tinta del pulpo
+    if (!s.charcos || !s.charcos.length || (w.y & 7)) return false;
+    var r = (w.y >> 3) + 2;
+    return s.charcos.some(function (c) { return c.y === r && w.x + 1 >= c.x1 && w.x <= c.x2 && charcoMojado(c, s.t); });
+  }
+  function creceAlto(c, t) { var P = c.periodo || 96, al = c.alto || 3; return Math.floor(ritmoQ(c, t) * (al + 1) / P); }
+  function crecePisa(s, x, y) {
+    for (var i = 0; i < s.crece.length; i++) { var c = s.crece[i]; if (x === c.x && y <= c.yBase && y > c.yBase - creceAlto(c, s.t)) return true; }
+    return false;
   }
   // Lo común al final de cada paso: teletransportes, interruptores, llaves de colores, cajas, agua y lo que mata
   function finPaso(s, w, ev) {
     if (s.empujon) { ev.push('caja'); s.empujon = false; }
     // Teletransportes (idea 4): de pie en uno (su casilla de arriba a la izquierda), apareces en su pareja.
     // Para volver hay que salir y entrar otra vez.
-    var enTele = false;
+    var enTele = false, pide = !!(s.def && s.def.pideSaltar), llega = false;   // (28-sep, D8) pideSaltar: solo con SALTAR encima
     if (w.aire === 0 && !(w.y & 7) && s.teles) Object.keys(s.teles).forEach(function (n) {
       var par = s.teles[n]; if (enTele || !par || par.length !== 2) return;
       for (var i = 0; i < 2; i++) if (w.x === par[i][0] && (w.y >> 3) === par[i][1]) {
         enTele = true;
-        if (!w.tele) { w.x = par[1 - i][0]; w.y = par[1 - i][1] * 8; w.f = 0; w.plat = -1; ev.push('tele'); }
+        if (!w.tele && (!pide || s.teleSalta)) { llega = true; w.x = par[1 - i][0]; w.y = par[1 - i][1] * 8; w.f = 0; w.plat = -1; ev.push('tele'); }
         return;
       }
     });
-    w.tele = enTele;
+    w.tele = pide ? enTele && (w.tele || llega) : enTele;   // (28-sep, D8) con pideSaltar, «acabo de llegar» hasta que te bajas
     // Interruptor de color (idea 5): al entrar en «*», cambian los bloques rojos y azules
     var enSw = ocupa(w).some(function (c) { return celda(s, c[0], c[1]) === '*'; });
     if (enSw && !w.enSw) { w.col = (w.col || 0) ^ 1; s.col = w.col; ev.push('color'); }
@@ -1052,11 +1212,19 @@ var MOTOR = (function () {
     if (s.congelado > 0) { s.congelado--; return; }
     if (s.lento > 0) { s.lento--; if (s.t & 1) return; }       // (24-sep, idea 54) reloj de arena: a cámara lenta
     // (idea 35) el IMITADOR repite lo que hiciste hace 3 segundos
-    if (s.objetivo) { s.huella = s.huella || []; s.huella.push({ x: s.objetivo.x, y: s.objetivo.y, dir: s.objetivo.dir }); if (s.huella.length > 60) s.huella.shift(); }
+    var callado = !s.tocado && s.enemigos.some(function (e) { return e.tipo === 'm' && e.tecla; });   // (27-sep, D4) el imitador con `tecla` no graba hasta tu 1.ª tecla
+    if (s.objetivo && !callado) { s.huella = s.huella || []; s.huella.push({ x: s.objetivo.x, y: s.objetivo.y, dir: s.objetivo.dir }); if (s.huella.length > 60) s.huella.shift(); }
     s.enemigos.forEach(function (e) {
       if (e.fuera) return;
+      if (frenadoD7(s, e)) return;                               // (28-sep, D7) parado (palanca, pescado, trituradora, balanza) o frenado (huevo)
+      var t0 = s.t; s.t -= e.retraso || 0;                       // (28-sep, D7) el que sale del paso sigue donde se quedó
+      unBicho(e); s.t = t0;
+    });
+    function unBicho(e) {                                        // (28-sep, D7) antes, el cuerpo del forEach
+      if (e.despierta) { e.dormido = !despierto(s, e); if (e.dormia && !e.dormido) e.aviso = 'despierta'; e.dormia = e.dormido; }   // (27-sep, D4) se mueve igual (su sitio sale del paso), pero no está
       if (e.tipo === 'h') {
         if (e.robado > 0) e.robado--;                            // (147) el moroso: tras robarte, 48 pasos sin volver a robar
+        if (e.espera != null || e.fase != null) { ritmoH(s, e); if (e.come) comeCosas(s, e); return; }   // (27-sep, D4) con espera/fase: sale del paso
         if (e.lento && (s.t & 1)) return;
         if (e.dir > 0) { if (e.f < 3) e.f++; else if (e.x < e.max) { e.x++; e.f = 0; } else e.dir = -1; }
         else { if (e.f > 0) e.f--; else if (e.x > e.min) { e.x--; e.f = 3; } else e.dir = 1; }
@@ -1069,6 +1237,7 @@ var MOTOR = (function () {
       } else if (e.tipo === 'v') {
         // (idea 18) murciélago DORMIDO: no se mueve hasta que saltas cerca (a 5 casillas); si vas andando, ni se entera
         if (e.duerme && !e.despierto) { var ob = s.objetivo; if (ob && ob.salta && Math.abs(ob.x - e.x) < 40) e.despierto = true; else { e.fr = 0; return; } }
+        if (!e.vecino && (e.espera != null || e.fase != null)) { ritmoV(s, e); return; }   // (27-sep, D4) con espera/fase: sale del paso
         var min = e.min, max = e.max;
         if (e.vecino && s.quedan === 0) { min = e.minFinal; e.dy = e.dy > 0 ? e.dyFinal : -e.dyFinal; }
         e.y += e.dy;
@@ -1088,6 +1257,7 @@ var MOTOR = (function () {
         e.estalla = dentro >= caida;
         e.y = e.estalla ? e.yFin : e.y0 + dentro * (e.vel || 2);
         e.fr = e.estalla ? 3 : (dentro >> 1) & 1;
+        if (e.presi != null) { if (dentro === 0 || e.presiOn == null) e.presiOn = presiArriba(s, e); e.oculta = !e.presiOn; }   // (28-sep, D6) la maceta, solo con el Presidente arriba
       } else if (e.tipo === 'c') {
         // El Tasador (jefe final, idea 7): flota a través de todo hacia el agente, a 1 px por paso (el agente anda a 2).
         // Se despierta al coger todas las llaves (o desde el principio con siempre:true).
@@ -1111,7 +1281,10 @@ var MOTOR = (function () {
         // min y max (px); si SALTAS justo debajo, se lanza en picado hasta `baja` px y vuelve a subir. El robot no lo sigue.
         if (e.y0 === undefined) { e.y0 = e.y; e.dir = e.dir || 1; e.pica = 0; }
         var oa = s.objetivo;
-        if (!e.pica && oa && oa.salta && oa.y > e.y && Math.abs(oa.x + 5 - (e.x + 8)) < 14) e.pica = 1;
+        if (!e.pica && !(e.unaVez && e.hecho) && oa && oa.salta && oa.y > e.y && Math.abs(oa.x + 5 - (e.x + 8)) < 14) { if (e.avisoPasos) { e.pica = 3; e.cuenta = e.avisoPasos; e.aviso = 'pajaroAvisa'; } else e.pica = 1; }   // (27-sep, D4) avisa antes
+        e.avisa = e.pica === 3;
+        if (e.pica === 3) { if (--e.cuenta <= 0) e.pica = 1; e.fr = (s.t >> 1) & 3; return; }   // (27-sep, D4) aletea en el sitio: ¡que viene!
+        if (e.pica === 2 && e.y - 1 <= e.y0 && e.unaVez) e.hecho = true;   // (27-sep, D4) `unaVez`: ya no se lanza más
         if (e.pica === 1) { e.y += 3; if (e.y >= e.y0 + (e.baja || 56)) e.pica = 2; }
         else if (e.pica === 2) { e.y -= 1; if (e.y <= e.y0) { e.y = e.y0; e.pica = 0; } }
         else { e.x += e.dir * (e.vel || 1); if (e.x >= e.max) { e.x = e.max; e.dir = -1; } else if (e.x <= e.min) { e.x = e.min; e.dir = 1; } }
@@ -1126,19 +1299,217 @@ var MOTOR = (function () {
         var vt = e.vel || 1;
         if (s.t & 1) { e.x += Math.max(-vt, Math.min(vt, o.x - 1 - e.x)); e.y += Math.max(-vt, Math.min(vt, o.y + 2 - e.y)); }
         e.fr = (s.t >> 3) & 1;
+      } else if (e.tipo === 'r' || e.tipo === 'topo') {
+        sitioD5(s, e);                                           // (27-sep, D5) recorrido por tramos, rata, chispa y topo: sitio puro del paso
       } else pasoMonstruo(s, e);                                 // (25-sep, 145-152) okupa, suegra, perro, dueño, cofre
-    });
+    }
     if (s.jefe && !s.jefe.vencido) mueveJefe(s, s.jefe);          // (25-sep, 138-144) el jefe, con su propio reloj
+  }
+  /* (27-sep, D4) BICHOS QUE DESPIERTAN Y QUE ESPERAN. `despierta: 'final' | n`: no está (ni se ve ni mata) hasta coger la última
+     llave o la n-ésima; mientras, se mueve igual para que su sitio salga del paso y el robot lo siga. Sin llaves en la sala (el
+     robot, las calles) cuenta despierto salvo `'final'` con quedan > 0. `espera` y `fase` en 'h' y 'v': como el ascensor, se para
+     `espera` pasos en cada punta; `aviso: pasos` → e.avisa esos pasos antes de salir (luces, campana) y el suceso 'avisaSale'. */
+  function despierto(s, e) {
+    if (!e.despierta || s.quedan == null || s.quedan === 0) return true;
+    if (e.despierta === 'final') return false;
+    var tot = s.llaves ? s.llaves.length : 0;
+    return !tot || tot - s.quedan >= e.despierta;
+  }
+  function vaivenEspera(e, t, U) {
+    var es = e.espera || 0, C = 2 * U + 2 * es, q = (((t + (e.fase || 0)) % C) + C) % C;
+    if (q < es) return { u: 0, sentido: 1, falta: es - q };
+    if (q < es + U) return { u: q - es, sentido: 1, falta: 0 };
+    if (q < 2 * es + U) return { u: U, sentido: -1, falta: 2 * es + U - q };
+    return { u: U - (q - 2 * es - U), sentido: -1, falta: 0 };
+  }
+  function avisaD4(e, falta) {
+    var n = e.avisoPasos || 0, antes = e.avisa;
+    e.avisa = n > 0 && falta > 0 && falta <= n;
+    if (e.avisa && !antes && !e.dormido) e.aviso = 'avisaSale';
+  }
+  function ritmoH(s, e) {                                // su cuarto de casilla u sale del paso (lento: la mitad)
+    var tt = e.lento ? Math.floor(s.t / 2) : s.t, U = (e.max - e.min) * 4 + 3, r = vaivenEspera(e, tt, U);
+    if (e.espejo) { e.x = e.max - (r.u >> 2); e.f = 3 - (r.u & 3); e.dir = -r.sentido; }   // espejo: x' = W − 2 − x y f' = 3 − f
+    else { e.x = e.min + (r.u >> 2); e.f = r.u & 3; e.dir = r.sentido; }
+    e.fr = e.espejo ? 3 - e.f : e.f;
+    avisaD4(e, r.falta);
+  }
+  function ritmoV(s, e) {
+    var v = Math.abs(e.dy) || 1, L = e.max - e.min, U = Math.ceil(L / v), r = vaivenEspera(e, s.t, U);
+    e.y = e.min + Math.min(L, r.u * v); e.dy = r.sentido * v; e.fr = s.t & 3;
+    avisaD4(e, r.falta);
+  }
+  /* (27-sep, D5) BICHOS CON RECORRIDO NUEVO (filas 36-39). Su sitio sale SOLO del paso s.t (como el satélite): el robot los sigue.
+     · 'r' { tramos: [[x1, y1, x2, y2], { espera: n, oculto: true }, …], vel, ciclo?, fase? }: recorre los tramos en orden (px, esquina
+       de arriba a la izquierda del dibujo) y al acabar vuelve a salir por el primero; { espera } se queda quieto n pasos (con
+       `oculto`, no está: ni se ve ni mata); `ciclo` alarga la vuelta con una espera oculta al final (48, 80 o 96 y sus múltiplos).
+     · la RATA: 'r' con `agujeros: [[x, y], …]` y `escondida: n`: corre del 1.º al 2.º, se mete, n pasos dentro, sale por el 3.º
+       y corre al 4.º… (con 2 agujeros, ida y vuelta).
+     · la CHISPA: 'r' con `rodea: [cx1, cy1, cx2, cy2]` (las casillas del bloque): da la vuelta entera por fuera (encima, el lado,
+       debajo y el otro lado) en `ciclo` pasos justos (96 si no se dice), sin desaparecer nunca.
+     · el TOPO { tipo: 'topo', agujeros: [[x, y], …], asoma, periodo }: cada `periodo` pasos cambia de agujero y asoma los últimos
+       `asoma` (sube y baja en 4 pasos); escondido no está; asomado mata y se le pisa (+200).
+     En espejo se dan la vuelta sus puntos (espejoEnemigo): el sitio espejo exacto en el mismo paso. */
+  var rndD5 = function (v) { return v < 0 ? -Math.round(-v) : Math.round(v); };   // redondeo simétrico: el espejo cae en el sitio exacto
+  function tramosD5(e) {
+    var an = anchoSpr(e.spr), al = altoSpr(e.spr);
+    if (e.rodea) {
+      var r = e.rodea, x1 = r[0] * 8 - an, y1 = r[1] * 8 - al, x2 = (r[2] + 1) * 8, y2 = (r[3] + 1) * 8;
+      return [[x1, y1, x2, y1], [x2, y1, x2, y2], [x2, y2, x1, y2], [x1, y2, x1, y1]];
+    }
+    if (e.agujeros && e.tipo === 'r') {
+      var a = e.agujeros, n = a.length, esc = e.escondida || 24, t = [];
+      for (var i = 0; i < n; i += 2) { var A = a[i], Bq = a[(i + 1) % n]; t.push([A[0], A[1], Bq[0], Bq[1]], { espera: esc, oculto: true }); }
+      if (n === 2) t.push([a[1][0], a[1][1], a[0][0], a[0][1]], { espera: esc, oculto: true });
+      return t;
+    }
+    return e.tramos || [];
+  }
+  // los tramos con sus pasos: [{ x1, y1, x2, y2, n, oculto, dir }] y el ciclo entero
+  function trozosD5(e) {
+    var tr = tramosD5(e), v = e.vel || 2, out = [], px = null, py = null, tot = 0;
+    tr.forEach(function (t) {
+      if (Array.isArray(t)) { var L = Math.max(Math.abs(t[2] - t[0]), Math.abs(t[3] - t[1])); out.push({ x1: t[0], y1: t[1], x2: t[2], y2: t[3], n: Math.max(1, Math.ceil(L / v)), L: L, dir: Math.sign(t[2] - t[0]) }); px = t[2]; py = t[3]; }
+      else { var p0 = px == null ? tr.filter(Array.isArray)[0] : null; var qx = px != null ? px : p0 ? p0[0] : e.x, qy = py != null ? py : p0 ? p0[1] : e.y; out.push({ x1: qx, y1: qy, x2: qx, y2: qy, n: Math.max(1, t.espera || 1), oculto: !!t.oculto, quieto: true, dir: 0 }); }
+    });
+    if (e.rodea) {                                       // la chispa: la vuelta en `ciclo` pasos justos, repartidos por lo que mide cada lado
+      var C = e.ciclo || 96, per = out.reduce(function (a, o) { return a + o.L; }, 0), hecho = 0;
+      out.forEach(function (o, i) { o.n = i === out.length - 1 ? C - hecho : Math.max(1, Math.round(o.L * C / per)); hecho += o.n; });
+    }
+    if (e.vueltaD5) out.forEach(function (o, i) { if (e.vueltaD5[i]) o.n = e.vueltaD5[i]; });   // la chispa dada la vuelta: los pasos de cada lado, los del original
+    tot = out.reduce(function (a, o) { return a + o.n; }, 0);
+    if (e.ciclo && e.ciclo > tot && out.length) { var u = out[out.length - 1]; out.push({ x1: u.x2, y1: u.y2, x2: u.x2, y2: u.y2, n: e.ciclo - tot, oculto: true, quieto: true, dir: 0 }); tot = e.ciclo; }
+    var d = e.espejo ? -1 : 1;                           // el que va en vertical mira hacia donde iba antes
+    for (var k = 0; k < 2 * out.length; k++) { var o = out[k % out.length]; if (o.dir) d = o.dir; else if (k >= out.length) o.dir = d; }
+    return { trozos: out, ciclo: tot };
+  }
+  function cicloD5(e) {
+    if (e.tipo === 'r') return trozosD5(e).ciclo;
+    if (e.tipo === 'topo') return (e.periodo || 48) * ((e.agujeros || []).length || 1);
+    return 0;
+  }
+  function sitioD5(s, e) {
+    var C = cicloD5(e), q = (((s.t + (e.fase || 0)) % C) + C) % C, oculto = false, nfr = SPR[e.spr] ? SPR[e.spr].length : 1;
+    if (e.tipo === 'topo') {
+      var P = e.periodo || 48, as = Math.min(P, e.asoma || 24), h = e.agujeros[Math.floor(q / P)], k = q % P - (P - as);
+      oculto = k < 0;
+      var sube = oculto ? 0 : Math.min(4, k + 1, as - k);
+      e.x = h[0]; e.y = h[1] + (4 - sube) * 2; e.hueco = Math.floor(q / P);
+      e.fr = oculto ? 0 : ((q >> 3) % nfr);
+    } else {
+      var z = trozosD5(e), i = 0, r = q;
+      while (r >= z.trozos[i].n) { r -= z.trozos[i].n; i++; }
+      var o = z.trozos[i];
+      e.x = o.x1 + rndD5((o.x2 - o.x1) * r / o.n); e.y = o.y1 + rndD5((o.y2 - o.y1) * r / o.n);
+      e.dir = o.dir || (e.espejo ? -1 : 1); oculto = !!o.oculto; e.tramo = i;
+      e.fr = o.quieto ? 0 : ((q >> 2) % nfr);
+    }
+    e.dentro = oculto;                                   // escondido (la rata por dentro, el topo bajo tierra, el barril que aún no sale)
+    e.dormido = !!(e.despierta && !despierto(s, e)) || oculto;   // no está: choca, sitioSeguro y la pantalla ya lo miran
+  }
+  // su recorrido entero [x1, x2, y1, y2] en px (para sitioSeguro: la entrada no va donde pasa)
+  function cajaD5(e) {
+    var an = anchoSpr(e.spr), al = altoSpr(e.spr), xs = [], ys = [];
+    if (e.tipo === 'topo') (e.agujeros || []).forEach(function (h) { xs.push(h[0]); ys.push(h[1]); });
+    else trozosD5(e).trozos.forEach(function (o) { if (!o.oculto) { xs.push(o.x1, o.x2); ys.push(o.y1, o.y2); } });
+    if (!xs.length) return [0, 0, 0, 0];
+    return [Math.min.apply(null, xs), Math.max.apply(null, xs) + an, Math.min.apply(null, ys), Math.max.apply(null, ys) + al + (e.tipo === 'topo' ? 8 : 0)];
+  }
+  // cada trozo por donde se le ve, por separado (la rata no pisa el tramo del medio: ahí sí se puede reaparecer)
+  function cajasD5(e) {
+    var an = anchoSpr(e.spr), al = altoSpr(e.spr);
+    if (e.tipo === 'topo') return (e.agujeros || []).map(function (h) { return [h[0], h[0] + an, h[1], h[1] + al + 8]; });
+    return trozosD5(e).trozos.filter(function (o) { return !o.oculto; }).map(function (o) { return [Math.min(o.x1, o.x2), Math.max(o.x1, o.x2) + an, Math.min(o.y1, o.y2), Math.max(o.y1, o.y2) + al]; });
+  }
+  /* (28-sep, D7) PARAR A LOS BICHOS (filas 47-48). Un solo efecto: para(s, a, pasos, ev, desde, modo).
+     · a (quién): índice · [índices] · 'todos' · 'mitad' (los de la mitad de la sala donde está `desde`) · un tipo o un dibujo
+       ('c', 'pinguino', 'ameba' vale para amebaPeq) · o { tipo, mitad, cerca: casillas, cols: [c1, c2], bajoDe: fila }.
+     · modo: nada → se queda QUIETO `pasos` pasos (sigue matando: está ahí) · 'sube' → el 'v' sube a su tope de arriba y
+       espera ahí (el telefonillo) · 'frena' → el resto de la sala va a la mitad (un paso sí y otro no: el huevo).
+     El que sale del paso (f, p, r, topo, y h/v con espera o fase) guarda los pasos que ha estado quieto en e.retraso y sigue
+     desde donde se quedó; sin tocar nada, nadie tiene retraso y todo va igual que antes. En espejo, lo mismo (las mitades y
+     las distancias se miden desde el centro, que el espejo respeta). El robot no usa nada de esto. */
+  function delPasoD7(e) { return e.tipo === 'f' || e.tipo === 'p' || e.tipo === 'r' || e.tipo === 'topo' || ((e.tipo === 'h' || (e.tipo === 'v' && !e.vecino)) && (e.espera != null || e.fase != null)); }
+  function frenadoD7(s, e) {
+    var quieto = e.parado > 0 || (e.frena && (s.t & 1));
+    if (!quieto) return false;
+    if (e.parado > 0) {
+      if (e.sube && e.tipo === 'v' && !delPasoD7(e)) { var v = Math.abs(e.dy) || 1; e.y = Math.max(e.min, e.y - v); e.dy = v; e.fr = (e.fr + 1) & 3; }   // (194) sube a contestar
+      if (--e.parado === 0) { e.sube = false; e.aviso = 'sigueD7'; }
+    }
+    if (delPasoD7(e)) e.retraso = (e.retraso || 0) + 1;
+    return true;
+  }
+  function quienD7(s, e, i, a, desde) {
+    if (a == null || a === 'todos') return true;
+    if (typeof a === 'number') return i === a;
+    if (Array.isArray(a)) return a.indexOf(i) >= 0;
+    if (typeof a === 'string') a = a === 'mitad' ? { mitad: true } : { tipo: a };
+    var pe = posEnemigo(e), an = anchoSpr(e.spr), cx = pe.x + an / 2, cy = pe.y + altoSpr(e.spr) / 2;
+    if (a.tipo && !(e.tipo === a.tipo || String(e.spr || '').indexOf(a.tipo) === 0)) return false;
+    if (a.mitad && desde) { var M2 = (s.ancho || ANCHO) * 4, dx0 = desde.x * 8 + 4; if (cx !== M2 && (cx < M2) !== (dx0 < M2)) return false; }   // justo en medio: de las dos
+    if (a.cols && (pe.x + an <= a.cols[0] * 8 || pe.x >= (a.cols[1] + 1) * 8)) return false;
+    if (a.bajoDe != null && pe.y + altoSpr(e.spr) <= a.bajoDe * 8) return false;
+    if (a.cerca != null && desde) { var ddx = cx - (desde.px != null ? desde.px : desde.x * 8 + 4), ddy = cy - (desde.py != null ? desde.py : desde.y * 8 + 4); if (ddx * ddx + ddy * ddy > a.cerca * a.cerca * 64) return false; }
+    return true;
+  }
+  function para(s, a, pasos, ev, desde, modo) {
+    var n = 0;
+    s.enemigos.forEach(function (e, i) {
+      if (e.fuera || e.tipo === 'gente' || e.tipo === 'generoso' || !quienD7(s, e, i, a, desde)) return;
+      if (modo === 'frena') e.frena = true;
+      else { e.parado = Math.max(e.parado || 0, pasos || 0); if (modo === 'sube') e.sube = true; if (modo === 'duerme') e.duermeD7 = true; }
+      n++;
+    });
+    if (ev) ev.push(n ? (modo === 'frena' ? 'frena' : modo === 'duerme' ? 'duerme' : 'para') : 'paraNada');
+    return n;
+  }
+  function espejoA(a, W) { if (!a || typeof a !== 'object' || Array.isArray(a) || !a.cols) return a; var o = copia(a); o.cols = [W - 1 - a.cols[1], W - 1 - a.cols[0]]; return o; }
+  // la palanca que PARA: { hace: 'para', a, pasos, recarga, modo, unaVez } (el telefonillo, las clavijas, la lámpara del Tasador)
+  function palancaPara(j, s, p, ev) {
+    if (p.hecha) return;
+    if (p.carga > 0) { ev.push('recarga'); return; }
+    ev.push(p.golpe ? 'golpe' : 'palanca');
+    para(s, p.a, p.pasos || 60, ev, p, p.modo);
+    p.carga = p.recarga || 0; p.movida = p.carga > 0 || !!p.unaVez; if (p.unaVez) p.hecha = true;
+  }
+  // cada paso: la recarga de palancas y frenos, y el cebo que llevas (el pescado) por si pasas junto a quien se lo come
+  function cargaD7(s, w, ev) {
+    (s.palancas || []).forEach(function (p) { if (p.carga > 0 && --p.carga === 0) { if (!p.hecha) p.movida = false; ev.push('recargada'); } });
+    (s.frenos || []).forEach(function (f) { if (f.carga > 0 && --f.carga === 0) ev.push('recargada'); });
+    var c = s.cebo;
+    if (c && w) { var desde = { px: w.x * 8 + w.f * 2 + 5, py: w.y + 8 }; if (para(s, { tipo: c.a, cerca: c.cerca }, c.pasos, null, desde)) { s.cebo = null; ev.push('come'); } }
+  }
+  // los objetos que frenan: el PESCADO (lo llevas; el primer pingüino junto al que pases se para a comérselo) y el HUEVO
+  // (los de su tipo van a la mitad el resto de la sala). Se usan en la sala y ya: no van a la colección.
+  var FRENA_OBJ = { pescado: 1, huevo: 1 };
+  function objetoD7(s, o, ev) {
+    if (o.tipo === 'pescado') { s.cebo = { a: o.a || 'pinguino', cerca: o.cerca || 3, pasos: o.pasos || 75 }; ev.push('cebo'); return; }
+    para(s, o.a || 'ameba', 0, ev, o, 'frena');
+  }
+  // casillas que paran al pasar por ellas: { x, y, a, pasos, recarga, modo, sinMorir, dibujo } (la trituradora, la balanza)
+  function frenosD7(j, s, celdas, ev) {
+    (s.frenos || []).forEach(function (f) {
+      var toca = celdas.some(function (c) { return c[0] === f.x && c[1] === f.y; }), entra = toca && !f.dentro;
+      f.dentro = toca;
+      if (!entra || (f.hecho && !f.recarga)) return;
+      if (f.carga > 0) { ev.push('recarga'); return; }
+      if (f.sinMorir && s.muertes > 0) { f.hecho = true; ev.push('balanzaMal'); return; }   // (338) la balanza no se equilibra si has muerto en la sala
+      f.hecho = true; f.carga = f.recarga || 0;
+      para(s, f.a, f.pasos || 45, ev, f, f.modo);
+    });
   }
   function posEnemigo(e) {
     if (e.tipo === 'h') return { x: e.x * 8 + e.f * 2 + (e.espejo ? 10 - anchoSpr(e.spr) : 0), y: e.y, flip: e.dir < 0 };   // (27-sep, P14) al revés: en W·8 − x − ancho
     // (25-sep) los monstruos nuevos que andan miran hacia donde van (y en la casa espejo, al revés: dir empieza en -1)
-    var gira = e.tipo === 'suegra' || e.tipo === 'perro' || e.tipo === 'cofre' || e.tipo === 'okupa' || e.tipo === 'generoso' || e.tipo === 'gente';
+    var gira = e.tipo === 'suegra' || e.tipo === 'perro' || e.tipo === 'cofre' || e.tipo === 'okupa' || e.tipo === 'generoso' || e.tipo === 'gente' || e.tipo === 'r' || e.tipo === 'manso' /* (28-sep, D6) */;   // (27-sep, D5) + el del recorrido
     return { x: e.x, y: e.y, flip: gira ? (e.dir || 1) < 0 : !!e.espejo };   // (27-sep, P14) el que no gira, en espejo, mirando al revés
   }
   // (27-sep, P14) el bicho 'h' dado la vuelta empieza en f 3: es el sitio espejo exacto del f 0 del original
   function ponEspejoH(o) { if (o.tipo === 'h' && o.espejo) { o.f = 3; o.fr = 0; } }
   function choca(w, e) {
+    if (e.dormido || e.duermeD7 || e.oculta /* (28-sep, D6) la maceta que no cae */) return false;
+    if (e.escalon && e.tipo === 'f' && e.estalla) return false;   // (28-sep, D8) el satélite caído que hace de escalón no mata           // (27-sep, D4) aún no ha despertado: no está · (28-sep, D7) o duerme (la balanza)
     var a = mascara('agente', e.espejo ? 3 - w.f : w.f), p = posEnemigo(e), b = mascara(e.spr, e.fr);   // (27-sep, P14) en espejo, el fotograma 3 − f
     var ax = w.x * 8 + w.f * 2, ay = w.y;
     if (ax + a.ancho <= p.x || p.x + b.ancho <= ax || ay + a.alto <= p.y || p.y + b.alto <= ay) return false;
@@ -1185,15 +1556,83 @@ var MOTOR = (function () {
     poderContraJefe(j);                               // (25-sep, 2b) el poder de otro jefe vencido le quita una vida a este
     if (j.revisita) preparaRevisita(j);               // (25-sep, 2b) de vuelta a una casa vendida, con las botas de muelle
   }
+  /* ══ (28-sep, D13) CASAS Y SALAS ESPECIALES (filas 100-109) ══════════════════════════════════════════════════════
+     · LA RUEDA de salas de bonus (tesoroDe) lleva SOLO las de siempre: una sala con `soloTuberia` (Los Anillos: solo por su
+       tubería) o `soloCasa` (la mudanza y la subasta: solo desde la casa que la pide con `bonusSala: '<id>'`) NO entra en la
+       rueda; así tesoroDe(n) da a TODAS las casas la misma sala que antes.
+     · PUERTAS ESPECIALES de las calles: `especiales: [{ x, y, casa, soloFecha, dibujo }]` (NO en `puertas`): no cuentan para
+       cuentaAv, ni abren vallas ni la puerta del jefe, ni llevan número. Suman al % como secretos, SALVO las de fecha.
+       `soloFecha: ['MM-DD', 'MM-DD']` (desde, hasta; si desde > hasta, cruza el año): la puerta solo EXISTE esos días.
+       fechaD13('AAAA-MM-DD') fija la fecha (pruebas); fechaD13(null) vuelve a la de hoy.
+     · `subasta: { cada, sube, tope }` en una sala: las piedras (gema, esmeralda, rubí, diamante) valen más cuanto más esperas
+       (+sube × su precio cada `cada` pasos, hasta `tope` veces su precio). Evento 'subasta'.
+     · `espejoTotal: true` en una casa: un GEMELO al revés (s.gemelo, tu reflejo exacto en cada paso)
+       coge llaves y bonus de su lado y, si le pillan (pinchos o bichos), te pillan (evento 'gemelo'). Por la puerta sale el de
+       siempre. En una casa SIMÉTRICA (plano y bichos) es lo mismo que otro agente con izquierda y derecha cambiadas. ══ */
+  var RUEDA = TESOROS.filter(function (t) { return !t.soloTuberia && !t.soloCasa; });
+  if (!RUEDA.length) RUEDA = TESOROS;
+  var FECHA_D13 = null;
+  function fechaD13(f) { FECHA_D13 = f || null; return FECHA_D13; }
+  function mmddD13() {
+    var d = FECHA_D13 ? new Date(FECHA_D13 + 'T12:00:00') : new Date(), m = d.getMonth() + 1, dd = d.getDate();
+    return (m < 10 ? '0' : '') + m + '-' + (dd < 10 ? '0' : '') + dd;
+  }
+  function fechaDentroD13(r) {
+    if (!r || r.length < 2) return true;
+    var h = mmddD13(); return r[0] <= r[1] ? (h >= r[0] && h <= r[1]) : (h >= r[0] || h <= r[1]);
+  }
+  function salaBonusD13(s) {
+    var id = s && s.def && s.def.bonusSala; if (!id) return null;
+    for (var i = 0; i < TESOROS.length; i++) if (TESOROS[i].id === id) return TESOROS[i];
+    return null;
+  }
+  var PRECIO_D13 = { gema: 1, esmeralda: 1, rubi: 1, diamante: 1 };
+  function precioD13(s, tipo) {
+    var sb = s.def.subasta || {}, base = BONUS[tipo] || 0, n = Math.floor((s.t || 0) / (sb.cada || 48));
+    return Math.min(base * (sb.tope || 4), base + Math.round(base * (sb.sube != null ? sb.sube : 0.5)) * n);
+  }
+  function espejaAgenteD13(s, w) {
+    var g = JSON.parse(JSON.stringify(w)), px = s.ancho * 8 - 16 - (w.x * 8 + w.f * 2);
+    g.x = px >> 3; g.f = (px & 7) >> 1; g.dir = -(w.dir || 1); if (g.jdir) g.jdir = -g.jdir; g.muerto = false;
+    return g;
+  }
+  /* el paso del gemelo (tras el tuyo): true si le han pillado (y por tanto a ti). Es tu REFLEJO EXACTO en cada paso (no lleva
+     física propia: el motor no es simétrico al subpíxel —al andar a la izquierda se choca 2 px antes que a la derecha— y un
+     gemelo con su propio pasoAgente se desfasaba en el primer salto). Coge lo que toca y muere con pinchos o bichos de SU lado. */
+  // ¿toca el bicho e al gemelo? = ¿tocas TÚ el reflejo de e? (los mismos puntos de choca(), con el bicho dado la vuelta: exacto)
+  function chocaReflejoD13(s, w, e) {
+    if (e.dormido || e.duermeD7 || e.oculta) return false;
+    if (e.escalon && e.tipo === 'f' && e.estalla) return false;
+    var a = mascara('agente', !e.espejo ? 3 - w.f : w.f), p = posEnemigo(e), b = mascara(e.spr, e.fr), W8 = s.ancho * 8;
+    var ax = w.x * 8 + w.f * 2, ay = w.y, rx = W8 - p.x - b.ancho;      // rx: el borde izquierdo del bicho reflejado
+    if (ax + a.ancho <= rx || rx + b.ancho <= ax || ay + a.alto <= p.y || p.y + b.alto <= ay) return false;
+    var tabla = {};
+    a.puntos.forEach(function (q) { tabla[(w.dir < 0 ? a.ancho - 1 - q[0] : q[0]) + ax + ',' + (q[1] + ay)] = 1; });
+    return b.puntos.some(function (q) { return tabla[(W8 - 1 - ((p.flip ? b.ancho - 1 - q[0] : q[0]) + p.x)) + ',' + (q[1] + p.y)]; });
+  }
+  function gemeloD13(j, s, inp, ev) {
+    var w = j.w, g = s.gemelo = espejaAgenteD13(s, w);
+    if (!(w.goma > 0) && !(w.estrella > 0) && ocupa(g).some(function (c) { return MORTAL[celda(s, c[0], c[1])]; })) g.muerto = 'pincho';
+    if (!g.muerto) {
+      recoge(j, s, g, 1, ev);
+      if (!(w.inv > 0) && !(w.estrella > 0) && s.enemigos.some(function (e) { return !e.fuera && (e.tipo !== 'c' || e.activo) && mata(e) && chocaReflejoD13(s, w, e); })) g.muerto = 'enemigo';
+    }
+    if (!g.muerto) return false;
+    ev.push('gemelo');
+    if (j.inmortal) { g.muerto = false; return false; }
+    w.muerto = g.muerto; ev.push('muerte');
+    return true;
+  }
   // (22-sep, Alejandro: «las pantallas de bonus, todas diferentes») hay varias salas de bonus; cada casa lleva a una
-  function tesoroDe(n) { return TESOROS[((n || 0) % TESOROS.length + TESOROS.length) % TESOROS.length]; }
+  // (28-sep, D13) solo las de la RUEDA (sin las de tubería ni las de una casa): la misma sala que antes para todas
+  function tesoroDe(n) { return RUEDA[((n || 0) % RUEDA.length + RUEDA.length) % RUEDA.length]; }
   function entrarTesoro(j) {
     // (26-sep, arreglo M1) en la aventura, la casa queda VENDIDA al ganarla, ANTES de su sala de bonus: si te pillaban en la
     // sala de bonus, volvías a la calle con la casa sin vender (y con el Gran Tasador no salía el final)
     if (j.av && j.enCasa && !j.revisita) vendeCasa(j, j.enCasa);
     // (26-sep, revisión) si has salido por la SALIDA SECRETA, queda apuntada ya (antes, solo al acabar la sala de bonus)
     var sec = j.salidaSec; if (j.av && sec && sec.calle && calle(sec.calle)) (j.av.salidas = j.av.salidas || {})[sec.casa || j.enCasa] = sec.calle;
-    var d = tesoroDe(j.n);
+    var d = salaBonusD13(j.s) || tesoroDe(j.n);          // (28-sep, D13) la casa que pide SU sala (bonusSala)
     j.s = nuevaSala(d); j.s.n = j.n; j.w = nuevoAgente(d); j.salida = false; j.enTesoro = true; j.racha = 1;
   }
   function sumar(j, p, ev, quien) {
@@ -1254,11 +1693,15 @@ var MOTOR = (function () {
     // Bonus escondidos (apenas se ven), piedras preciosas y poderes (se ven)
     s.bonus.forEach(function (b) {
       if (b.cogido || b.comida || (b.alFinal && s.quedan > 0)) return;   // (comida: se la tragó la aspiradora)
+      if (b.marea && !mareaBajaD2(s)) return;                            // (28-sep, D2) solo con la marea baja
       if (!celdas.some(function (c) { return c[0] === b.x && c[1] === b.y; })) { if (!traeIman(j, s, b, cx, cy)) return; ev.push('imanTrae'); }   // (26-sep, 51) o te la trae el imán gigante
       b.cogido = true; ev.push('bonus', 'bonus_' + (b.tipo === 'dobleSalto' && botasYa(j) ? 'monedaBotas' : b.tipo));   // (27-sep, P13) con las Botas, el poder s es una moneda
       if (s.calle && j.av && !b.extra) (j.av.premios = j.av.premios || {})[claveBonus(s, b)] = 1;   // (26-sep) en la calle ya no vuelve a salir
+      if (b.d2) daD2(j, b.d2);                                                // (28-sep, D2) una vez por aventura
       if (b.muelle && j.av) { (j.av.muelleHechos = j.av.muelleHechos || {})[b.muelle] = 1; ev.push('muelleSecreto'); }   // (25-sep, 2b)
-      if (b.tipo === 'gema') sumar(j, BONUS.gema, ev, quien);
+      if (s.def.subasta && PRECIO_D13[b.tipo]) { sumar(j, precioD13(s, b.tipo), ev, quien); ev.push('subasta'); }   // (28-sep, D13) la subasta: sube con el tiempo
+      else if (b.tipo === 'moneda' && valeD2(s, b)) { sumar(j, valeD2(s, b), ev, quien); ev.push('ficha'); }   // (28-sep, D2) la ficha vale según su fila
+      else if (b.tipo === 'gema') sumar(j, BONUS.gema, ev, quien);
       else if (BONUS[b.tipo] && (b.tipo === 'esmeralda' || b.tipo === 'rubi' || b.tipo === 'diamante' || b.tipo === 'moneda')) sumar(j, BONUS[b.tipo], ev, quien);
       else if (b.tipo === 'aire') s.aire = Math.min(s.aireMax, s.aire + Math.round(s.aireMax * BONUS.aire));
       else if (b.tipo === 'aireGrande') s.aire = Math.min(s.aireMax, s.aire + Math.round(s.aireMax * 0.6));   // (24-sep, idea 10) la grande: +60 %
@@ -1296,11 +1739,13 @@ var MOTOR = (function () {
       if (o.cogido || !celdas.some(function (c) { return c[0] === o.x && c[1] === o.y; })) return;
       o.cogido = true; s.lleva[o.tipo] = 1;
       ev.push('objeto', 'objeto:' + o.tipo);
+      if (FRENA_OBJ[o.tipo]) { objetoD7(s, o, ev); return; }   // (28-sep, D7) pescado y huevo: se usan en la sala y ya
       if (o.tipo === 'cronometro') { s.crono = 450; return; }
       var av = j.av;
       if (!av) { j.objetos = j.objetos || {}; j.objetos[o.tipo + (o.id != null ? ':' + o.id : '')] = 1; return; }
       if (o.tipo === 'estatuilla') (av.estatuillas = av.estatuillas || {})[o.id] = 1;
       else if (o.tipo === 'carta') (av.cartas = av.cartas || {})[o.id] = 1;
+      else if (OBJ_COLECCION[o.tipo] && o.id != null) (av[OBJ_COLECCION[o.tipo]] = av[OBJ_COLECCION[o.tipo]] || {})[o.id] = 1;   // (28-sep, D12) postales, llaves raras (y lo que se enchufe)
       else (av.lleva = av.lleva || {})[o.tipo] = 1;
     });
   }
@@ -1308,8 +1753,8 @@ var MOTOR = (function () {
   function marcaObjetos(j) {
     var av = j.av, s = j.s; if (!av || !s || !s.objetos) return;
     s.objetos.forEach(function (o) {
-      if ((o.tipo === 'estatuilla' && av.estatuillas && av.estatuillas[o.id]) || (o.tipo === 'carta' && av.cartas && av.cartas[o.id]) ||
-        (o.tipo !== 'estatuilla' && o.tipo !== 'carta' && o.tipo !== 'cronometro' && av.lleva && av.lleva[o.tipo])) o.cogido = true;
+      var colD12 = OBJ_COLECCION[o.tipo];               // (28-sep, D12) todas las colecciones (estatuillas, cartas, postales, llaves raras…)
+      if ((colD12 && av[colD12] && av[colD12][o.id]) || (!colD12 && o.tipo !== 'cronometro' && av.lleva && av.lleva[o.tipo])) o.cogido = true;
     });
   }
   // (26-sep) los PREMIOS de las CALLES (monedas, gemas, piedras, vidas y corazones) no vuelven a salir: antes, al volver a entrar
@@ -1332,7 +1777,9 @@ var MOTOR = (function () {
     if (!callado) ev.push('truco', 'secreto');
     if (t.hace === 'abre' || t.hace === 'crea') efectoCeldas(s, t);
     else if (!callado && t.hace === 'monedas') t.celdas.forEach(function (c) { s.bonus.push({ x: c[0], y: c[1], tipo: 'moneda', cogido: false, alFinal: false, extra: true, truco: true }); });
-    else if (!callado && t.hace === 'premio' && t.premio) s.bonus.push({ x: t.premio[0], y: t.premio[1], tipo: t.premio[2], cogido: false, alFinal: false, extra: true, truco: true });
+    else if (!callado && t.hace === 'premio' && t.premio) s.bonus.push({ x: t.premio[0], y: t.premio[1] + (t.sube || 0), tipo: t.premio[2], cogido: false, alFinal: false, extra: true, truco: true,
+      subeA: t.sube ? t.premio[1] : null });   // (27-sep, D1) con `sube`, sale más abajo y sube despacio (el globo)
+    if (!callado && t.puntos) sumar(j, t.puntos, ev);   // (27-sep, D1) los puntos del truco (el hoyo en uno: +1.000)
     if (s.calle && j.av) { j.av.trucos = j.av.trucos || {}; j.av.trucos[s.def.id + ':' + i] = 1; }
     return ev;
   }
@@ -1343,11 +1790,34 @@ var MOTOR = (function () {
     var s = j.s, av = j.av; if (!av || !av.trucos || !s || !s.calle) return;
     s.trucos.forEach(function (t, i) { if (av.trucos[s.def.id + ':' + i]) aplicaTrucoSala(j, s, i, [], true); });
   }
+  // (27-sep, D1) las notas del truco «orden» de la sala, en el orden en que hay que tocarlas (ya al revés en espejo)
+  function melodiaTruco(s) {
+    var t = (s && s.trucos || []).filter(function (q) { return q.tipo === 'orden' && !q.hecho; })[0];
+    return t ? t.celdas.map(function (c, k) { return c[2] != null ? c[2] : k; }) : [];
+  }
   function hayTecla(inp) { return !!(inp && (inp.izq || inp.der || inp.saltar)); }
+  /* (27-sep, D1) la ALTURA DE LA CAÍDA: filas desde lo MÁS ALTO del vuelo hasta donde aterrizas (s.caidaFilas; 0 si no
+     aterrizas en este paso). La usa el truco «caida» y la usará D8. Y s.hoyoLimpio: este aterrizaje viene de un SALTO
+     (no de caerte de un borde) sin haber pisado nada entre medias (para el «hoyo en uno»). */
+  function mideCaida(s, w, ev) {
+    var aterriza = ev.indexOf('aterriza') >= 0;
+    s.caidaFilas = 0; s.hoyoLimpio = false;
+    s.subiendo = s.yAntes != null && w.y < s.yAntes; s.yAntes = w.y;   // (para los cabezazos del «orden»: solo al subir)
+    if (ev.indexOf('salto') >= 0) s.saltoLimpio = true;
+    if (w.aire !== 0) { s.cima = s.cima == null ? w.y : Math.min(s.cima, w.y); return; }
+    if (aterriza && s.cima != null) { s.caidaFilas = Math.max(0, Math.floor((w.y - s.cima) / 8)); s.hoyoLimpio = !!s.saltoLimpio; }
+    s.cima = w.y; s.saltoLimpio = false;
+  }
+  // (27-sep, D1) la columna del centro del agente (para «orden», «todas» y «encima»)
+  function colCentro(w) { return (w.x * 8 + w.f * 2 + 5) >> 3; }
   function trucos(j, s, w, inp, celdas, ev) {
     if (hayTecla(inp)) s.tocado = true;
+    mideCaida(s, w, ev);                                    // (27-sep, D1)
     if (!s.trucos || !s.trucos.length) return;
+    // (27-sep, D1, idea 298) el premio que SUBE despacio (el globo de la noria): una fila cada 6 pasos hasta su sitio
+    s.bonus.forEach(function (b) { if (b.subeA != null && !b.cogido && b.y > b.subeA && !(s.t % 6)) { b.y--; ev.push('globoSube'); } });
     var aterriza = ev.indexOf('aterriza') >= 0, deCabeza = !(w.y & 7) ? w.y >> 3 : -1;
+    var cc = colCentro(w), pie = w.aire === 0 && !(w.y & 7) ? (w.y >> 3) + 2 : -9;
     s.trucos.forEach(function (t, i) {
       if (t.hecho) return;
       var enCol = w.x === t.x || w.x + 1 === t.x;
@@ -1380,6 +1850,51 @@ var MOTOR = (function () {
         dispara = toca && !!(s.lleva[t.obj] || (j.av && j.av.lleva && j.av.lleva[t.obj]));
       } else if (t.tipo === 'esfinge') {     // (23) la pantalla pregunta; si aciertas, M.aplicaTruco(j, i)
         if (entra) { s.esfinge = i; ev.push('esfinge'); }
+      } else if (t.tipo === 'encima') {      // (27-sep, D1, idea 205) SALTAR POR ENCIMA n veces sin tocar la casilla (tocarla: a 0)
+        var pisaE = w.aire === 0 && pie === t.y && enCol, lado = w.x + 1 < t.x ? -1 : w.x > t.x ? 1 : 0;
+        if (toca || pisaE) { if (t.cuenta) ev.push('encimaMal'); t.cuenta = 0; t.pasa = false; }
+        else if (lado === 0) t.pasa = w.aire !== 0;        // (en el aire sobre ella; de pie en su columna, no cuenta)
+        else { if (t.pasa && t.lado && lado !== t.lado) { t.cuenta++; ev.push('encima:' + t.cuenta); } t.pasa = false; t.lado = lado; }
+        dispara = t.cuenta >= t.n;
+      } else if (t.tipo === 'orden' || t.tipo === 'todas') {   // (27-sep, D1, ideas 190, 277, 356 y 325)
+        t.celdas.forEach(function (c, k) {
+          // (golpe: el cabezazo; si da en dos casillas a la vez, vale la del centro del agente)
+          var golpeC = function (q) { return tocaPalanca({ golpe: true, x: q[0], y: q[1] }, celdas); };
+          var da = t.tipo === 'orden' && t.modo !== 'pisa' ? s.subiendo && golpeC(c) && (cc === c[0] || !t.celdas.some(function (o) { return o[0] === cc && o[1] === c[1] && golpeC(o); }))
+            : pie === c[1] && cc === c[0];
+          var nuevo = da && !t.toques[k]; t.toques[k] = da;
+          if (!nuevo) return;
+          if (t.tipo === 'todas') { if (!t.encendidas[k]) { t.encendidas[k] = 1; ev.push('baldosa'); } return; }
+          ev.push('nota:' + (c[2] != null ? c[2] : k));
+          if (k === t.prog) t.prog++;
+          else { if (t.prog) ev.push('ordenMal'); t.prog = k === 0 ? 1 : 0; }
+        });
+        dispara = t.tipo === 'orden' ? t.celdas.length > 0 && t.prog >= t.celdas.length
+          : t.celdas.length > 0 && t.celdas.every(function (c, k) { return t.encendidas[k]; });
+      } else if (t.tipo === 'combo') {       // (27-sep, D1, idea 297) n bichos seguidos sin tocar el suelo
+        dispara = (w.combo || 0) >= t.n;
+        if (dispara) ev.push('campana');
+      } else if (t.tipo === 'vuelta') {      // (27-sep, D1, idea 298) una vuelta ENTERA en la misma plataforma (bajarse: a 0)
+        if (w.aire === 0 && w.plat === t.plat && t.plat >= 0) t.cuenta++; else t.cuenta = 0;
+        var pl = s.plataformas && s.plataformas[t.plat];
+        dispara = !!pl && t.cuenta >= periodoPlat(pl);
+        if (dispara) ev.push('vuelta');
+      } else if (t.tipo === 'hoyo') {        // (27-sep, D1, idea 316) caer en el hoyo de UN salto, sin aterrizar antes (ni en cintas)
+        // (pasar por su casilla EN EL AIRE tras un salto limpio —en la calle el hoyo te lleva abajo— o aterrizar en ella)
+        dispara = toca && (w.aire !== 0 ? !!s.saltoLimpio : !!s.hoyoLimpio);
+        if (dispara) ev.push('hoyoEnUno');
+      } else if (t.tipo === 'saltaBicho') {  // (28-sep, D6, idea 242) saltar n veces SEGUIDAS por encima de un bicho (si te toca, a 0)
+        var eb = s.enemigos[t.a];
+        if (eb && !eb.fuera) {
+          var pb = posEnemigo(eb), axb = w.x * 8 + w.f * 2 + 5, sobre = w.aire !== 0 && axb >= pb.x && axb < pb.x + anchoSpr(eb.spr) && w.y + 16 <= pb.y + 4;
+          if (eb.tocoD6 === s.t) { if (t.cuenta) ev.push('encimaMal'); t.cuenta = 0; t.pasa = false; }
+          else if (sobre) t.pasa = true;
+          else if (t.pasa) { t.pasa = false; t.cuenta++; ev.push('encima:' + t.cuenta); }
+        }
+        dispara = t.cuenta >= (t.n || 7);
+      } else if (t.tipo === 'caida') {       // (27-sep, D1, idea 283) aterrizar en la casilla desde `filas` o más
+        dispara = aterriza && pie === t.y && enCol && s.caidaFilas >= t.filas;
+        if (dispara) ev.push('caidaLarga');
       }
       if (dispara) aplicaTrucoSala(j, s, i, ev);
     });
@@ -1396,6 +1911,7 @@ var MOTOR = (function () {
     'llaveFalsa', 'prensa', 'rayo', 'muelle', 'gravedad', 'palanca', 'aire', 'puertaJefe', 'valla', 'botas'];
   function paso(j, inp, inp2) {
     var ev = pasoBase(j, inp, inp2);
+    if (j.av && j.s && j.s.calle) apuntaFirme(j);             // (27-sep, calles-reaparecer) el último sitio pisado firme
     if (j.avisos && typeof j.avisos === 'object' && !j.dos) primeraVez(j, ev);   // (27-sep, P8)
     return ev;
   }
@@ -1418,7 +1934,7 @@ var MOTOR = (function () {
     var hay = function (e) { return ev.indexOf(e) >= 0; };
     var casa = !s.calle && !s.tesoro, L = letrasSala8(s), ax = w.x * 8 + (w.f || 0) * 2 + 5, ay = w.y + 8;
     var cerca = function (x, y, rx) { return Math.abs(x - ax) <= rx && Math.abs(y - ay) <= 28; };
-    var bicho = function (e, pis) { if (e.fuera || !mata(e) || pisable(e) !== pis) return false; var p = posEnemigo(e); return cerca(p.x + 5, p.y + 8, 64); };   // (27-sep, P8) a 8 casillas
+    var bicho = function (e, pis) { if (e.fuera || e.dormido /* (27-sep, D4) */ || !mata(e) || pisable(e) !== pis) return false; var p = posEnemigo(e); return cerca(p.x + 5, p.y + 8, 64); };   // (27-sep, P8) a 8 casillas
     // lo que ya pasa en este paso
     if (falta('llave') && hay('llave')) da('llave');
     if (falta('llaveFalsa') && hay('llaveFalsa')) da('llaveFalsa');
@@ -1477,6 +1993,7 @@ var MOTOR = (function () {
     if (w.lianaSuelta > 0) w.lianaSuelta--;                  // (26-sep, 29) recién soltado de una liana
     if (s.bocaT > 0 && --s.bocaT === 0 && s.bocaAbajo) { s.bocaAbajo = false; s.palancas.forEach(function (p) { if (p.hace === 'bocaAbajo') p.movida = false; }); ev.push('bocaArriba'); }   // (26-sep, 60) vuelve sola (y su palanca, también: arreglo)
     hundidos(j, s, w);
+    recuperaS(s);                                            // (27-sep, D0) los S se recuperan poco a poco
     if (s.linterna && s.pila > 0 && s.oscuro && !s.luz) { s.pila--; if (s.pila === 0) { s.linterna = false; ev.push('pilaFin'); } }
     // (25-sep, 2b) el modo moderno va en el agente (pasoAgente no ve la partida) · en una casa ya vendida a la que vuelves
     // con las BOTAS DE MUELLE, saltas alto todo el rato
@@ -1494,9 +2011,10 @@ var MOTOR = (function () {
     }
     // (26-sep, idea 108) ABAJO (pulsación nueva) con ladrillos en la mano: lanzas uno (colgado de una liana, ABAJO resbala)
     if (inp && inp.abajo && !abajoPrev && w.ladrillos > 0 && w.liana == null) lanza(j, s, w, ev);
+    inp = pieD6(s, w, inp || {});                             // (28-sep, D6) los zapatos pegados del sello y dónde entraste
     var ax0 = w.x * 8 + w.f * 2, ay0 = w.y, n0 = ev.length;
     // (26-sep, idea 29) colgado de una LIANA, la liana te lleva; si no, lo de siempre y, en el aire, ¿te agarras a una?
-    if (w.liana != null) pasoLiana(s, w, inp || {}, ev); else { pasoAgente(s, w, inp, ev); agarraLiana(s, w, ev); }
+    if (w.liana != null) pasoLiana(s, w, inp || {}, ev); else if (garraD8(s, w, inp || {}, ev)) { /* (28-sep, D8) la garra te lleva */ } else { pasoAgente(s, w, inp, ev); agarraLiana(s, w, ev); }
     dingAscensor(s, w, ev);                                  // (26-sep, idea 39) el ascensor se para contigo: «¡ding!»
     w.ruido = ev.indexOf('aterriza', n0) >= 0 || Math.abs(w.x * 8 + w.f * 2 - ax0) >= 4;
     // (26-sep, arreglo A1) al ENTRAR por una puerta (casa, otra calle, tubería, atajo o la tienda) no se muere en ese mismo
@@ -1518,12 +2036,18 @@ var MOTOR = (function () {
     var celdas = recoge(j, s, w, 1, ev);
     pendientesPaso(j, s, w, celdas, ev);                     // (26-sep) burbujas, perro del cliente, notario y bandera de la puerta
     trucos(j, s, w, inp, celdas, ev);
+    pasoD8(j, s, w, ev);                                     // (28-sep, D8) la plataforma que arranca y el cristal que se agrieta
+    pasoD2(j, s, w, inp, celdas, ev);                        // (28-sep, D2) retos y premios
+    pasoD6(j, s, w, celdas, ev);                             // (28-sep, D6) sellos, voces y el vigilante
     secretosDePaso(j, s, w, celdas, ev);
     if (j.feliz > 0) j.feliz--;
     if (s.monedasT > 0 && --s.monedasT === 0) finMonedas(s, ev);   // (25-sep, 2b) se acaba el interruptor de monedas
     miraCheckpoint(j, ev);
     if (s.tesoro && s.bonus.every(function (b) { return b.cogido; })) { j.salida = true; ev.push('salida'); return ev; }
+    cargaD7(s, w, ev);                                       // (28-sep, D7) recargas y el pescado
+    palancasRetardo(s, ev);                                  // (27-sep, D1) antes de las palancas: el paso en que la tocas no cuenta
     palancas(j, s, celdas, ev, 'dentro');
+    frenosD7(j, s, celdas, ev);                              // (28-sep, D7) trituradora, balanza…
     miraOkupas(s, celdas, ev);                               // (25-sep, 145) cabezazo al techo del okupa
     // (25-sep, 138-144) el JEFE: pisar su blanco le quita una vida; tocar lo que mata, como un bicho
     if (s.jefe && choqueJefe(j, s, w, ev, w.y > ay0)) {
@@ -1537,7 +2061,7 @@ var MOTOR = (function () {
       toca.forEach(function (e) {
         var pe = posEnemigo(e);
         if (e.tipo === 'generoso') { golpeGeneroso(j, s, w, e, ev, cae, w.y < ay0); return; }                  // (26-sep, túneles) no mata: da premios
-        if (w.estrella > 0 && mata(e)) { e.fuera = true; sumar(j, 300, ev); ev.push('estrellaGolpe'); sueltaLoSuyo(j, s, e, ev); }   // (idea 105) estrella: los tumbas · (26-sep, B3) y sueltan lo suyo
+        if (w.estrella > 0 && mata(e)) { e.fuera = true; e.estrellado = true; /* (28-sep, D2) */ sumar(j, 300, ev); ev.push('estrellaGolpe'); sueltaLoSuyo(j, s, e, ev); }   // (idea 105) estrella: los tumbas · (26-sep, B3) y sueltan lo suyo
         // (idea 101) pisarlos desde arriba · (25-sep, idea 2b) con COMBO si encadenas sin tocar el suelo
         // (25-sep, arreglo) se mide desde lo más alto de su DIBUJO: antes, desde el borde de arriba del cuadro, y a los
         // bichos bajitos (rata, cangrejo, gato: 8-10 px de aire encima) no se les podía pisar nunca
@@ -1555,6 +2079,7 @@ var MOTOR = (function () {
       w.muerto = 'enemigo'; ev.push('muerte');
       if (j.inmortal) revive(j, s, w, ev); else return ev;
     }
+    if (s.def.espejoTotal && !s.calle && gemeloD13(j, s, inp, ev)) return ev;   // (28-sep, D13) el gemelo al revés
     if (w.aire === 0) w.combo = 0;                           // (25-sep) el combo se acaba al tocar el suelo
     if (s.puerta && s.quedan === 0 && jefeFuera(s) && w.x === s.puerta.x && (w.y >> 3) === s.puerta.y && w.aire === 0) return saleCasa(j, s, ev);
     // (25-sep, 2b) SALIDA SECRETA: una segunda puerta escondida (s.salidaSec, 2×2 como la P). Se descubre al pasar por ella
@@ -1590,13 +2115,15 @@ var MOTOR = (function () {
   var SALIDA_SECRETA = 2000;
   function saleCasa(j, s, ev) {
     j.salida = true;
+    saleD2(j, s, ev);                                  // (28-sep, D2) la cuenta atrás a tiempo y la propina del yate
     // el cliente te espera en la puerta: propina según el aire que te sobra (idea 9)
     if (!s.tesoro && !j.revisita) { j.propina = Math.round(PROPINA * s.aire / s.aireMax * (1 + MEJORA.propina * nivelMejora(j, 'propina'))); sumar(j, j.propina, ev); ev.push('propina'); casaSinMorir(j, ev); }
     // (26-sep, idea 49) sales con el perro del cliente: +1.000
     if (s.perroC && s.perroC.sigue && !s.tesoro && !j.revisita) { sumar(j, PERRO_PUNTOS, ev); ev.push('perroEntregado'); }
     // (25-sep, idea 120) la casa tenía monedas y no has cogido NINGUNA: la pantalla da el cofre
     var mon = propios(s).filter(function (b) { return b.tipo === 'moneda'; });
-    if (!s.tesoro && !j.revisita && mon.length && !mon.some(function (b) { return b.cogido; })) ev.push('sinMonedas');
+    // (27-sep, D0 · 148 Máquina de Premios) si un bicho se comió alguna (b.comida), no hay cofre: la aspiradora no lo regala
+    if (!s.tesoro && !j.revisita && mon.length && !mon.some(function (b) { return b.cogido || b.comida; })) ev.push('sinMonedas');
     if (j.revisita) ev.push('revisitaFin');
     ev.push('salida'); return ev;
   }
@@ -1626,7 +2153,7 @@ var MOTOR = (function () {
   }
   // Modo truco «inmortal»: en vez de morir, sigues (y si te has salido del mapa, vuelves a la entrada)
   function revive(j, s, w, ev) {
-    w.muerto = false;
+    w.muerto = false; s.muertes = (s.muertes || 0) + 1;     // (28-sep, D7) para la balanza
     for (var i = ev.length - 1; i >= 0; i--) if (ev[i] === 'muerte') ev.splice(i, 1);
     if (w.y >= (s.alto || ALTO) * 8 - 8 || w.y < 0) {
       var a = nuevoAgente(s.def);
@@ -1776,6 +2303,15 @@ var MOTOR = (function () {
     var arriba = Math.min.apply(null, celdas.map(function (c) { return c[1]; }));
     return arriba === p.y + 1 && celdas.some(function (c) { return c[0] === p.x && c[1] === arriba; });
   }
+  // (27-sep, D1) la cuenta atrás de las palancas con retardo: 'cuenta:3', 'cuenta:2', 'cuenta:1' (cada 15 pasos) y 'bum'
+  function palancasRetardo(s, ev) {
+    (s.palancas || []).forEach(function (p) {
+      if (!(p.cuenta > 0)) return;
+      p.cuenta--;
+      if (p.cuenta > 0 && !(p.cuenta % 15) && p.cuenta <= 45) ev.push('cuenta:' + (p.cuenta / 15));
+      if (!p.cuenta) { efectoCeldas(s, p); ev.push('bum'); }
+    });
+  }
   function palancas(j, s, celdas, ev, marcaDentro) {
     s.palancas.forEach(function (p) {
       var toca = tocaPalanca(p, celdas);
@@ -1783,6 +2319,7 @@ var MOTOR = (function () {
       p[marcaDentro] = toca;
       // (26-sep, ideas 80 y 60) la palanca que CAMBIA la sala (ida y vuelta) y la que pone la casa BOCA ABAJO (también ida y vuelta)
       if (entra && p.hace === 'cambia') { cambiaSala(s, p, celdas, ev); return; }
+      if (entra && p.hace === 'para') { palancaPara(j, s, p, ev); return; }   // (28-sep, D7) para a quien toca
       if (entra && p.hace === 'bocaAbajo') { s.bocaAbajo = !s.bocaAbajo; s.bocaT = s.bocaAbajo ? (p.dura || 0) : 0; p.movida = s.bocaAbajo; ev.push('palanca', s.bocaAbajo ? 'bocaAbajo' : 'bocaArriba'); return; }
       // (24-sep, Alejandro: «que la palanca que quita un muro sea reversible: si la pisas otra vez, que se ponga») reversible:true
       if (!entra || (p.movida && p.hace !== 'cae' && p.hace !== 'apaga' && !p.reversible)) return;
@@ -1790,6 +2327,8 @@ var MOTOR = (function () {
       if (p.hace === 'jefe') { if (!p.movida && s.jefe && !s.jefe.vencido) { p.movida = true; ev.push('palanca'); golpeJefe(j, s, { toca: true, id: 'palanca' }, ev); } return; }
       // (25-sep, 2b) el interruptor de ladrillos y monedas: vale otra vez cuando se acaba el anterior
       if (p.hace === 'monedas') { if (!(s.monedasT > 0)) { ev.push('palanca'); interruptorMonedas(s, p, ev); } return; }
+      // (27-sep, D1, idea 189) la palanca que CUESTA AIRE: paga sus pasos de aire; si no te llega, no abre
+      if (p.paga && !p.movida && !j.aireInf) { if (s.aire <= p.paga) { ev.push('sinAire'); return; } s.aire -= p.paga; ev.push('paga'); }
       ev.push(p.golpe ? 'golpe' : 'palanca');
       // (25-sep, idea 124) interruptor que APAGA y enciende la luz de una casa con luz: a oscuras se ven las pintadas
       if (p.hace === 'apaga') { s.apagada = !s.apagada; p.movida = s.apagada; ev.push('apaga'); return; }
@@ -1797,9 +2336,12 @@ var MOTOR = (function () {
         p.movida = true;
         // 23-sep (Alejandro): interruptor de la luz. En una casa a oscuras, al tocarlo se enciende y ya no se apaga.
         if (p.hace === 'luz') { s.luz = true; ev.push('luz'); return; }
+        // (27-sep, D1, idea 265) con RETARDO: cuenta atrás y ¡bum! (lo hace palancasRetardo, un paso cada vez)
+        if (p.retardo) { p.cuenta = p.retardo; ev.push('cuenta'); return; }
         // 'crea' (bloque que se golpea con la cabeza, como en los juegos de Mario): en vez de quitar, PONE suelo
         efectoCeldas(s, p);
         if (p.hace === 'cae') s.enemigos.forEach(function (e) { if (e.tipo === 'g' && !e.cae) { e.cae = true; sumar(j, 100, ev); ev.push('cae'); } });
+        if (p.hace === 'cae' && p.golpea) { var xs = p.celdas.map(function (q) { return q[0]; }), yb = Math.max.apply(null, p.celdas.map(function (q) { return q[1]; })); para(s, p.a || { tipo: 'c', cols: [Math.min.apply(null, xs), Math.max.apply(null, xs)], bajoDe: yb + 1 }, p.golpea, ev, p); }   // (28-sep, D7) lo que cae golpea al de debajo
       } else {
         p.movida = false;
         p.celdas.forEach(function (c, i) { s.mapa[c[1]][c[0]] = p.guardado[i]; });
@@ -2010,6 +2552,7 @@ var MOTOR = (function () {
     CALLES.forEach(function (c) {
       if ((c.mundo || '') !== (mundo || '')) return;
       (c.puertas || []).forEach(function (p) { if (p.casa && !vistas[p.casa] && (c.secreta || sec[c.id] || condicionPuerta(p))) { vistas[p.casa] = 1; cuenta(vend[p.casa]); } });
+      (c.especiales || []).forEach(function (p) { if (p.casa && !p.soloFecha && !vistas[p.casa]) { vistas[p.casa] = 1; cuenta(vend[p.casa]); } });   // (28-sep, D13)
       (c.zonas || []).forEach(function (z) { if (z.casa && !vistas[z.casa]) { vistas[z.casa] = 1; cuenta(vend[z.casa]); } });
       (c.bajadas || []).forEach(function (b, i) { if (b.casa) cuenta(baj[c.id + ':' + i]); });
       (c.tuberias || []).forEach(function (p) { if (p.a) cuenta(tub[p.a]); });
@@ -2089,6 +2632,262 @@ var MOTOR = (function () {
     ((c && c.puertas) || []).forEach(function (p) { if (!r && p.casa === id && p.sale && calle(p.sale.calle)) r = p.sale; });
     return r;
   }
+  /* (27-sep, calles-reaparecer) Alejandro: al cruzar de pantalla SALTANDO y morir, reaparecías en el aire (la entrada era el punto
+     exacto del cruce) y morías una y otra vez. Ahora la entrada se guarda en el SUELO FIRME bajo esa x si es seguro; si no lo hay,
+     se reaparece en el ÚLTIMO SITIO PISADO FIRME (j.av.firme, aunque sea de la pantalla de antes). La protección (PROTEGE) sigue. */
+  /* ── (28-sep, D8) PLATAFORMAS Y SUELOS NUEVOS ──────────────────────────────────────────────────────────────────────────
+     · toboganes: [{ x1, x2, y1, y2, sentido }] casillas que se PISAN; de pie en ellas te lleva cuesta abajo y no se salta
+     · satélite 'f' con `escalon: true`: mientras está en el suelo, sus casillas son bloque (escalonF) y no mata
+     · pideSaltar (la casa): los teletransportes solo con SALTAR encima (andando no te cuelas)
+     · garras: [{ x, y, suelta: [x, y] }] (garraD8) · cristalFragil: [[x1, x2, y, filas]] (pasoD8) · plataformas `arranca` (pasoD8) */
+  function toboganEn(s, w) {
+    var l = s.def && s.def.toboganes; if (!l || !l.length || (w.y & 7)) return 0;
+    var r = (w.y >> 3) + 2;
+    for (var i = 0; i < l.length; i++) { var z = l[i]; if (r >= z.y1 && r <= z.y2 && w.x + 1 >= z.x1 && w.x <= z.x2) return z.sentido || 1; }
+    return 0;
+  }
+  function teleSalta(s, w, inp) {
+    if (!inp.saltar || !s.def || !s.def.pideSaltar || w.tele || (w.y & 7) || !s.teles) return false;
+    return Object.keys(s.teles).some(function (n) { var par = s.teles[n]; return par && par.length === 2 && par.some(function (q) { return w.x === q[0] && (w.y >> 3) === q[1]; }); });
+  }
+  function cicloSat(e) { var caida = Math.round((e.yFin - e.y0) / (e.vel || 2)); return (caida + (e.espera || 12)) * (e.cols || [e.x]).length; }
+  // dónde está el satélite en el suelo (casillas [x1, x2, y1, y2]) en el paso t, o null si está cayendo; sale del paso
+  function satSuelo(e, t) {
+    var cols = e.cols || [e.x], caida = Math.round((e.yFin - e.y0) / (e.vel || 2)), ciclo = caida + (e.espera || 12), P = ciclo * cols.length;
+    var q = (((t + (e.fase || 0)) % P) + P) % P, cual = Math.floor(q / ciclo), dentro = q % ciclo;
+    if (dentro < caida) return null;
+    var x0 = cols[cual];
+    return [x0 >> 3, (x0 + 15) >> 3, e.yFin >> 3, (e.yFin + 15) >> 3];
+  }
+  function escalonF(s, x, y) {
+    var l = s.escF || (s.escF = (s.enemigos || []).filter(function (e) { return e.tipo === 'f' && e.escalon; }));
+    for (var i = 0; i < l.length; i++) {
+      var e = l[i]; if (e.fuera) continue;
+      var q = satSuelo(e, s.t - (e.retraso || 0));
+      if (q && x >= q[0] && x <= q[1] && y >= q[2] && y <= q[3]) return true;
+    }
+    return false;
+  }
+  function fragilZona(s, x, y) {
+    var l = s.def && s.def.cristalFragil; if (!l) return null;
+    for (var i = 0; i < l.length; i++) if (y === l[i][2] && x >= l[i][0] && x <= l[i][1]) return l[i];
+    return null;
+  }
+  /* LA GARRA de la galería: de pie debajo de ella (x, y = la casilla de tu cabeza, a 1 casilla de margen), SALTAR (pulsación
+     nueva) y te agarra: subes 2 px por paso hasta la fila de `suelta`, luego de lado 1 casilla cada 2 pasos, y te deja allí.
+     Solo en paso(): el robot no la sigue (va FUERA del camino obligatorio). */
+  function garraD8(s, w, inp, ev) {
+    var l = s.def && s.def.garras; if (!l || !l.length) return false;
+    if (w.garra) {
+      var g = l[w.garra.i], tx = g && g.suelta ? g.suelta[0] : -1, ty = g && g.suelta ? g.suelta[1] * 8 : 0;
+      if (!g || w.muerto || w.x < Math.min(g.x, tx) || w.x > Math.max(g.x, tx)) { w.garra = null; return false; }   // (murió o volvió a su sitio)
+      w.aire = 2; w.plat = -1; w.salto = 0; w.jdir = 0;
+      if (w.y > ty) w.y = Math.max(ty, w.y - 2);
+      else if (w.x !== tx || w.f) { if (s.t & 1) { w.f = 0; w.x += tx > w.x ? 1 : -1; } }
+      else { w.garra = null; w.aire = apoyo(s, w) ? 0 : 2; w.saltoAntes = true; ev.push('garraSuelta'); }
+      return true;
+    }
+    if (w.aire !== 0 || (w.y & 7) || !inp.saltar || w.saltoAntes) return false;
+    for (var i = 0; i < l.length; i++) {
+      var q = l[i];
+      if (q.suelta && Math.abs(w.x - q.x) <= 1 && (w.y >> 3) === q.y) { w.garra = { i: i }; w.x = q.x; w.f = 0; w.plat = -1; w.aire = 2; w.saltoAntes = true; ev.push('garra'); return true; }
+    }
+    return false;
+  }
+  function cogidoEn(s, x, y) {
+    var en = function (o) { return o.x === x && o.y === y && (o.cogida || o.cogido); };
+    return (s.llaves || []).some(en) || (s.bonus || []).some(en) || (s.objetos || []).some(en);
+  }
+  // tras moverte: la plataforma que ARRANCA (al pisarla o al coger su objeto `al`) y el CRISTAL que se agrieta al caer desde alto
+  // (desde `filas`, 3 si no se dice, se agrieta; la 2.ª vez se rompe y queda el hueco) · usa s.caidaFilas (D1)
+  function pasoD8(j, s, w, ev) {
+    (s.plataformas || []).forEach(function (p, i) {
+      if (!p.arranca || p.desde != null) return;
+      var va = p.arranca === 'pisar' ? w.aire === 0 && w.plat === i : !!(p.al && cogidoEn(s, p.al[0], p.al[1]));
+      if (va) { p.desde = s.t; ev.push('arranca'); }
+    });
+    if (!(s.def && s.def.cristalFragil) || !(s.caidaFilas > 0) || w.aire !== 0 || w.plat >= 0 || (w.y & 7)) return;
+    var r = (w.y >> 3) + 2;
+    [w.x, w.x + 1].forEach(function (x) {
+      var z = fragilZona(s, x, r); if (!z || !s.mapa[r] || s.mapa[r][x] !== 'G' || s.caidaFilas < (z[3] || 3)) return;
+      var k = x + ',' + r; s.cristal = s.cristal || {};
+      s.cristal[k] = (s.cristal[k] || 0) + 1;
+      if (s.cristal[k] >= 2) { s.mapa[r][x] = ' '; ev.push('cristalRompe'); } else ev.push('cristalGrieta');
+    });
+  }
+  /* (28-sep, D2) RETOS Y PREMIOS (PLAN-FASE-D, filas 17-26). Todo premio es de UNA VEZ por AVENTURA: se apunta en j.av.dado (va en
+     M.guardadoAventura: aguanta «Menú» + «Continuar» y el cambio de ranura); sin aventura, en j.d2dado (solo esa partida). Claves con el
+     id de siempre (sin «-espejo»: la Leyenda comparte lo dado) y con el ÍNDICE, no la casilla (el espejo no cambia la clave).
+       reto {en: [x, y], x, y, pasos, premio}   el teléfono: al tocar `en`, llega a (x, y) en `pasos` (sin `en`, al entrar)   (17, 291)
+       cuentaAtras {pasos, premio}              arranca al coger la última llave; sal por la puerta a tiempo                  (18, 328)
+       premioTodas: puntos                      todas las monedas de la sala (en la calle, sumando visitas: av.premios)       (19, 319)
+       zarpa {propina}                          pita a la mitad del aire, suelta amarras al cuarto; sales antes de la mitad → propina (20, 230)
+       mareaBaja: [[x, y, tipo]]                premio que solo se coge con la marea en su tercio de abajo                     (21, 188)
+       tragaperras {rodillos: [[x, y]…], premio, par}  cada cabezazo para un rodillo; el símbolo sale de s.t (NUNCA Math.random) (22, 357)
+       valeFila {fila: puntos} / bonus.vale     monedas-ficha que valen según su fila                                          (23, 358)
+       leyendaDorada {x, y, n}                  con la estrella, tumbar a n (5) → gema grande y ficha de 1.000                  (24, 344)
+       fuente {x, y}                            SALTAR en su casilla → 'fuente' (la 🪙 la cobra la pantalla y llama a fuenteEcha) (25, 315)
+       maletero {premio: [x, y, tipo], coche}   con el objeto `mando` + SALTAR, el coche pita y abre el maletero              (26, 313) */
+  var D2_RETO = 500, D2_CUENTA = 2000, D2_ZARPA = 1000, D2_TRAGA = 3000, D2_PAR = 300, D2_SIMBOLOS = 5, D2_FICHA = 1000, FUENTE_GEMA = 10, FUENTE_VIDA = 50;
+  function idD2(s) { return String((s && s.def && s.def.id) || '').replace(/-espejo$/, ''); }
+  function dadoD2(j) { return j.av ? (j.av.dado = j.av.dado || {}) : (j.d2dado = j.d2dado || {}); }
+  function yaD2(j, k) { return !!dadoD2(j)[k]; }
+  function daD2(j, k) { dadoD2(j)[k] = 1; }
+  function listaD2(v) { return !v ? [] : Array.isArray(v) ? v : [v]; }
+  function retosD2(d) { return listaD2(d.reto).concat(listaD2(d.retos)); }
+  function tocaD2(celdas, x, y) { return celdas.some(function (c) { return c[0] === x && c[1] === y; }); }
+  function mareaBajaD2(s) { var a = s.agua; if (!a) return true; return nivelAgua(s, s.t) >= Math.round((a.arriba + (a.abajo - a.arriba) * 2 / 3) * 8); }
+  function valeD2(s, b) { var v = s.def && s.def.valeFila; return +(b.vale || (v && v[b.y]) || 0); }
+  function simboloD2(t, i) { return ((t >> 2) + i * 2) % D2_SIMBOLOS; }   // lo que enseña (y para) cada rodillo en el paso t
+  function hayD2(d) { return !!(d && (d.reto || d.retos || d.cuentaAtras || d.premioTodas || d.zarpa || d.mareaBaja || d.tragaperras || d.leyendaDorada || d.fuente || d.maletero)); }
+  function iniD2(j, s) {
+    if (s.d2) return s.d2;
+    var d = s.def, id = idD2(s);
+    var o = s.d2 = { retos: retosD2(d).map(function (r, i) { return { r: r, k: 'reto:' + id + ':' + i, fin: 0, vivo: false, dentro: false, ya: false }; }) };
+    if (d.tragaperras) o.traga = { rod: d.tragaperras.rodillos.map(function () { return -1; }), hecho: yaD2(j, 'traga:' + id) };
+    (d.mareaBaja || []).forEach(function (b, i) {
+      var k = 'marea:' + id + ':' + i;
+      if (!yaD2(j, k)) s.bonus.push({ x: b[0], y: b[1], tipo: b[2] || 'gema', cogido: false, alFinal: false, extra: true, marea: 'baja', d2: k });
+    });
+    return o;
+  }
+  function pasoD2(j, s, w, inp, celdas, ev) {
+    var d = s.def; if (j.dos || !hayD2(d)) return;
+    var o = iniD2(j, s), id = idD2(s), pulsa = !!(inp && inp.saltar), salta = pulsa && !o.saltaba; o.saltaba = pulsa;
+    // 17 · el reto corto (el teléfono)
+    o.retos.forEach(function (q) {
+      var r = q.r; if (yaD2(j, q.k)) return;
+      var en = r.en ? tocaD2(celdas, r.en[0], r.en[1]) : false;
+      if (!q.vivo && (r.en ? en && !q.dentro : !q.ya)) { q.vivo = true; q.ya = true; q.fin = s.t + (r.pasos || 45); ev.push('retoEmpieza'); }
+      q.dentro = en;
+      if (!q.vivo) return;
+      if (tocaD2(celdas, r.x, r.y)) { q.vivo = false; daD2(j, q.k); sumar(j, r.premio || D2_RETO, ev); ev.push('retoBien'); }
+      else if (s.t >= q.fin) { q.vivo = false; ev.push('retoMal'); }
+    });
+    // 18 · la cuenta atrás de la última llave
+    var ca = d.cuentaAtras;
+    if (ca && !o.cuenta && s.llaves.length && s.quedan === 0 && !yaD2(j, 'cuenta:' + id)) { o.cuenta = s.cuenta = { fin: s.t + (ca.pasos || 150), pasos: ca.pasos || 150, premio: ca.premio || D2_CUENTA }; ev.push('cuentaEmpieza'); }
+    if (o.cuenta && !o.cuenta.fuera && s.t > o.cuenta.fin) { o.cuenta.fuera = true; ev.push('cuentaFuera'); }
+    // 19 · todas las monedas (una vez por aventura: 'todas:<sala>')
+    if (d.premioTodas && !o.todas) {
+      var kt = 'todas:' + id, mon = s.bonus.filter(function (b) { return b.tipo === 'moneda' && !b.extra; });
+      if (yaD2(j, kt)) o.todas = true;
+      else if (mon.length && mon.every(function (b) { return b.cogido; })) { o.todas = true; daD2(j, kt); sumar(j, d.premioTodas, ev); ev.push('todasMonedas'); }
+    }
+    // 20 · el yate que zarpa: avisos por el aire gastado
+    if (d.zarpa && !s.calle && !s.tesoro) {
+      if (!o.mitad && s.aire <= s.aireMax / 2) { o.mitad = true; ev.push('zarpaPita'); }
+      if (!o.cuarto && s.aire <= s.aireMax / 4) { o.cuarto = true; ev.push('zarpaAmarras'); }
+    }
+    // 22 · la tragaperras: cada cabezazo contra un rodillo lo para en lo que enseña ESTE paso
+    var tg = d.tragaperras;
+    if (tg && o.traga && !o.traga.hecho && w.cabezaD2 != null) {
+      var fila = w.cabezaD2, rod = o.traga.rod;
+      tg.rodillos.some(function (c, i) { if (rod[i] >= 0 || c[1] !== fila || (c[0] !== w.x && c[0] !== w.x + 1)) return false; rod[i] = simboloD2(s.t, i); ev.push('rodillo'); return true; });
+      if (rod.every(function (v) { return v >= 0; })) {
+        o.traga.hecho = true; daD2(j, 'traga:' + id);
+        var cuenta = {}, mas = 0; rod.forEach(function (v) { cuenta[v] = (cuenta[v] || 0) + 1; mas = Math.max(mas, cuenta[v]); });
+        if (mas >= rod.length) { sumar(j, tg.premio || D2_TRAGA, ev); ev.push('tragaTres'); }
+        else if (mas >= 2) { sumar(j, tg.par || D2_PAR, ev); ev.push('tragaDos'); }
+        else ev.push('tragaNada');
+      }
+    }
+    w.cabezaD2 = null;
+    // 24 · la leyenda dorada: tumbadas n con la estrella → gema grande y ficha
+    var ld = d.leyendaDorada;
+    if (ld && !o.dorada && !yaD2(j, 'dorada:' + id) && s.enemigos.filter(function (e) { return e.estrellado; }).length >= (ld.n || 5)) {
+      o.dorada = true;
+      s.bonus.push({ x: ld.x, y: ld.y, tipo: 'diamante', cogido: false, alFinal: false, extra: true, d2: 'dorada:' + id, dorada: true });
+      s.bonus.push({ x: ld.x + (ld.fx != null ? ld.fx : 1), y: ld.y, tipo: 'moneda', vale: ld.ficha || D2_FICHA, cogido: false, alFinal: false, extra: true, d2: 'dorada:' + id, dorada: true });
+      ev.push('leyendaDorada');
+    }
+    // 25 · la fuente de los deseos (SALTAR con los pies en su borde)
+    var fu = d.fuente;
+    if (fu && salta && (w.x === fu.x || w.x + 1 === fu.x) && Math.abs((w.y >> 3) + 2 - fu.y) <= 1) ev.push('fuente');
+    // 26 · el mando del coche: SALTAR con él → el coche pita y abre el maletero
+    var ml = d.maletero;
+    if (ml && salta && !o.maletero && ((s.lleva && s.lleva.mando) || (j.av && j.av.lleva && j.av.lleva.mando)) && !yaD2(j, 'maletero:' + id)) {
+      o.maletero = true; var pr = ml.premio || [0, 0];
+      s.bonus.push({ x: pr[0], y: pr[1], tipo: pr[2] || 'diamante', cogido: false, alFinal: false, extra: true, d2: 'maletero:' + id });
+      ev.push('mandoPita');
+    }
+  }
+  // al salir por la puerta: la cuenta atrás a tiempo y la propina del yate (antes de la mitad del aire)
+  function saleD2(j, s, ev) {
+    var o = s.d2, d = s.def; if (!o || !d || s.tesoro || j.dos) return;
+    var id = idD2(s);
+    if (o.cuenta && !o.cuenta.fuera && s.t <= o.cuenta.fin && !yaD2(j, 'cuenta:' + id)) { daD2(j, 'cuenta:' + id); sumar(j, o.cuenta.premio, ev); ev.push('cuentaBien'); }
+    if (d.zarpa && !o.mitad && !yaD2(j, 'zarpa:' + id)) { daD2(j, 'zarpa:' + id); sumar(j, d.zarpa.propina || D2_ZARPA, ev); ev.push('zarpaPropina'); }
+  }
+  // 25 · la pantalla ya ha cobrado 1 🪙: la moneda cae en la fuente. A las 10, gema; a las 50, vida (en «una vida» / sin morir: puntos)
+  function fuenteCuenta(j) { var s = j && j.s; return s && s.def && s.def.fuente ? +(dadoD2(j)['fuente:' + idD2(s)] || 0) : 0; }
+  function fuenteEcha(j) {
+    var s = j && j.s, ev = []; if (!s || !s.def || !s.def.fuente || fuenteCuenta(j) >= FUENTE_VIDA) return ev;
+    var dd = dadoD2(j), k = 'fuente:' + idD2(s), n = dd[k] = (+dd[k] || 0) + 1;
+    ev.push('fuenteMoneda');
+    if (n === FUENTE_GEMA) { sumar(j, BONUS.gema, ev); ev.push('fuenteGema'); }
+    if (n === FUENTE_VIDA) { if (sinExtras(j)) { sumar(j, SIN_MORIR_VIDA, ev); ev.push('sinVida'); } else { j.vidas++; ev.push('vida', 'fuenteVida'); } }
+    return ev;
+  }
+  var FIRMES_NO = { C: 1, S: 1, T: 1, '<': 1, '>': 1 };   // (27-sep, calles-reaparecer) se deshacen, lanzan o te llevan: no valen de apoyo quieto
+  function sitioSeguro(s, x, y) {
+    var W = s.ancho || ANCHO, H = s.alto || ALTO;
+    if (x < 0 || x > W - 2 || y < 0 || (y & 7) || y > (H - 3) * 8) return false;
+    var w = { x: x, y: y, f: 0 };
+    if (!apoyoSuelo(s, w)) return false;
+    var r = (y >> 3) + 2, a = celda(s, x, r), b = celda(s, x + 1, r);
+    if (a === 'T' || b === 'T') return false;
+    if (!((PISABLE[a] && !FIRMES_NO[a]) || (PISABLE[b] && !FIRMES_NO[b]))) return false;
+    if (ocupa(w).some(function (c) { var ch = celda(s, c[0], c[1]); return MURO[ch] || PISABLE[ch] || MORTAL[ch] || ch === 'E'; })) return false;
+    if (zonaDe(s.vapor, w) || zonaDe(s.cascada, w) || zonaDe(s.viento, w)) return false;
+    if ((s.rachas || []).some(function (r) { return zonaDe([r.zona], w); })) return false;   // (27-sep, D3) ni en una racha
+    // (28-sep, D8) ni en un tobogán (te lleva), ni sobre el cristal que se agrieta, ni sobre el satélite caído (se va)
+    if (toboganEn(s, w) || fragilZona(s, x, r) || fragilZona(s, x + 1, r) || escalonF(s, x, r) || escalonF(s, x + 1, r)) return false;
+    if (s.agua && y + 4 >= (s.agua.arriba || 0) * 8) return false;
+    var px = x * 8;
+    return !(s.enemigos || []).some(function (e) {
+      if (e.fuera || !mata(e)) return false;
+      if (e.tipo === 'r' || e.tipo === 'topo') return cajasD5(e).some(function (c) { return c[0] < px + 24 && c[1] > px - 8 && c[2] < y + 16 && c[3] > y; });   // (27-sep, D5) cada trozo de su recorrido
+      var cj = cajaD4(e); if (cj) return cj[0] < px + 24 && cj[1] > px - 8 && cj[2] < y + 16 && cj[3] > y;   // (27-sep, D4) todo su tramo
+      var p = posEnemigo(e); return p.x < px + 24 && p.x + anchoSpr(e.spr) > px - 8 && p.y < y + 16 && p.y + altoSpr(e.spr) > y;
+    });
+  }
+  // (27-sep, D4) los que esperan, avisan o despiertan: su tramo entero [x1, x2, y1, y2] en px (dormido o parado, van a salir)
+  function cajaD4(e) {
+    if (e.tipo === 'r' || e.tipo === 'topo') return cajaD5(e);   // (27-sep, D5) todo su recorrido
+    if (!(e.despierta || e.espera != null || e.fase != null || e.avisoPasos)) return null;
+    var an = anchoSpr(e.spr), al = altoSpr(e.spr);
+    if (e.tipo === 'h') return [e.min * 8 - 2, e.max * 8 + 8 + an, e.y, e.y + al];
+    if (e.tipo === 'v') return [e.x, e.x + an, e.min, e.max + al];
+    if ((e.tipo === 'p' || e.tipo === 'a') && e.min != null) return [e.min, e.max + an, e.tipo === 'p' ? (e.y0 != null ? e.y0 : e.y) - (e.alto || 24) : e.y, (e.y0 != null ? e.y0 : e.y) + al + (e.tipo === 'a' ? (e.baja || 56) : 0)];
+    var p = posEnemigo(e); return [p.x, p.x + an, p.y, p.y + al];
+  }
+  // el suelo bajo (x, y): la primera posición de pie al caer en recto; si no es seguro (o no hay), null
+  function sueloBajo(s, x, y) {
+    var W = s.ancho || ANCHO, H = s.alto || ALTO;
+    x = Math.max(0, Math.min(W - 2, x));
+    for (var yy = Math.max(0, Math.ceil(y / 8) * 8); yy <= (H - 3) * 8; yy += 8) {
+      var w = { x: x, y: yy, f: 0 };
+      if (ocupa(w).some(function (c) { var ch = celda(s, c[0], c[1]); return MURO[ch] || PISABLE[ch]; })) continue;
+      if (apoyoSuelo(s, w)) return sitioSeguro(s, x, yy) ? { x: x, y: yy } : null;
+    }
+    return null;
+  }
+  // la entrada de la pantalla: de pie en el suelo firme bajo donde apareces (null si no hay suelo seguro: vale j.av.firme)
+  function entradaFirme(j) {
+    var s = j.s, w = j.w;
+    if (w.f === 0 && w.aire === 0 && sitioSeguro(s, w.x, w.y)) return { x: w.x, y: w.y, dir: w.dir };
+    var q = sueloBajo(s, w.x, w.y);
+    return q ? { x: q.x, y: q.y, dir: w.dir } : null;
+  }
+  // tras cada paso en la calle: si estás de pie en un sitio seguro, es el último sitio pisado firme
+  function apuntaFirme(j) {
+    var av = j.av, s = j.s, w = j.w;
+    if (!av || !s || !s.calle || !w || w.muerto || w.aire !== 0 || w.plat >= 0 || w.f !== 0) return;
+    var f = av.firme;
+    if (f && f.pantalla === av.pantalla && f.x === w.x && f.y === w.y) { f.dir = w.dir; return; }
+    if (sitioSeguro(s, w.x, w.y)) av.firme = { pantalla: av.pantalla, x: w.x, y: w.y, dir: w.dir };
+  }
   function ponCalle(j, id, x, y, dir) {
     var d = calle(id); if (!d) return false;
     var s = nuevaSala(d); s.n = -1;
@@ -2105,6 +2904,8 @@ var MOTOR = (function () {
     // (25-sep, secretos) la calle sabe de la aventura (puertas con condición) y si es de noche; lo que ya hiciste sigue hecho
     s.av = j.av; s.noche = !!j.noche || nocheVuelta(j.av);   // (27-sep, P5) + la noche de la vuelta
     reaplicaTrucos(j); marcaObjetos(j); marcaPremios(j);
+    // (27-sep, calles-reaparecer) puesto en el aire (p. ej. «Continuar» guardado a mitad de un salto): la entrada, en el suelo firme de debajo
+    if (x != null && !apoyo(s, w)) j.av.entrada = entradaFirme(j);
     return true;
   }
   // opc: { empieza: id de la calle de salida, guardado: lo que se guardó para «Continuar» }
@@ -2130,6 +2931,7 @@ var MOTOR = (function () {
       actos: {},
       // (27-sep, P10) lo hecho con trucos (clave → 1): no suma al % (lo apunta la pantalla)
       conTrucos: {} };
+    D12_CAMPOS.forEach(function (k) { j.av[k] = {}; });   // (28-sep, D12) llavesRaras, postales, pegatinas, cuaderno, deseos: vacíos
     if (opc.moderno) j.moderno = true;                 // (25-sep, 2b) el modo moderno (perdón al borde y salto guardado)
     CALLES.forEach(function (c) { (c.puertas || []).forEach(function (p) { j.av.mundoDe[p.casa] = c.mundo || ''; }); });
     // (26-sep, revisión R1) sobre una COPIA: si no, la partida y lo guardado compartían premios, trucos, vendidas… y lo que
@@ -2148,6 +2950,9 @@ var MOTOR = (function () {
       j.av.mundos = g.mundos && typeof g.mundos === 'object' ? g.mundos : mundosDeAntes(j.av, g.pantalla);
       j.av.actos = g.actos && typeof g.actos === 'object' ? g.actos : actosDeAntes(j.av.vendidas);   // (27-sep, P5) las de antes: por lo vendido
       j.av.conTrucos = g.conTrucos && typeof g.conTrucos === 'object' ? g.conTrucos : {};              // (27-sep, P10) lo hecho con trucos
+      j.av.firme = g.firme && typeof g.firme === 'object' && calle(g.firme.pantalla) ? g.firme : null;   // (27-sep, calles-reaparecer)
+      j.av.ultimaVenta = g.ultimaVenta && typeof g.ultimaVenta === 'object' && g.ultimaVenta.id ? { id: String(g.ultimaVenta.id), pasos: +g.ultimaVenta.pasos || 0 } : null;   // (28-sep, D10)
+      D12_CAMPOS.forEach(function (k) { j.av[k] = g[k] && typeof g[k] === 'object' && !Array.isArray(g[k]) ? g[k] : {}; });   // (28-sep, D12) (las de antes: vacíos)
       if (g.terminada) j.av.terminada = true;          // (26-sep, fase B) la aventura ya acabada sigue guardada («Terminada ★»)
       ponCalle(j, g.pantalla, g.x, g.y, g.dir);
       // se sigue delante de la puerta de la casa que acabas de vender · (26-sep, A1) con unos pasos de protección
@@ -2169,6 +2974,10 @@ var MOTOR = (function () {
       actos: j.av.actos || {},                           // (27-sep, P5) los actos (la vuelta a Nerja)
       conTrucos: j.av.conTrucos || {},                   // (27-sep, P10) lo hecho con trucos: no suma al %
       dobleSalto: !!j.av.dobleSalto, mundos: j.av.mundos || {},
+      firme: j.av.firme || undefined,                    // (27-sep, calles-reaparecer) el último sitio pisado firme
+      ultimaVenta: j.av.ultimaVenta || undefined,        // (28-sep, D10) el quiosco (~30 bytes)
+      llavesRaras: j.av.llavesRaras || {}, postales: j.av.postales || {}, pegatinas: j.av.pegatinas || {}, cuaderno: j.av.cuaderno || {}, deseos: j.av.deseos || {},   // (28-sep, D12)
+      piezas: j.av.piezas || {},                         // (28-sep, caballero) las piezas de la armadura
       leyenda: j.av.leyenda ? true : undefined });   // (27-sep, P14) solo si es Leyenda (las de siempre, igual que antes)   // (26-sep, P4) las Botas del Doble Salto y lo de cada mundo
   }
   // Al cruzar un borde: a la pantalla vecina, por el borde contrario, a la misma altura (o columna)
@@ -2185,7 +2994,7 @@ var MOTOR = (function () {
     else if (lado === 'arr') { n.y = H * 8 - 16; }
     else if (lado === 'aba') { n.y = 0; if (n.aire >= 2) n.aire = 2; }   // la caída sigue, pero sin contar lo de arriba
     n.plat = -1; n.enPuerta = true;                            // (si apareces justo en una puerta, no entras sin querer)
-    j.av.entrada = { x: n.x, y: n.y, dir: n.dir };
+    j.av.entrada = entradaFirme(j);                            // (27-sep, calles-reaparecer) en el suelo firme de debajo (o null: el último sitio firme)
     return true;
   }
   // Entrar en una casa por su puerta
@@ -2226,6 +3035,8 @@ var MOTOR = (function () {
   function vendeCasa(j, id) {
     if (!id || !j.av || j.av.vendidas[id]) return false;
     var c = casaPorId(id); if (c && c.def.superbonus) return false;
+    j.av.ultimaVenta = { id: id, pasos: (j.s && !j.s.calle && j.s.t) || 0 };   // (28-sep, D10, 246) para el quiosco del Paseo: lo último vendido y en cuántos pasos
+    deseoD12(j, id);                                   // (28-sep, D12) (170) el deseo del cliente, ANTES de apuntarla vendida
     j.av.vendidas[id] = 1;   // (27-sep, P10) ya NO se apunta una cifra por CASA (el av.cifras de antes se queda tal cual): la da cada JEFE
     // (26-sep, P4) vencer al JEFE de un mundo: «MUNDO SUPERADO» (lo saca la pantalla, con la cifra de la caja fuerte que da ese
     // jefe) · la puerta con `da: 'dobleSalto'` (el Gorila) da además las BOTAS DEL DOBLE SALTO, para siempre
@@ -2235,6 +3046,7 @@ var MOTOR = (function () {
       j.superado = { mundo: mj, jefe: id, cifra: cifraJefe(id), botas: false }; var mm = j.av.mundos = j.av.mundos || {}, me = mm[mj] = mm[mj] || {}; me.superado = 1;
       // (27-sep, P10) «SIN MORIR» por mundo: ninguna muerte desde que entraste en él (y sin trucos) → su medalla
       if (me.muertes === 0 && !j.trucoUsado && !j.inmortal && !j.peques) { me.sinMorir = 1; j.superado.sinMorir = true; }
+      superadoD12(j, mj);                              // (28-sep, D12) la página del cuaderno y la postal del mundo
     }
     // (27-sep, P5) vender la casa de la puerta con `abreActo` (el Cometa) abre ese acto: la VUELTA A NERJA, DE NOCHE
     var ac = actoQueAbre(id); if (ac && !(j.av.actos && j.av.actos[ac])) { (j.av.actos = j.av.actos || {})[ac] = 1; if (j.superado && j.superado.jefe === id) j.superado.acto = ac; else j.actoNuevo = ac; }
@@ -2256,10 +3068,13 @@ var MOTOR = (function () {
     if (!j.vidasInf) j.vidas--;                                  // modo truco: vidas infinitas
     // en la calle: vuelves a la última BANDERA de control si está en esta misma calle; si no, por donde entraste
     if (j.av && j.s.calle) {
-      var b = j.av.bandera, e = b && b.pantalla === j.av.pantalla ? b : (j.av.entrada || {});
+      var b = j.av.bandera, e = b && b.pantalla === j.av.pantalla ? b : (j.av.entrada || {}), pan = j.av.pantalla;
+      // (27-sep, calles-reaparecer) sin entrada segura (cruzaste saltando sobre un hueco, pinchos o agua): al último sitio firme
+      var fi = j.av.firme;
+      if (!(b && b.pantalla === pan) && !j.av.entrada && fi && calle(fi.pantalla)) { e = fi; pan = fi.pantalla; }
       // (26-sep, revisión) abajoAntes: tras llegar por un ATAJO, la entrada está encima del túnel de vuelta; con el ▼ o la flecha
       // que quitan el cartel todavía pulsados, en el primer paso te volvías por el túnel sin querer (hay que soltar y pulsar)
-      ponCalle(j, j.av.pantalla, e.x, e.y, e.dir); j.w.enPuerta = true; j.w.abajoAntes = true; protege(j); return true;
+      ponCalle(j, pan, e.x, e.y, e.dir); j.w.enPuerta = true; j.w.abajoAntes = true; protege(j); return true;
     }
     // (24-sep, Alejandro: «cuando te maten, que salgas fuera a la puerta, por si quieres hacer otra o entrar de nuevo»)
     // (25-sep, 2b) salvo si has tocado una MEDALLA DE CONTROL de esta casa: entonces sigues dentro, desde la medalla
@@ -2267,7 +3082,8 @@ var MOTOR = (function () {
     // (26-sep, revisión) j.salidaSec (salida secreta → sala de bonus → te pillan) no se queda puesto: si no, al acabar el sótano de
     // una TUBERÍA de la calle aparecías en la calle de aquella salida secreta (ya queda apuntada en entrarTesoro)
     if (j.av && j.av.volver && !enMedalla) { var v = j.av.volver; j.salidaSec = null; cambiaPack('normal'); ponCalle(j, v.pantalla, v.x, v.y, v.dir); j.w.enPuerta = true; j.av.volver = null; protege(j); return true; }
-    empezarSala(j, j.n);
+    var muD7 = j.s ? (j.s.muertes || 0) + 1 : 1;               // (28-sep, D7) las muertes en esta sala (la balanza)
+    empezarSala(j, j.n); j.s.muertes = muD7;
     // Bandera de control (casas con «checkpoint», la 20) y medallas de control (2b): vuelves a ella con lo que ya habías cogido
     var c = j.check;
     if (c && c.n === j.n && c.id === j.s.def.id) {
@@ -2331,6 +3147,8 @@ var MOTOR = (function () {
     J.reloj = 0; J.inv = 0; J.pausa = 0; J.vencido = false; J.tinta = 0; J.heridos = {}; J.sucesos = []; J.sinVer = 0; J.aturdido = 0;
     J.peligros = []; J.blancos = []; J.an = d.an || 16; J.al = d.al || 16; J.x = d.x || 0; J.y = d.y || 0; J.fr = 0; J.flip = false;
     J.sentido = d.sentido || 1;
+    // (28-sep, D11) escalones, fichas en el suelo, garra, venda y mareo (listas que se rehacen, nunca se cambian por dentro)
+    J.escalones = []; J.fichas = []; J.cogidas = []; J.garraX = d.garra ? d.garra.x : null; J.garraR = null; J.vendaT = 0; J.mareo = 0; J.desdeFase = 0; J.charcoOn = false;
     return J;
   }
   var sueloJ = function (J) { return (J.suelo || 15) * 8; };
@@ -2380,6 +3198,8 @@ var MOTOR = (function () {
         if (h === 16) J.blancos.push({ x: c * 8, y: suelo - 16, an: 8, al: 6, id: i });
       });
       if (q % 96 === 60 || (J.fase >= 3 && q % 96 === 12)) { J.tinta = 45; J.sucesos.push('jefeTinta'); }
+      // (28-sep, D11, 258) tras cada chorro de tinta, su charco resbala CHARCO_TINTA pasos (como los charcos de D3)
+      if (J.charco) { var kc = q % 96, ed = (kc + 36) % 96; if (J.fase >= 3) ed = Math.min(ed, (kc + 84) % 96); J.charcoOn = q >= 60 && ed < CHARCO_TINTA; }
       if (J.cuerpo) { J.x = J.cuerpo[0]; J.y = J.cuerpo[1]; }
       J.fr = (q >> 3) & 1;
     },
@@ -2391,6 +3211,7 @@ var MOTOR = (function () {
       J.fr = p.para ? 2 + ((q >> 2) & 1) : (q >> 2) & 1;
       cuerpoJefe(J, p.para);
       caidas(J, q, J.caen, 'ladrillo');
+      escalonesD11(s, J, q);                                                     // (28-sep, D11, 199) y se quedan de escalón
     },
     // (140) EL PROMOTOR FANTASMA: flota de lado a lado por arriba y suelta ladrillos desde donde está (cada 48, 32 o 24
     // pasos según la fase). No se le pisa: se le vence cortando sus 3 GRÚAS (palancas `hace: 'jefe'`). Los muros que
@@ -2406,6 +3227,7 @@ var MOTOR = (function () {
     // de «juego»: 1 pinball (fichas rodando por el suelo), 2 marcianitos (lluvia por columnas), 3 fichas que botan.
     reyFichas: function (s, J, q) {
       var suelo = sueloJ(J), k = q % 96, sen = J.sentido, W8 = (s.ancho || ANCHO) * 8;
+      garraD11(s, J, q); fichasD11(J, q);                                        // (28-sep, D11, 331-332) la garra y las fichas del suelo
       J.y = suelo - J.al; J.expuesto = k >= 64; J.fr = J.expuesto ? 2 : (k >> 3) & 1; J.flip = sen < 0;
       cuerpoJefe(J, J.expuesto);
       if (J.fase === 2) { caidas(J, q, J.lluvia, 'ficha'); return; }
@@ -2426,12 +3248,14 @@ var MOTOR = (function () {
     momia: function (s, J, q) {
       var o = s.objetivo; J.fr = (q >> 3) & 1;
       if (J.fila == null) J.fila = J.suelo || 15;
-      if (J.aturdido > 0) { if (--J.aturdido === 0) teleMomia(J, o, 'lejos'); J.fr = 2; }
+      vendaD11(J, o);                                                            // (28-sep, D11, 209) pisar su venda la marea
+      if (J.aturdido > 0) { if (--J.aturdido === 0) teleMomia(J, o, 'lejos', s); J.fr = 2; }
+      else if (J.mareo > 0) { J.mareo--; J.fr = 2; J.sinVer = 0; }             // (28-sep, D11) mareada: quieta, y se le puede dar
       else if (o) {
         var cx = J.x + J.an / 2, ax = o.x + 5, anda = J.fase >= 2 || (q & 1);
         if (anda) { if (ax > cx + 1 && J.x < J.max) { J.x++; J.flip = false; } else if (ax < cx - 1 && J.x > J.min) { J.x--; J.flip = true; } }
         if (o.pie > 0 && o.pie !== J.fila) J.sinVer++; else J.sinVer = 0;
-        if (J.sinVer >= 48) { J.sinVer = 0; teleMomia(J, o, 'cerca'); }
+        if (J.sinVer >= 48) { J.sinVer = 0; teleMomia(J, o, 'cerca', s); }
       }
       J.y = J.fila * 8 - J.al;
       J.blancos.push({ x: J.x + 2, y: J.y, an: J.an - 4, al: 6, id: 'cabeza' });
@@ -2451,6 +3275,11 @@ var MOTOR = (function () {
       else if (k < vu + 8 + re) { J.x = J.cx - h; J.y = yRep; J.cansado = true; J.fr = 2; }
       else { J.x = J.cx - h; J.y = yRep - Math.round((yRep - yTop) * (k - vu - 8 - re + 1) / 8); }
       cuerpoJefe(J, J.cansado);
+      // (28-sep, D11, 355) al caer cansado, una ONDA por el suelo a los dos lados (`onda`: px por paso; mata: se salta)
+      if (J.onda && k >= vu + 8) {
+        var dd = k - vu - 8, W8c = (s.ancho || ANCHO) * 8, yo = sueloJ(J) - 6;
+        [J.cx + h + J.onda * dd, J.cx - h - 8 - J.onda * dd].forEach(function (xo) { if (xo >= 8 && xo + 8 <= W8c - 8) J.peligros.push({ x: xo, y: yo, an: 8, al: 6, tipo: 'onda' }); });
+      }
     },
     // (144) EL GRAN TASADOR (azotea de la Gran Villa), 3 fases: 1 pasea y le caen carpetas; 2 llama a sus ayudantes (un bicho
     // de cada mundo); 3 se sube a la GRÚA: cruza por arriba y en cada punta el gancho le baja al suelo (expuesto) 16 pasos.
@@ -2475,7 +3304,7 @@ var MOTOR = (function () {
   };
   // la momia salta a una vitrina: 'cerca' = la de tu piso más cercana a 6 casillas o más; 'lejos' = la más lejana de todas
   // (a igual distancia, la que queda hacia su `sentido`, así el espejo elige la misma)
-  function teleMomia(J, o, como) {
+  function teleMomia(J, o, como, s) {
     var ax = o ? o.x + 5 : 0, mejor = null, md = como === 'lejos' ? -1 : 1e9;
     (J.vitrinas || []).forEach(function (v) {
       var c = v[0] + J.an / 2, d = Math.abs(c - ax);
@@ -2485,11 +3314,103 @@ var MOTOR = (function () {
       if (mejora) { md = d; mejor = v; }
     });
     if (!mejor) return;
+    if (como === 'cerca' && J.venda) { J.vendaX = J.x; J.vendaFila = J.fila; J.vendaT = J.venda; }   // (28-sep, D11, 209) deja su venda
     J.x = mejor[0]; J.fila = mejor[1]; J.min = mejor[2]; J.max = mejor[3]; J.sucesos.push('jefeTele');
+    if (como === 'lejos' && s && mejor[4]) escarabajosD11(s, mejor[4]);          // (28-sep, D11, 346) los escarabajos de esa vitrina
   }
   // (25-sep) tras cada golpe el jefe se queda PARADO 24 pasos (J.pausa: su reloj no corre; lo suyo se queda donde está):
   // así el rebote no te deja caer encima de él mientras se mueve y hay tiempo de apartarse. La momia no (ya se marea).
   var PAUSA_JEFE = 24;
+  /* (28-sep, D11 · filas 79-86) LO NUEVO DE LOS JEFES. Todo sale del reloj del jefe (q), salvo lo que te sigue (la garra) y
+     lo que se coge (las fichas): campos sueltos de J; las listas se rehacen, nunca se cambian por dentro (el jugador de la
+     prueba de jefes copia al jefe por encima).
+     · 199 gorila `escalon: pasos`: el ladrillo que llega al suelo se queda esos pasos como bloque B (J.escalones, celda());
+       no aparece dentro del agente (espera a que se quite).
+     · 258 pulpo `charco: [x1, x2]`: tras cada chorro de tinta, el charco resbala CHARCO_TINTA pasos (resbalaEn).
+     · 331 rey `fichasQuedan: pasos`: las fichas de la lluvia (fase 2) se quedan en el suelo como monedas (+50, 'fichaSuelo').
+     · 332 rey `garra: { x, suelta }`: la garra de feria te sigue por arriba a 1 px (k < 64), baja 16 pasos y sube 16; si te
+       toca bajando, te suelta en la entrada (`suelta`: px del agente) sin matar ('garra'). Con estrella o invulnerable, no.
+     · 209 momia `venda: pasos`: al saltar de vitrina porque la perdiste de vista deja su venda donde estaba; pisarla (de pie)
+       la marea MAREO_VENDA pasos: quieta, y SÍ se le puede dar ('jefeVenda').
+     · 346 momia: la 5.ª cosa de una vitrina = sus escarabajos (bichos pisables): salen cuando salta a ella tras un golpe (la
+       más lejana: lejos de ti) y se van los de antes. Son `ayudante`: al vencerla se van.
+     · 355 cometa `onda: px por paso`: ver MUEVE_JEFE.cometa. */
+  var CHARCO_TINTA = 32, MAREO_VENDA = 30, PUNTOS_FICHA = 50;
+  // lo que cae por columnas (caidas) y ya llegó al suelo hace menos de `dura` pasos: [{ col, id }] (desde el cambio de fase)
+  function aterrizadas(J, q, c, dura) {
+    var r = []; if (!c || !c.cols || !c.cols.length || !dura) return r;
+    var n = c.cols.length, per = c.periodo || 48, vel = c.vel || 4, y0 = c.y0 != null ? c.y0 : 8, fin = sueloJ(J) - 8;
+    var kl = Math.floor((fin - y0) / vel) + 1, tandas = J.fase >= (c.dobleEn || 99) ? 2 : 1, med = Math.floor(per / 2);
+    for (var t = 0; t < tandas; t++) {
+      var qq = q + t * med, k = qq % per;
+      for (var m = 0; k + m * per < kl + dura; m++) {
+        var edad = k + m * per, qb = qq - m * per, sale = qb - k - t * med;
+        if (edad < kl || q - m * per < 0 || sale < (J.desdeFase || 0)) continue;
+        var i = Math.floor(qb / per) % n; if (t) i = (i + Math.floor(n / 2)) % n;
+        r.push({ col: c.cols[i], id: (qb - k) * 2 + t });
+      }
+    }
+    return r;
+  }
+  function escalonesD11(s, J, q) {
+    J.escalones = []; if (!J.escalon) return;
+    var fila = (J.suelo || 15) - 1, o = s.objetivo, l = [];
+    aterrizadas(J, q, J.caen, J.escalon).forEach(function (a) {
+      if (!s.mapa[fila] || s.mapa[fila][a.col] !== ' ') return;
+      if (o && solapa({ x: o.x + 1, y: o.y, an: 8, al: 16 }, { x: a.col * 8, y: fila * 8, an: 8, al: 8 })) return;
+      l.push([a.col, fila]);
+    });
+    J.escalones = l;
+  }
+  function escalonEn(s, x, y) {
+    var J = s.jefe; if (!J || J.vencido) return false;
+    for (var i = 0; i < J.escalones.length; i++) if (J.escalones[i][0] === x && J.escalones[i][1] === y) return true;
+    return false;
+  }
+  function charcoJefe(s, w) {
+    var J = s.jefe; if (!J || J.vencido || !J.charcoOn || !J.charco || (w.y & 7)) return false;
+    return (w.y >> 3) + 2 === (J.suelo || 15) && w.x + 1 >= J.charco[0] && w.x <= J.charco[1];
+  }
+  function fichasD11(J, q) {
+    var l = []; J.fichas = l; if (!J.fichasQuedan || J.fase !== 2) return;
+    var fin = sueloJ(J) - 8, cog = J.cogidas || [];
+    aterrizadas(J, q, J.lluvia, J.fichasQuedan).forEach(function (a) { if (cog.indexOf(a.id) < 0) l.push({ x: a.col * 8 + 1, y: fin + 2, an: 6, al: 6, id: a.id }); });
+  }
+  function garraD11(s, J, q) {
+    J.garraR = null; var g = J.garra; if (!g) return;
+    var o = s.objetivo, k = q % 96, top = g.y != null ? g.y : 8, abajo = sueloJ(J) - 16, W8 = (s.ancho || ANCHO) * 8;
+    if (J.garraX == null) J.garraX = g.x;
+    if (k < 64) {
+      J.garraY = top;
+      if (o) { var c = J.garraX + 4, ac = o.x + 5; if (ac > c + 1 && J.garraX < W8 - 16) J.garraX++; else if (ac < c - 1 && J.garraX > 8) J.garraX--; }
+    } else if (k < 80) { J.garraY = top + Math.round((abajo - top) * (k - 63) / 16); J.garraR = { x: J.garraX, y: J.garraY, an: 8, al: 8 }; }
+    else J.garraY = abajo - Math.round((abajo - top) * (k - 79) / 16);
+  }
+  function vendaD11(J, o) {
+    if (!(J.vendaT > 0)) return;
+    J.vendaT--;
+    if (o && o.pie === J.vendaFila && o.x + 1 < J.vendaX + J.an - 2 && J.vendaX + 2 < o.x + 9) { J.vendaT = 0; J.mareo = MAREO_VENDA; J.sucesos.push('jefeVenda'); }
+  }
+  function escarabajosD11(s, l) {
+    s.enemigos.forEach(function (e) { if (e.escarabajo) e.fuera = true; });
+    l.forEach(function (e) { var o = copia(e); o.fr = 0; o.f = 0; ponEspejoH(o); if (o.tipo === 'h') o.y = o.fila * 8; o.ayudante = true; o.escarabajo = true; s.enemigos.push(o); });
+    s.jefe.sucesos.push('escarabajos');
+  }
+  // en choqueJefe, antes de lo que mata: la garra te lleva a la entrada y las fichas del suelo se cogen
+  function extrasD11(j, s, w, ev) {
+    var J = s.jefe, ra = rectAg(w);
+    if (J.garraR && !(w.inv > 0) && !(w.estrella > 0) && solapa(ra, J.garraR)) {
+      var px = J.garra.suelta != null ? J.garra.suelta : 16, a = nuevoAgente(s.def);
+      w.x = px >> 3; w.f = (px & 7) >> 1; w.y = a.y; w.aire = 0; w.salto = 0; w.jdir = 0; w.plat = -1; w.resbala = 0; w.rebote = false;
+      J.garraR = null; ev.push('garra'); ra = rectAg(w);
+    }
+    if (J.fichas && J.fichas.length) J.fichas.forEach(function (f) {
+      if (!solapa(ra, f)) return;
+      J.cogidas = J.cogidas.concat([f.id]); J.fichas = J.fichas.filter(function (x) { return x !== f; });
+      sumar(j, PUNTOS_FICHA, ev); ev.push('fichaSuelo');
+    });
+  }
+  function limpiaD11(J) { J.escalones = []; J.fichas = []; J.garraR = null; J.vendaT = 0; J.mareo = 0; J.charcoOn = false; }
   function mueveJefe(s, J) {
     // (26-sep, arreglo B2) la pausa baja SIEMPRE (la momia no se para, pero antes su pausa se quedaba en 24 toda la pelea y
     // la pantalla le pintaba las estrellitas de mareo hasta el final)
@@ -2503,6 +3424,7 @@ var MOTOR = (function () {
     if (quieto) { J.sucesos.length = n; J.tinta = tinta; }       // (parado no vuelve a echar tinta ni nada)
   }
   function cambiaFase(s, J, ev) {
+    J.desdeFase = J.reloj;                                                       // (28-sep, D11) lo que cae de antes no se queda
     if (J.tipo === 'gorila' && J.fase >= 2 && J.rompe) { J.rompe.forEach(function (c) { if (s.mapa[c[1]]) s.mapa[c[1]][c[0]] = ' '; }); ev.push('derrumbe'); }
     if (J.tipo === 'granTasador' && J.fase === 2) {
       (J.ayudantes || []).forEach(function (e) { var o = copia(e); o.fr = 0; o.f = 0; ponEspejoH(o); if (o.tipo === 'h') o.y = o.fila * 8; o.ayudante = true; s.enemigos.push(o); });
@@ -2516,10 +3438,10 @@ var MOTOR = (function () {
     var J = s.jefe;
     J.vida--; J.inv = INV_JEFE; J.golpes++; J.pausa = PAUSA_JEFE;
     if (J.tipo === 'pulpo' && b && b.id != null) J.heridos[b.id] = 1;
-    if (J.tipo === 'momia') J.aturdido = 32;
+    if (J.tipo === 'momia') { J.aturdido = 32; J.mareo = 0; }                  // (28-sep, D11) el golpe le quita el mareo de la venda
     sumar(j, PUNTOS_GOLPE, ev); ev.push('jefeGolpe');
     if (J.vida <= 0) {
-      J.vencido = true; J.peligros = []; J.blancos = []; J.tinta = 0;
+      J.vencido = true; J.peligros = []; J.blancos = []; J.tinta = 0; limpiaD11(J);   // (28-sep, D11)
       s.enemigos.forEach(function (e) { if (e.ayudante) e.fuera = true; });
       sumar(j, PUNTOS_JEFE, ev); ev.push('jefeVencido');
       // (25-sep, 2b) en la aventura, cada jefe vencido da su PODER (le quita una vida a otro jefe: PODER_JEFE)
@@ -2537,6 +3459,7 @@ var MOTOR = (function () {
     var J = s.jefe; if (!J || J.vencido) return false;
     if (J.inv > 0) J.inv--;
     while (J.sucesos.length) ev.push(J.sucesos.shift());
+    extrasD11(j, s, w, ev);                                                      // (28-sep, D11) la garra y las fichas del suelo
     var ra = rectAg(w), cae = cayendo(s, w) && baja !== false, b = null, i;
     var protegido = J.inv > 0 || J.aturdido > 0;                 // (la momia mareada tampoco se deja dar)
     if (!protegido) for (i = 0; i < J.blancos.length && !b; i++) {
@@ -2617,7 +3540,7 @@ var MOTOR = (function () {
     j.w.botas = 2;
     // (26-sep, arreglo) en una casa-JEFE ya vendida, el jefe sigue vencido y la puerta abierta: si no, se le volvía a ganar
     // en cada visita (3 × 1.000 + 5.000 cada vez: puntos sin fin con las botas)
-    var Jf = s.jefe; if (Jf) { Jf.vencido = true; Jf.vida = 0; Jf.peligros = []; Jf.blancos = []; Jf.tinta = 0; Jf.sucesos = []; s.palancas.forEach(function (p) { if (p.hace === 'jefe') p.movida = true; }); }
+    var Jf = s.jefe; if (Jf) { Jf.vencido = true; Jf.vida = 0; Jf.peligros = []; Jf.blancos = []; Jf.tinta = 0; Jf.sucesos = []; limpiaD11(Jf); s.palancas.forEach(function (p) { if (p.hace === 'jefe') p.movida = true; }); }
   }
   /* (25-sep, 2b) EL MAPA DEL MUNDO dibujado como un tablero: los mundos en orden con sus calles (las pisadas, iluminadas;
      las secretas no se enseñan hasta que las pisas) y los ATAJOS (tuberías con `atajo`), que solo salen cuando los usas. */
@@ -2658,14 +3581,153 @@ var MOTOR = (function () {
     ['caen', 'lluvia'].forEach(function (k) { if (J0[k] && J0[k].cols) J[k].cols = J0[k].cols.map(col); });
     if (J0.rompe) J.rompe = J0.rompe.map(function (c) { return [W - 1 - c[0], c[1]]; });
     if (J0.cuerpo) J.cuerpo = [W8 - J0.cuerpo[0] - (J0.cuerpo[2] || 32)].concat(J0.cuerpo.slice(1));
-    if (J0.vitrinas) J.vitrinas = J0.vitrinas.map(function (v) { return [W8 - v[0] - an, v[1], W8 - v[3] - an, W8 - v[2] - an]; });
+    // (28-sep, D11) + los escarabajos de cada vitrina (5.ª cosa), la garra (x y dónde suelta) y el charco de tinta
+    if (J0.vitrinas) J.vitrinas = J0.vitrinas.map(function (v) { return [W8 - v[0] - an, v[1], W8 - v[3] - an, W8 - v[2] - an].concat(v[4] ? [v[4].map(function (e) { return espejoEnemigo(e, W); })] : []); });
+    if (J0.garra) { J.garra.x = W8 - J0.garra.x - 8; if (J0.garra.suelta != null) J.garra.suelta = W8 - J0.garra.suelta - 10; }
+    if (J0.charco) J.charco = [W - 1 - J0.charco[1], W - 1 - J0.charco[0]];
     if (J0.ayudantes) J.ayudantes = J0.ayudantes.map(function (e) { return espejoEnemigo(e, W); });
     return J;
   }
 
+  /* ══ (28-sep, D6) LOS QUE NO MATAN (PLAN-FASE-D, filas 40-46). El ROBOT no los sigue (mata() da false): en las casas
+     van FUERA del camino obligatorio. Bicho nuevo `{tipo: 'manso', hace, spr, x, y, min, max, dir}` (px, como la suegra):
+       hace 'timido'  si le miras, quieto; de espaldas, se te acerca por su tramo. Tócale QUIETO: `premio` ('diamante',
+                      'rubi'… o puntos) UNA vez por aventura (j.av.dado 'manso:<casa>:<i>'); con `reverencia`, la hace (222, 248, 307)
+       hace 'empuja'  va y viene a `vel` px por paso, rebota en su tramo y en los otros 'empuja'; tocarte te aparta `fuerza`
+                      pasos (4) hacia su lado, nunca dentro de un muro (mover) (296, 317, 242, 295)
+       hace 'concha'  el cangrejo ermitaño: si te acercas SALTANDO se mete en su concha `concha` pasos (64) y su casilla de
+                      abajo es SUELO (celda 'B'; nunca la que ocupas tú); mientras estés encima no sale (225)
+       hace 'notario' pasea y cada `cada` pasos (48) deja un SELLO en el suelo que se seca a los `seca` (192): pisarlo te
+                      pega los zapatos PEGADO pasos (32 = 2 s: andas a la mitad) (308)
+       hace 'vigila'  el guarda con linterna: el cono de `luz` casillas (5) delante; si te pilla (sin muro en medio), vuelves
+                      a donde entraste en la sala con las MISMAS vidas y 3 s de protección. No en 🧸 Tranquilo ni protegido (301)
+     · `voz: 'clave'` en cualquier bicho (perro y suegra sobre todo): cerca de ti dice su frase (T.es 'dVoz' + Clave), cada 96
+       pasos; el perro, solo despierto (306, 309, 317) · `inofensivo: true` (el perro-bibliotecaria): no mata, te aparta.
+     · satélite 'f' con `presi: fila`: la maceta solo cae en las vueltas que empiezan con el Presidente (bicho `vecino` o
+       `presidente`) a esa fila o más arriba; si no, no está (e.oculta) (223). El robot la cree siempre: más prudente.
+     · truco `saltaBicho {a: índice, n: 7}`: saltar n veces seguidas por encima de ese bicho (que te toque, a 0) (242). ══ */
+  var PEGADO = 32, SELLO_SECA = 192, SELLO_CADA = 48, CONCHA = 64, VOZ_CADA = 96, LUZ = 5;
+  function mueveTramoD6(e, v) {
+    e.dir = e.dir || 1; var nx = e.x + e.dir * v;
+    if (nx >= e.max) { nx = e.max; e.dir = -1; } else if (nx <= e.min) { nx = e.min; e.dir = 1; }
+    e.x = nx;
+  }
+  function miraD6(o, e) { return (o.dir || 1) > 0 ? centroE(e) >= o.x + 5 : centroE(e) <= o.x + 5; }
+  function cercaD6(o, e, dx, dy) { return !!o && Math.abs(o.x + 5 - centroE(e)) < dx && Math.abs(o.y + 16 - (e.y + altoSpr(e.spr))) < dy; }
+  // las casillas de la concha escondida (la fila de abajo de su dibujo), menos las que ocupa el agente
+  function conchaCeldas(e, o) {
+    var an = anchoSpr(e.spr), fy = (e.y + altoSpr(e.spr) - 1) >> 3, l = [];
+    for (var cx = e.x >> 3; cx <= (e.x + an - 1) >> 3; cx++) {
+      if (o && o.x + 1 < cx * 8 + 8 && cx * 8 < o.x + 9 && o.y < fy * 8 + 8 && fy * 8 < o.y + 16) continue;
+      l.push([cx, fy]);
+    }
+    return l;
+  }
+  function conchaEn(s, x, y) {
+    for (var i = 0; i < s.enemigos.length; i++) { var e = s.enemigos[i]; if (e.tipo !== 'manso' || !(e.escondido > 0) || !e.celdasD6 || e.fuera) continue;
+      for (var k = 0; k < e.celdasD6.length; k++) if (e.celdasD6[k][0] === x && e.celdasD6[k][1] === y) return true; }
+    return false;
+  }
+  function pasoManso(s, e) {
+    var o = s.objetivo, t = s.t, h = e.hace;
+    if (e.empuja > 0) e.empuja--;
+    if (h === 'timido') {
+      e.quieto = !o || miraD6(o, e);
+      if (!e.quieto && (t & 1)) { var ce = centroE(e), ao = o.x + 5; if (ao > ce + 1 && e.x < e.max) { e.x++; e.dir = 1; } else if (ao < ce - 1 && e.x > e.min) { e.x--; e.dir = -1; } }
+      e.fr = e.quieto ? 0 : 1 + ((t >> 3) & 1);
+    } else if (h === 'empuja') {
+      mueveTramoD6(e, e.vel || 1);
+      s.enemigos.forEach(function (b) {              // rebotan entre ellos (el que va hacia el otro da la vuelta)
+        if (b === e || b.fuera || b.tipo !== 'manso' || b.hace !== 'empuja' || Math.abs(b.y - e.y) >= 8) return;
+        var ae = anchoSpr(e.spr), ab = anchoSpr(b.spr);
+        if (e.x < b.x + ab && b.x < e.x + ae && (e.dir > 0 ? e.x < b.x : e.x > b.x)) e.dir = -e.dir;
+      });
+      e.fr = (t >> 2) & 1;
+    } else if (h === 'concha') {
+      if (e.escondido > 0) {
+        var encima = o && o.pie === ((e.y + altoSpr(e.spr) - 1) >> 3) && o.x + 9 > e.x && o.x + 1 < e.x + anchoSpr(e.spr);
+        if (encima) e.escondido = Math.max(e.escondido, 2); else e.escondido--;
+        e.celdasD6 = e.escondido > 0 ? conchaCeldas(e, o) : null; e.fr = 2;
+        if (!(e.escondido > 0)) e.aviso = 'conchaSale';
+        return;
+      }
+      if (o && o.salta && cercaD6(o, e, 32, 32)) { e.escondido = e.concha || CONCHA; e.celdasD6 = conchaCeldas(e, o); e.fr = 2; e.aviso = 'concha'; return; }
+      if (t & 1) mueveTramoD6(e, 1);
+      e.fr = (t >> 3) & 1;
+    } else if (h === 'notario') {
+      if (t & 1) mueveTramoD6(e, 1);
+      e.fr = (t >> 3) & 1;
+      if (t % (e.cada || SELLO_CADA) === 0) {
+        var sx = centroE(e) >> 3, sy = (e.y + altoSpr(e.spr) - 1) >> 3; s.sellos = s.sellos || [];
+        s.sellos = s.sellos.filter(function (q) { return q.x !== sx || q.y !== sy; });
+        s.sellos.push({ x: sx, y: sy, seca: e.seca || SELLO_SECA }); if (s.sellos.length > 6) s.sellos.shift();
+        e.aviso = 'sellaD6';
+      }
+    } else if (h === 'vigila') {
+      if (e.gira > 0) { e.gira--; if (!e.gira) e.dir = e.dirSig; }
+      else { var d0 = e.dir || 1; if (t & 1) mueveTramoD6(e, 1); if (e.dir !== d0) { e.dirSig = e.dir; e.dir = d0; e.gira = e.espera || 24; } }
+      e.fr = e.gira > 0 ? 0 : (t >> 3) & 1;
+    } else e.fr = (t >> 3) & 1;
+  }
+  // tocar a un manso (y al perro inofensivo): apartarte, darte su premio
+  function empujaD6(s, w, e, ev, fuerza) {
+    if (e.empuja > 0 || w.aire !== 0) return;
+    var ca = w.x * 8 + w.f * 2 + 5, ce = centroE(e), d = ca > ce ? 1 : ca < ce ? -1 : (e.dir || 1);
+    for (var i = 0; i < (fuerza || 4); i++) mover(s, w, d);
+    e.empuja = 12; ev.push('empujon');
+  }
+  function tocaManso(j, s, w, e, ev) {
+    e.tocoD6 = s.t;
+    if (e.hace === 'empuja') empujaD6(s, w, e, ev, e.fuerza);
+    else if (e.hace === 'timido' && e.quieto && e.premio != null) {
+      var k = 'manso:' + idD2(s) + ':' + s.enemigos.indexOf(e);
+      if (yaD2(j, k)) return;
+      daD2(j, k);
+      if (typeof e.premio === 'number') sumar(j, e.premio, ev);
+      else { var c = centroE(e), col = Math.floor(c / 8); if (s.def && s.def.espejo && c % 8 === 0) col--;
+        s.bonus.push({ x: col, y: (e.y + altoSpr(e.spr) - 1) >> 3, tipo: e.premio, cogido: false, alFinal: false, extra: true }); }
+      ev.push(e.reverencia ? 'reverencia' : 'mansoPremio');
+    }
+  }
+  // la maceta: ¿está el Presidente arriba?
+  function presiArriba(s, f) { return s.enemigos.some(function (e) { return !e.fuera && (e.vecino || e.presidente) && (e.y >> 3) <= f.presi; }); }
+  // antes de moverte: los zapatos pegados (un paso sí y otro no, sin andar) y dónde entraste en la sala
+  function pieD6(s, w, inp) {
+    if (!s.entradaD6) s.entradaD6 = { x: w.x, f: w.f, y: w.y, dir: w.dir };
+    if (w.pegadoD6 > 0) { w.pegadoD6--; if (s.t & 1) { var o = {}; for (var k in inp) o[k] = inp[k]; o.izq = false; o.der = false; return o; } }
+    return inp;
+  }
+  function luzPilla(s, w, e) {
+    var an = anchoSpr(e.spr), d = e.dir || 1, ax = w.x * 8 + w.f * 2 + 5, ay = w.y + 8, fr0 = d > 0 ? e.x + an : e.x, L = (e.luz || LUZ) * 8;
+    var dist = (ax - fr0) * d; if (dist < 0 || dist > L) return false;
+    if (Math.abs(ay - (e.y + 4)) > 6 + dist / 3) return false;
+    var fila = ay >> 3;
+    for (var cx = fr0 >> 3; d > 0 ? cx < ax >> 3 : cx > ax >> 3; cx += d) if (MURO[celda(s, cx, fila)]) return false;   // detrás de un muro no te ve
+    return true;
+  }
+  function pasoD6(j, s, w, celdas, ev) {
+    if (s.vozD6 && --s.vozD6.t <= 0) s.vozD6 = null;
+    if (s.sellos && s.sellos.length) {
+      s.sellos = s.sellos.filter(function (q) { return --q.seca > 0; });
+      if (w.aire === 0 && s.sellos.some(function (q) { return celdas.some(function (c) { return c[0] === q.x && c[1] === q.y; }); })) { if (!(w.pegadoD6 > 0)) ev.push('sello'); w.pegadoD6 = PEGADO; }
+    }
+    var ax = w.x * 8 + w.f * 2 + 5;
+    s.enemigos.forEach(function (e, i) {
+      if (e.fuera || e.dormido) return;
+      if (e.vozT > 0) e.vozT--;
+      if (e.voz && !(e.vozT > 0) && (e.tipo !== 'perro' || e.despierto) && Math.abs(ax - centroE(e)) < (e.vozDist || 40) && Math.abs(w.y + 8 - (e.y + 8)) < 24) {
+        e.vozT = VOZ_CADA; s.vozD6 = { i: i, clave: e.voz, t: 40 }; ev.push('voz:' + e.voz);
+      }
+      if (e.tipo === 'manso' && e.hace === 'vigila' && !(e.gira > 0) && !j.inmortal && !(w.inv > 0) && s.entradaD6 && luzPilla(s, w, e)) {
+        var q = s.entradaD6; w.x = q.x; w.f = q.f; w.y = q.y; w.dir = q.dir; w.aire = 0; w.salto = 0; w.jdir = 0; w.plat = -1;
+        w.coyote = 0; w.guarda = 0; w.inv = Math.max(w.inv || 0, PROTEGE); w.pegadoD6 = 0; ev.push('pillado');
+      }
+    });
+  }
   /* MONSTRUOS NUEVOS (145-152). Los que NO matan: okupa, suegra, dueño, moroso (roba) y termitas (come: 'madera');
      el perro solo despierto y el cofre solo abierto. mata(e) lo dice (y el robot no sigue a los que no matan). */
   function mata(e) {
+    if (e.tipo === 'manso' || e.inofensivo) return false;   // (28-sep, D6) los que no matan
     if (e.tipo === 'okupa' || e.tipo === 'suegra' || e.tipo === 'dueno' || e.tipo === 'generoso' || e.tipo === 'gente') return false;   // (26-sep) + el Generoso y la gente
     if (e.tipo === 'perro') return !!e.despierto;
     if (e.tipo === 'cofre') return !!e.abierto;
@@ -2673,10 +3735,10 @@ var MOTOR = (function () {
     return true;
   }
   // ¿lo sigue el robot? (recorrido fijo que depende solo del paso y que mata)
-  function sigueRobot(e) { return (e.tipo === 'h' || e.tipo === 'v' || e.tipo === 'f' || e.tipo === 'p') && mata(e); }
+  function sigueRobot(e) { return (e.tipo === 'h' || e.tipo === 'v' || e.tipo === 'f' || e.tipo === 'p' || e.tipo === 'r' || e.tipo === 'topo' /* (27-sep, D5) */) && mata(e); }
   // (26-sep, arreglo) la GENTE no se pisa aunque lleve el dibujo de un bicho pisable (camarero, vendedor): antes desaparecía,
   // daba +100 y combo y su regalo no llegaba nunca
-  function pisable(e) { return e.tipo !== 'gente' && !!(PISABLES_BICHO[e.spr] || e.roba || e.come || (e.tipo === 'cofre' && e.abierto)); }
+  function pisable(e) { return e.tipo !== 'gente' && e.tipo !== 'manso' /* (28-sep, D6) */ && !!(e.tipo === 'topo' /* (27-sep, D5) */ || e.pisable === true /* (28-sep, D11) */ || PISABLES_BICHO[e.spr] || e.roba || e.come || (e.tipo === 'cofre' && e.abierto)); }
   function centroE(e) { return e.x + anchoSpr(e.spr) / 2; }
   function altoSpr(n) { return SPR[n] ? SPR[n][0].length : 16; }
   // (145-152) lo que hacen al moverse (lo llama pasoEnemigos). Sus avisos van en e.aviso y paso() los saca como sucesos.
@@ -2730,6 +3792,7 @@ var MOTOR = (function () {
         e.x = nxg; e.fr = (t >> 3) & 1;
       }
     } else if (e.tipo === 'gente') genteAnda(e, t);          // (26-sep, idea 109) la gente de la calle
+    else if (e.tipo === 'manso') pasoManso(s, e);            // (28-sep, D6) los que no matan
   }
   // (148) la aspiradora se come las monedas por donde pasa · (149) las termitas se comen la madera (O) cada 48 pasos
   function comeCosas(s, e) {
@@ -2748,6 +3811,7 @@ var MOTOR = (function () {
     e.fuera = true;
     w.combo = (w.combo || 0) + 1;
     var pts = w.combo >= 8 ? 0 : COMBO[w.combo - 1];
+    if (e.tipo === 'topo' && pts && pts < 200) pts = 200;       // (27-sep, D5) el topo, +200
     if (!pts && sinExtras(j)) { pts = SIN_MORIR_VIDA; ev.push('sinVida'); }   // (168 y 167) el 8.º bicho tampoco da vida
     if (pts) sumar(j, pts, ev); else { j.vidas++; ev.push('vida', 'comboVida'); }
     j.comboPisa = { n: w.combo, p: pts * (j.turbo ? 2 : 1) * (j.feliz > 0 ? 2 : 1) };   // (J.combo es de la pantalla: las piedras)
@@ -2788,6 +3852,8 @@ var MOTOR = (function () {
     } else if (e.tipo === 'dueno') {
       if (s.linterna) { e.fuera = true; sumar(j, 500, ev); j.dueno = e.k || 0; ev.push('dueno'); }
     } else if (e.tipo === 'gente') genteToca(j, s, w, e, ev);   // (26-sep, idea 109) te ayuda o te aparta
+    else if (e.tipo === 'manso') tocaManso(j, s, w, e, ev);     // (28-sep, D6)
+    else if (e.tipo === 'perro' && e.inofensivo) { e.tocoD6 = s.t; empujaD6(s, w, e, ev); }   // (28-sep, D6) la bibliotecaria: te aparta
   }
   // (145) el cabezazo al techo del okupa (como una palanca de golpe): se levanta y se va
   function miraOkupas(s, celdas, ev) {
@@ -3032,7 +4098,7 @@ var MOTOR = (function () {
       if (p.x < 0 || p.y < 0 || cx >= (s.ancho || ANCHO) || cy >= (s.alto || ALTO) || p.t > 90) return false;
       var dio = null;
       s.enemigos.forEach(function (e) {
-        if (dio || e.fuera || !mata(e) || e.tipo === 'c' || e.tipo === 'm' || e.tipo === 'g' || !SPR[e.spr]) return;   // (ni el Tasador, ni tu sombra, ni el gigante)
+        if (dio || e.fuera || e.dormido /* (27-sep, D4) */ || !mata(e) || e.tipo === 'c' || e.tipo === 'm' || e.tipo === 'g' || !SPR[e.spr]) return;   // (ni el Tasador, ni tu sombra, ni el gigante)
         var pe = posEnemigo(e), mk = mascara(e.spr, e.fr);
         if (p.x >= pe.x && p.x < pe.x + mk.ancho && p.y >= pe.y + mk.arriba && p.y < pe.y + mk.alto) dio = e;
       });
@@ -3075,6 +4141,10 @@ var MOTOR = (function () {
     // nuevo): se apunta en j.av.dado, como las puertas con regalo · y en la calle (donde el aire no se gasta) el aire son monedas
     var clave = j.av && s.calle ? 'gente:' + s.def.id + ':' + s.enemigos.indexOf(e) : '';
     if (e.dado || (clave && j.av.dado && j.av.dado[clave])) return;
+    // (28-sep, D12) (171) la COMPAÑERA (`cafe: true`): la pista cuesta un café (1 🪙). Sin 🪙 (j.monedasCafe === 0, lo pone la pantalla) no
+    // la da ni se apunta: 'genteCafeNo' y se aparta un rato. Sin pantalla (robot, pruebas) no se mira
+    if (e.cafe && j.monedasCafe === 0) { if (!e.para) { e.para = 48; ev.push('genteCafeNo'); } return; }
+    j.genteCafe = !!e.cafe;
     if (clave) (j.av.dado = j.av.dado || {})[clave] = 1;
     var rg = e.regalo || 'monedas'; if (rg === 'aire' && (s.calle || s.tesoro)) rg = 'monedas';
     e.dado = true; e.para = 24; j.genteRegalo = rg;
@@ -3137,7 +4207,7 @@ var MOTOR = (function () {
   var CIFRA_JEFE = { 'jefe-nerja': 4, 'jefe-edificio': 7, 'jefe-urba': 1, 'jefe-recreativos': 9, 'jefe-museo': 3, 'jefe-galaxia': 6, 'jefe-final': 2 };
   var PCT_PARTES = { casas: 50, estrellas: 20, secretos: 30 };
   var RANGOS = [0, 10, 25, 50, 75, 100];
-  var OBJ_COLECCION = { estatuilla: 'estatuillas', carta: 'cartas', postal: 'postales', llaveRara: 'llavesRaras' };
+  var OBJ_COLECCION = { estatuilla: 'estatuillas', carta: 'cartas', postal: 'postales', llaveRara: 'llavesRaras', pieza: 'piezas' /* (28-sep, caballero) */ };
   function cifraJefe(id) { id = String(id || ''); return CIFRA_JEFE[id] != null ? CIFRA_JEFE[id] : (id.length * 7 + (id.charCodeAt(0) || 0)) % 10; }
   function esJefe(id) {
     if (JEFES.some(function (q) { return q[0] === id; }) || mundoDeJefe(id)) return true;
@@ -3191,6 +4261,7 @@ var MOTOR = (function () {
         var jefe = JEFES.some(function (q) { return q[0] === p.casa; });
         deCasa(p.casa, c, (!c.secreta && !condicionPuerta(p)) || jefe ? 'casas' : 'secretos', p);   // (la cuenta de cuentaAv, y los jefes)
       });
+      (c.especiales || []).forEach(function (p) { if (p.casa && !p.soloFecha) deCasa(p.casa, c, 'secretos', p); });   // (28-sep, D13) (las de fecha, no)
       (c.zonas || []).forEach(function (z) { if (z.casa) deCasa(z.casa, c, 'secretos', null); });
       (c.bajadas || []).forEach(function (b, i) { if (b.casa) mete({ k: 'b:' + c.id + ':' + i, parte: 'secretos', mundo: m, calle: c.id }); });
       (c.tuberias || []).forEach(function (p) { if (p.a) mete({ k: 't:' + p.a, parte: 'secretos', mundo: m, calle: c.id, id: p.a }); });
@@ -3236,6 +4307,75 @@ var MOTOR = (function () {
     var r = {}; av = av || {};
     universo().forEach(function (it) { var t = it.k.charAt(0); if (t !== 'e' && t !== 's' && hechoItem(av, it, opc, true)) r[it.k] = 1; });
     return r;
+  }
+  /* ══ (28-sep, D12) HISTORIA Y COLECCIONABLES (filas 91-99) ══════════════════════════════════════════════════════════════════
+     · Campos nuevos de av (VACÍOS por defecto; van en guardadoAventura; una partida de antes carga con ellos vacíos):
+       llavesRaras, postales, pegatinas, cuaderno, deseos (D12_CAMPOS).
+     · COLECCIONES (OBJ_COLECCION): el objeto { tipo: 'postal' | 'llaveRara', id } va a av.postales[id] / av.llavesRaras[id] (como
+       estatuillas y cartas) y ya no vuelve a salir. Suman al % (secretos) SOLO las escondidas (las que están en los `objetos` de
+       una casa o calle: universo()). La postal de «MUNDO SUPERADO» va a av.postales['mundo:<m>'] y NO suma.
+       ENCHUFE para otra colección (las 6 piezas del caballero): OBJ_COLECCION.pieza = 'piezas' y 'piezas' en D12_CAMPOS; en las
+       casas, objetos { tipo: 'pieza', id: 'casco' | 'peto' | … }: se cogen, se guardan, no se repiten, suman y la Vitrina las cuenta
+       con escondidasAv(av, 'pieza') / coleccionTotal('pieza').
+     · DESEOS (170): la casa con `deseo: '<tipo de objeto>'`: si lo llevas al venderla (av.lleva o la sala), av.deseos[id] = tipo y
+       j.deseoCumplido = { id, tipo } (la pantalla paga DESEO_MONEDAS 🪙 y saca otra reseña). Una vez por casa.
+     · CUADERNO (172): al vencer al jefe, av.cuaderno[m] = { v: vendidas del mundo, s: secretos, m: muertes } (la pantalla pone t).
+     · HERENCIA (173): herenciaAv(av) = 7 estatuillas y 12 cartas → el epílogo de la Cámara cambia (una variante; nada se borra).
+     · PEGATINAS (176): pegatinasAv(av, opc) las calcula con lo que ya se apunta; apuntaPegatinas guarda las nuevas (para siempre).
+     · LA AGENCIA CRECE (164): oficinasAv(av) = la 1.ª calle de cada mundo con su jefe vencido. ══ */
+  var D12_CAMPOS = ['llavesRaras', 'postales', 'pegatinas', 'cuaderno', 'deseos', 'piezas' /* (28-sep, caballero) */];
+  /* (28-sep, caballero) EL CABALLERO DE LA LLAVE: 6 piezas de armadura escondidas ({ tipo: 'pieza', id }), una por mundo, fuera del
+     camino. Con las 6 en av.piezas (caballeroAv) se desbloquea el personaje 'caballero' (la pantalla lo guarda en P.desbloq) y la pegatina. */
+  var PIEZAS_CABALLERO = ['casco', 'peto', 'guanteletes', 'grebas', 'escudo', 'pluma'];
+  function piezasAv(av) { var c = (av && av.piezas) || {}; return PIEZAS_CABALLERO.filter(function (p) { return !!c[p]; }).length; }
+  function caballeroAv(av) { return piezasAv(av) >= PIEZAS_CABALLERO.length; }
+  var HERENCIA = { estatuillas: 7, cartas: 12 }, DESEO_MONEDAS = 5;
+  function nColD12(o) { return o && typeof o === 'object' ? Object.keys(o).length : 0; }
+  function herenciaAv(av) { av = av || {}; return nColD12(av.estatuillas) >= HERENCIA.estatuillas && nColD12(av.cartas) >= HERENCIA.cartas; }
+  function escondidosD12(tipo) { var u = {}; universo().forEach(function (it) { if (it.k.charAt(0) === 'o' && it.tipo === tipo) u[it.id] = 1; }); return u; }
+  function coleccionTotal(tipo) { return nColD12(escondidosD12(tipo)); }
+  function escondidasAv(av, tipo) { var u = escondidosD12(tipo), c = (av && av[OBJ_COLECCION[tipo]]) || {}; return Object.keys(c).filter(function (k) { return u[k]; }).length; }
+  var PEGATINAS = [
+    ['sieteSinMorir', function (av) { return JEFES.length > 0 && JEFES.every(function (q) { var m = (av.mundos || {})[q[2]]; return !!(m && m.sinMorir); }); }],
+    ['herencia', function (av) { return herenciaAv(av); }],
+    ['llavero', function (av) { var t = coleccionTotal('llaveRara'); return t > 0 && escondidasAv(av, 'llaveRara') >= t; }],
+    ['postales', function (av) { var t = coleccionTotal('postal'); return t > 0 && escondidasAv(av, 'postal') >= t; }],
+    ['deseos', function (av) { return nColD12(av.deseos) >= 5; }],
+    ['sinTrucos', function (av, opc) { return !nColD12(av.conTrucos) && porcentaje(av, opc).pct >= 100; }],
+    ['leyenda', function (av) { return !!(av.leyenda && av.terminada); }],
+    ['caballero', function (av) { return caballeroAv(av); }]   // (28-sep, caballero)
+  ];
+  function pegatinasAv(av, opc) {
+    av = av || {}; var g = av.pegatinas || {};
+    return PEGATINAS.map(function (p) { var si = !!g[p[0]]; if (!si) { try { si = !!p[1](av, opc || {}); } catch (e) { si = false; } } return { id: p[0], tiene: si, guardada: !!g[p[0]] }; });
+  }
+  function apuntaPegatinas(av, opc) {
+    if (!av) return [];
+    var n = []; pegatinasAv(av, opc).forEach(function (p) { if (p.tiene && !p.guardada) { (av.pegatinas = av.pegatinas || {})[p.id] = 1; n.push(p.id); } });
+    return n;
+  }
+  function oficinasAv(av) {
+    var v = (av && av.vendidas) || {}, sec = secretasDeCalles(), r = [];
+    JEFES.forEach(function (q) {
+      if (!v[q[0]]) return;
+      var c0 = null; CALLES.forEach(function (c) { if (!c0 && !c.secreta && !sec[c.id] && (c.mundo || '') === q[2]) c0 = c; });
+      if (c0) r.push({ mundo: q[2], calle: c0.id, jefe: q[0] });
+    });
+    return r;
+  }
+  // el deseo de la casa (una vez): devuelve { id, tipo } si se cumple AHORA; si ya estaba cumplido o no lo llevas, null
+  function deseoD12(j, id) {
+    if (!j || !j.av || !id) return null;
+    var c = casaPorId(id), de = c && c.def.deseo; if (!de || (j.av.deseos && j.av.deseos[id])) return null;
+    if (!((j.av.lleva && j.av.lleva[de]) || (j.s && j.s.lleva && j.s.lleva[de]))) return null;
+    (j.av.deseos = j.av.deseos || {})[id] = de;
+    return (j.deseoCumplido = { id: id, tipo: de });
+  }
+  function superadoD12(j, mj) {
+    var av = j.av; if (!av) return;
+    (av.postales = av.postales || {})['mundo:' + mj] = 1;
+    var c = cuentaAv(av, mj), sm = null; try { sm = secretosMundo(av, mj); } catch (e) { sm = null; }
+    (av.cuaderno = av.cuaderno || {})[mj] = { v: c.vendidas, s: sm ? sm.hechos : 0, m: (av.mundos && av.mundos[mj] && +av.mundos[mj].muertes) || 0 };
   }
   function paradasAv(av) {
     av = av || {};
@@ -3343,14 +4483,15 @@ var MOTOR = (function () {
     nuevaPartida: nuevaPartida, empezarSala: empezarSala, entrarTesoro: entrarTesoro, paso: paso, airePuntos: airePuntos,
     siguienteSala: siguienteSala, trasMorir: trasMorir, estrellas: estrellas, todosBonus: todosBonus, casaDelDia: casaDelDia,
     SALTO_ALTO: SALTO_ALTO, SALTO_LUNA: SALTO_LUNA, PODER: PODER, PROPINA: PROPINA, VISIBLES: VISIBLES, espejo: espejo, posPlat: posPlat, periodoPlat: periodoPlat,
-    platDebajo: platDebajo, retoSemana: retoSemana, defDe: defDe, TESOROS: TESOROS, tesoroDe: tesoroDe, sumar: sumar, cambiaPack: cambiaPack, packActual: packActual, RETRO: RETRO,
-    NUEVAS: NUEVAS, GALAXIA: GALAXIA, CALLES: CALLES, largoPrensa: largoPrensa, rayoEncendido: rayoEncendido, faseRitmo: faseRitmo, barraCierra: barraCierra, AVATARES_EXTRA: (EXTRA && EXTRA.AVATARES) || [], entrarTuberia: entrarTuberia, SALTO_TRAMP: SALTO_TRAMP, PISABLES_BICHO: PISABLES_BICHO, calle: calle, casaPorId: casaPorId, nuevaAventura: nuevaAventura, guardadoAventura: guardadoAventura,
+    platDebajo: platDebajo, toboganEn: toboganEn, teleSalta: teleSalta, satSuelo: satSuelo, escalonF: escalonF, cicloSat: cicloSat, fragilZona: fragilZona, garraD8: garraD8, pasoD8: pasoD8, posArco: posArco, lanzaArco: lanzaArco, nivelDe: nivelDe,   // (28-sep, D8)
+    retoSemana: retoSemana, defDe: defDe, TESOROS: TESOROS, tesoroDe: tesoroDe, sumar: sumar, cambiaPack: cambiaPack, packActual: packActual, RETRO: RETRO,
+    NUEVAS: NUEVAS, GALAXIA: GALAXIA, CALLES: CALLES, largoPrensa: largoPrensa, rayoEncendido: rayoEncendido, faseRitmo: faseRitmo, barraCierra: barraCierra, AVATARES_EXTRA: (EXTRA && EXTRA.AVATARES) || [], entrarTuberia: entrarTuberia, SALTO_TRAMP: SALTO_TRAMP, PISABLES_BICHO: PISABLES_BICHO, calle: calle, casaPorId: casaPorId, nuevaAventura: nuevaAventura, guardadoAventura: guardadoAventura, D12_CAMPOS: D12_CAMPOS, OBJ_COLECCION: OBJ_COLECCION, HERENCIA: HERENCIA, DESEO_MONEDAS: DESEO_MONEDAS, herenciaAv: herenciaAv, coleccionTotal: coleccionTotal, escondidasAv: escondidasAv, pegatinasAv: pegatinasAv, apuntaPegatinas: apuntaPegatinas, oficinasAv: oficinasAv, deseoD12: deseoD12, superadoD12: superadoD12,   /* (28-sep, D12) */ PIEZAS_CABALLERO: PIEZAS_CABALLERO, piezasAv: piezasAv, caballeroAv: caballeroAv,   /* (28-sep, caballero) */
     cambiaPantalla: cambiaPantalla, entrarCasa: entrarCasa, volverCalle: volverCalle, vendidasDe: vendidasDe, cuentaAv: cuentaAv, periodoSala: periodoSala, nivelAgua: nivelAgua, zonaDe: zonaDe, LLAVE_COLOR: LLAVE_COLOR, PUERTA_COLOR: PUERTA_COLOR,
     // (25-sep, secretos: PLAN-SECRETOS.md y MOTOR-SECRETOS-LISTO.md)
     aplicaTruco: aplicaTruco, llaveVisible: llaveVisible, entrarPasadizo: entrarPasadizo, extraAbierta: extraAbierta,
     puertaExiste: puertaExiste, secretosTotal: secretosTotal, irCalle: irCalle,
     // (25-sep, jefes y monstruos: PLAN-TANDA-JEFES.md)
-    puertaAbierta: puertaAbierta, jefeDianas: jefeDianas, mata: mata, sigueRobot: sigueRobot, COMBO: COMBO, rectAg: rectAg, solapa: solapa,
+    puertaAbierta: puertaAbierta, jefeDianas: jefeDianas, mata: mata, sigueRobot: sigueRobot, despierto: despierto, cajaD4: cajaD4, sitioSeguro: sitioSeguro /* (27-sep, D4) */, cicloD5: cicloD5, tramosD5: tramosD5, trozosD5: trozosD5, cajaD5: cajaD5, cajasD5: cajasD5, sitioD5: sitioD5 /* (27-sep, D5) */, para: para, quienD7: quienD7, delPasoD7: delPasoD7 /* (28-sep, D7) */, COMBO: COMBO, rectAg: rectAg, solapa: solapa,
     PUNTOS_JEFE: PUNTOS_JEFE, PUNTOS_GOLPE: PUNTOS_GOLPE, espejoJefe: espejoJefe,
     // (25-sep, modos y enganche: ideas 166, 167, 168, 177, 178, 179 y 182)
     cronoSemana: cronoSemana, desafioDia: desafioDia, DESAFIOS: DESAFIOS, cofreDelDia: cofreDelDia, COFRES: COFRES, regaloCofre: regaloCofre,
@@ -3360,7 +4501,8 @@ var MOTOR = (function () {
     COYOTE: COYOTE, GUARDA: GUARDA, JEFES: JEFES, PODER_JEFE: PODER_JEFE, mapaJefes: mapaJefes, mapaJefesAbierto: mapaJefesAbierto, irJefe: irJefe, jefeAbierto: jefeAbierto,
     mapaMundo: mapaMundo, SALIDA_SECRETA: SALIDA_SECRETA, MONEDAS_T: MONEDAS_T, tieneMuelle: tieneMuelle, daMuelle: daMuelle,
     // (26-sep, arreglos y TÚNELES SECRETOS: PLAN-TUNELES.md y VERIFICACION-JEFES.md)
-    PROTEGE: PROTEGE, vendeCasa: vendeCasa, bajadaBajo: bajadaBajo, bajadaAbierta: bajadaAbierta, claveBajada: claveBajada, entrarBajada: entrarBajada,
+    pasoD6: pasoD6, pasoManso: pasoManso, conchaEn: conchaEn, luzPilla: luzPilla, presiArriba: presiArriba, PEGADO: PEGADO, CONCHA: CONCHA,   // (28-sep, D6)
+    PROTEGE: PROTEGE, RECUPERA_S: RECUPERA_S, recuperaS: recuperaS, vendeCasa: vendeCasa, bajadaBajo: bajadaBajo, bajadaAbierta: bajadaAbierta, claveBajada: claveBajada, entrarBajada: entrarBajada,
     llegadaTunel: llegadaTunel, GENEROSO_GOLPES: GENEROSO_GOLPES, GENEROSO_PUNTOS: GENEROSO_PUNTOS, sueltaLoSuyo: sueltaLoSuyo,
     // (26-sep, tanda «pendientes de antes»: burbujas, baile, lianas, casa boca abajo, salas que cambian, imán gigante, ladrillos,
     // gente, ascensor de cristal, casco, perro del cliente, notario y bandera de la puerta)
@@ -3378,7 +4520,14 @@ var MOTOR = (function () {
     // (27-sep, P9) el mapa de la pausa y el autobús · (P10) el %, la caja fuerte, la casa del día, el rango y «sin morir» por mundo
     mapaPausa: mapaPausa, paradasAv: paradasAv, viajaAv: viajaAv, porcentaje: porcentaje, hechosAv: hechosAv, rangoPct: rangoPct, RANGOS: RANGOS,
     PCT_PARTES: PCT_PARTES, cifraJefe: cifraJefe, cifrasJefes: cifrasJefes, CIFRA_JEFE: CIFRA_JEFE, casaDelDiaAv: casaDelDiaAv, retoSemanaAv: retoSemanaAv,
-    casasVendidasAv: casasVendidasAv, esJefe: esJefe
+    casasVendidasAv: casasVendidasAv, esJefe: esJefe,
+    // (27-sep, D1) trucos y palancas nuevas
+    melodiaTruco: melodiaTruco, palancasRetardo: palancasRetardo,
+    rachaSopla: rachaSopla, rachaFalta: rachaFalta, ritmoOn: ritmoOn, vaporEn: vaporEn, charcoMojado: charcoMojado, creceAlto: creceAlto, resbalaEn: resbalaEn,   // (27-sep, D3)
+    // (28-sep, D2) retos y premios
+    RUEDA: RUEDA, fechaD13: fechaD13, fechaDentroD13: fechaDentroD13, salaBonusD13: salaBonusD13, precioD13: precioD13, espejaAgenteD13: espejaAgenteD13, gemeloD13: gemeloD13,   // (28-sep, D13)
+    pasoD2: pasoD2, saleD2: saleD2, fuenteEcha: fuenteEcha, fuenteCuenta: fuenteCuenta, simboloD2: simboloD2, mareaBajaD2: mareaBajaD2, valeD2: valeD2, yaD2: yaD2, idD2: idD2, retosD2: retosD2,
+    FUENTE_GEMA: FUENTE_GEMA, FUENTE_VIDA: FUENTE_VIDA, D2_RETO: D2_RETO, D2_CUENTA: D2_CUENTA, D2_ZARPA: D2_ZARPA, D2_TRAGA: D2_TRAGA, D2_PAR: D2_PAR, D2_FICHA: D2_FICHA
   };
 })();
 if (typeof module !== 'undefined') module.exports = MOTOR;

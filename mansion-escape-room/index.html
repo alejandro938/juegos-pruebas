@@ -337,6 +337,10 @@
   .titulo img{width:54px; height:54px; filter:drop-shadow(0 0 14px rgba(201,169,110,.45));}
   .titulo .tl1{font-family:var(--font-sans); font-weight:600; letter-spacing:.6em; font-size:.8rem; color:var(--gold-light); text-transform:uppercase; margin-left:.6em;}
   .titulo .tl2{font-family:var(--font-serif); font-weight:600; font-size:clamp(2.2rem,6.4vw,3.6rem); line-height:1; color:var(--gold); text-shadow:0 2px 22px rgba(201,169,110,.35);}
+  /* (28-sep, caballero) el LOGO de Alejandro en el título: ancho del móvil sin pasarse de 520 px ni de un tercio del alto; los
+     textos «Mansion / Escape Room» se quedan solo para lectores de pantalla */
+  .titulo img.logoTit{width:min(90vw,520px); height:auto; max-height:34vh; object-fit:contain; border-radius:10px; filter:drop-shadow(0 0 18px rgba(201,169,110,.35));}
+  .titulo.conLogo .tl1, .titulo.conLogo .tl2{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;}
   .menu4{display:flex; flex-direction:column; gap:10px; width:min(86vw,340px);}
   .menu4 .btn{width:100%; padding:15px 20px; font-size:1rem; letter-spacing:.2em;}
   .menu4 .ficha{font-size:.72rem; color:#FBEFC9; letter-spacing:.03em; margin:-4px 0 4px; line-height:1.4;}
@@ -461,7 +465,7 @@
              pantallas «Nueva partida», «Extras» (cada modo o panel de antes, con su candado y su motivo: la tabla QUE_ABRE) y «Opciones».
              Cada cosa dice en qué pantalla sale (data-en; «ext» = en todas las de un Extra). TODOS los botones de antes siguen aquí, con
              su mismo id (las pruebas, los robots y la copia de revisión los usan). -->
-        <div class="titulo" id="titulo" data-en="titulo"><img src="favicon.svg" alt=""><div class="tl1">Mansion</div><div class="tl2">Escape Room</div></div>
+        <div class="titulo conLogo" id="titulo" data-en="titulo"><img class="logoTit" id="logoTit" src="logo.webp" alt="Mansion Escape Room" width="960" height="512"><div class="tl1">Mansion</div><div class="tl2">Escape Room</div></div><!-- (28-sep, caballero) el logo de Alejandro; los textos quedan para quien no ve la imagen -->
         <div class="pantcab" id="pantCab" data-en="nueva extras opciones ext"><button class="btn ghost peq" id="volverBtn" type="button"></button><h3 id="pantTit"></h3></div>
         <p class="pantpie" id="pantPie" data-en="nueva extras opciones ext"></p>
         <h2 id="ovTitle" class="hidden" data-t="fx_ovtitle" data-en="fin">Fin de la partida</h2>
@@ -615,7 +619,7 @@
     tesoro: '✨ La Sala del Tesoro', tesoroSub: '30 segundos: ¡coge todo el oro!', tesoroGanado: '¡Todos los bonus! Te espera el tesoro…', tesoroFin: 'Tesoro', monedas: 'Oro: +{n}',
     turbo: 'Modo Turbo: {e}', on: 'ON', off: 'OFF', seguirCasa: '▶ Seguir en la casa {n}', practica: 'sin ranking',
     dia: '🗓 Casa del día: {c}', diaMejor: 'Tu mejor hoy: {t}', diaFin: 'Casa del día', diaTiempo: 'Tiempo: {t}', diaRecord: '¡Tu mejor tiempo de hoy!',
-    avatares: { jardinero: 'Jardinero', capitana: 'Capitana', chef: 'Chef', tasadorBueno: 'Tasador bueno', agente: 'Agente', androide: 'Robot', agenta: 'Agente', turista: 'Turista', mago: 'Mago de Hielo', astronauta: 'Héroe del Espacio', ninja: 'Ninja en la Sombra', guerrero: 'Guerrero Fantástico' }, avatarTit: 'Elige personaje',
+    avatares: { jardinero: 'Jardinero', capitana: 'Capitana', chef: 'Chef', tasadorBueno: 'Tasador bueno', agente: 'Agente', androide: 'Robot', agenta: 'Agente', turista: 'Turista', mago: 'Mago de Hielo', astronauta: 'Héroe del Espacio', ninja: 'Ninja en la Sombra', guerrero: 'Guerrero Fantástico', caballero: 'Caballero de la Llave' /* (28-sep, caballero) */ }, avatarTit: 'Elige personaje',
     bEsmeralda: '💚 +250', bRubi: '❤️ +500', bDiamante: '💎 +1.000', bBotas: '🥾 ¡Botas!', bParaguas: '☂️ ¡Paraguas!', bIman: '🧲 ¡Imán!', bLinterna: '🔦 ¡Linterna!',
     tele: '✨', color: '¡Cambio de color!', suelo: '¡Suelo puesto!', propina: 'Propina del cliente: +{n}', tasador: '¡El Tasador despierta!',
     espejo: '¡Vuelta {n}: todo al revés!', llaveOro: '🗝️ ¡LLAVE DE ORO!', llaveOroTxt: 'Las 20 casas sin perder una vida. Tu código: {c}',
@@ -672,14 +676,14 @@
       r16: 'La caverna más larga del edificio. Guarda aire.',
       r17: 'El almacén está a oscuras: busca el interruptor.',
       r18: 'Las amebas quieren la revancha. Y han traído a sus primas.',
-      r19: 'El rayo del generador te quita el aire. Crúzalo corriendo.',
+      r19: 'El generador resopla y el vapor sube de golpe hasta el techo.',   // (28-sep, D10, 214) el rayo ya no está
       r20: 'La última barrera. Detrás, la salida del edificio.',
       feria: 'Feria de agosto: la noria no para, y las llaves van montadas en ella.',
       caminito: 'Pasarelas colgadas sobre el vacío y un viento que no avisa.',
       golf: 'Aquí las pelotas no van al hoyo: van a por ti.',
       spa: 'Vapor que te sube, agua que te baja. Relájate… si puedes.',
       marina: 'De noche, en la marina, la marea sube sin hacer ruido.',
-      helipuerto: 'Rotores, láseres de seguridad y un viento que te empuja al borde.',
+      helipuerto: 'Rotores, un jeque con prisa y el viento de las aspas que te empuja al borde.',   // (28-sep, D10, 214) sin láseres
       dosplantas: 'Dos plantas, un hueco que se sube de un doble salto y puertas que solo abre la llave de su color.',   // (27-sep, P5) ya no tiene ascensor
       biblioteca: 'Silencio: en esta biblioteca, las cajas se mueven empujando.',
       trastero: 'El trastero de la mudanza. Cada caja, en su sitio… o no sales.',
@@ -700,7 +704,7 @@
       helipuerto: 'El Helipuerto', dosplantas: 'La Casa de Dos Plantas', biblioteca: 'La Biblioteca', trastero: 'El Trastero', notaria: 'La Notaría',
       // (26-sep, arreglo B7) las casas nuevas que salían en español fijo (su `nombre`): Urbanización, Recreativos, Museo, Galaxia,
       // las secretas, los jefes, El Chalet de las Sorpresas y las súper bonus. Si cambia el nombre en su borrador, cambiarlo aquí
-      concesionario: 'El Concesionario de Lujo', circuito: 'El Circuito de Karts', parking: 'El Parking de Seis Plantas',
+      concesionario: 'El Concesionario de Lujo', circuito: 'El Circuito de Karts', parking: 'El Parking de Cuatro Plantas',   /* (28-sep, D10, 214) tiene 4 */
       'rec-pinball': 'La Máquina de Pinball', 'rec-marcianos': 'La Máquina de Marcianitos', 'rec-karts': 'El Simulador de Karts', 'rec-baile': 'La Pista de Baile',
       'rec-premios': 'La Máquina de Premios', 'rec-jefe': 'El Gran Salón', 'mus-sabana': 'La Sala de la Sabana', 'mus-rio': 'La Sala del Río',
       'mus-selva': 'La Sala de la Selva', 'mus-desierto': 'La Sala del Desierto', 'mus-cripta': 'La Cripta', 'mus-esfinge': 'La Sala de la Esfinge',
@@ -715,7 +719,10 @@
       'jefe-final': 'La Azotea del Gran Tasador',
       'superbonus-1': 'La Cueva del Oro', 'superbonus-2': 'El Ascensor del Tesoro', 'superbonus-3': 'La Tubería Gigante', 'superbonus-4': 'La Sala de los Espejos de Oro',
       'superbonus-5': 'La Bodega del Galeón', 'superbonus-6': 'La Cámara de Cristal', 'superbonus-7': 'La Mina de Diamantes',
-      'superbonus-8': 'La Sala de las Monedas que Llueven', 'superbonus-9': 'El Congelador de los Helados', 'superbonus-10': 'El Sótano de las Huchas' },
+      'superbonus-8': 'La Sala de las Monedas que Llueven', 'superbonus-9': 'El Congelador de los Helados', 'superbonus-10': 'El Sótano de las Huchas',
+      // (28-sep, D13) las casas y salas especiales
+      'casa-encantada': 'La Casa Encantada', 'casa-navidad': 'La Casa de Navidad', 'sotano-programador': 'El Sótano del Programador', 'espejo-total': 'La Casa del Espejo',
+      'casa-miniatura': 'La Casa de Muñecas', 'sin-gravedad': 'La Sala sin Gravedad', 'tunel-1983': 'El Túnel del Tiempo', anillos: 'Los Anillos', mudanza: 'La Mudanza', subasta: 'La Subasta' },
     llaveColor: '🔑 ¡Llave de color! Abre su puerta',
     recNuevas: '🎡 Las 10 nuevas', recNuevasPie: 'Noria, viento, vapor, cajas, marea y dos jefes',
     mitad2: '¡Las 20 retro, hechas! Ahora, las 10 nuevas',
@@ -754,7 +761,7 @@
     anecdotas: ["El nombre «Balcón de Europa» se atribuye al rey Alfonso XII, que visitó Nerja en 1885.","En el Balcón de Europa hay una estatua de bronce de Alfonso XII apoyado en la barandilla.","Donde hoy está el Balcón de Europa hubo una fortaleza: aún quedan cañones de recuerdo.","Junto al Balcón de Europa está la iglesia de El Salvador, del siglo XVII.","La Cueva de Nerja la descubrieron en 1959 cinco jóvenes del pueblo que buscaban murciélagos.","En la Cueva de Nerja hay una de las columnas de estalactita y estalagmita más grandes del mundo.","Desde 1960 se celebra un festival de música y danza dentro de la Cueva de Nerja.","La sala de la Cueva donde se hacen los conciertos se llama Sala de la Cascada o del Ballet.","En la Cueva de Nerja se han hallado restos de personas que vivieron allí en la Prehistoria.","La Cueva de Nerja está declarada Bien de Interés Cultural.","La serie «Verano azul», de Antonio Mercero, se rodó en Nerja y se estrenó en 1981.","En Nerja hay un parque con una réplica del barco de Chanquete, de «Verano azul».","A Chanquete, el pescador de «Verano azul», le dio vida el actor Antonio Ferrandis.","Piraña, Tito, Bea, Javi, Pancho, Quique y Desi eran la pandilla de «Verano azul».","El nombre de Nerja viene del árabe Narixa, que se suele traducir como «manantial abundante».","Nerja es el pueblo más oriental de la costa de Málaga y está en la comarca de la Axarquía.","Burriana es la playa más conocida de Nerja, famosa por sus chiringuitos y sus paellas a la leña.","El Acueducto del Águila, en Maro, se construyó en el siglo XIX para llevar agua a un ingenio de azúcar.","El Acueducto del Águila tiene cuatro alturas de arcos de ladrillo y cruza un barranco.","Maro es un pequeño pueblo blanco que pertenece al municipio de Nerja.","Entre Nerja y La Herradura están los Acantilados de Maro-Cerro Gordo, un paraje natural protegido.","Frigiliana forma parte de la asociación «Los pueblos más bonitos de España».","En 1569, durante la rebelión morisca, se libró la batalla del Peñón de Frigiliana.","Por las calles de Frigiliana hay azulejos que cuentan la historia del pueblo y de sus moriscos.","Cada verano, Frigiliana celebra el Festival de las Tres Culturas: cristiana, judía y musulmana.","En Frigiliana se ha fabricado durante siglos miel de caña, a partir de la caña de azúcar.","Detrás de Nerja se alza el Parque Natural de las Sierras de Tejeda, Almijara y Alhama.","La Maroma, el pico más alto de esas sierras, supera los 2.000 metros de altura.","En las sierras de Tejeda y Almijara vive la cabra montés, que trepa por las rocas como nadie.","El río Chíllar, en Nerja, es famoso por su ruta a pie por dentro del agua entre paredes de roca."],
     historia: ["Nerja, un lunes soleado. En Stela Mare suena el teléfono: ¡más de setenta casas por enseñar y clientes esperando!","Pero alguien llega antes: el Tasador, con su carpeta gris. «Todo esto vale la mitad», gruñe. «Y la otra mitad, menos».","El agente coge su manojo de llaves y sonríe: «Si los clientes ven las casas antes que tú, no hay rebaja que valga».","{n} casas enseñadas y {n} clientes felices. El Tasador rompe una calculadora de rabia. Era la de repuesto.","«Te queda la sierra, el acueducto y el Balcón de Europa», avisa el Tasador. «Allí no hay quien venda nada».","¡Nerja, lista! El Tasador se esconde en un edificio viejísimo, lleno de cintas, amebas y un gorila con casco.","«Aquí dentro todo es de 1983», se ríe. «Ni tu móvil funciona». El agente saca un mapa de papel. Ventaja.","El gorila del andamio pide información: busca piso con vistas. El agente le da una tarjeta.","¡Edificio vendido! El agente sale del edificio y el Tasador ya espera en la feria, el golf y hasta en el helipuerto.","«Te espero en la Notaría», dice el Tasador. «Allí se firma… o no se firma nada».","En la Notaría, el cliente firma. El Tasador revisa sus cuentas y suspira: «Pues… sí que valían lo que pedíais. Pero el Promotor no firma nada: está en sus grúas».","Atardece en el Balcón de Europa. El agente invita al Tasador a un helado. Mañana, más casas. Y más vistas.","Los Recreativos: el Tasador se ha escondido entre las máquinas. «Aquí todo va por fichas», se ríe. El agente lleva el bolsillo lleno.","El Museo de las Leyendas: esfinges, basiliscos y un grootslang de guardia. El Tasador tasa hasta las momias. A la baja, claro.","¡Hasta la Galaxia! El Tasador ha huido en cohete a la Luna. El agente se pone el casco: allí arriba también se venden casas.","Nerja, de noche. El cohete ha caído al mar frente al Paseo y en la sierra, en el Balcón y en la playa hay luces: ¡los dueños han vuelto! Y en la Parada espera un autobús con un letrero: «A la Gran Villa».","La verja dorada se abre con un chirrido. Al final del camino, la Gran Villa enciende sus luces… y el Gran Tasador te espera en su azotea.","¡De Nerja a la Galaxia: todo vendido! El Gran Tasador firma la última tasación: «Valían lo que pedíais. Y un poco más».","Todo vendido y cada secreto encontrado. En Stela Mare cuelgan tu foto en la pared de los mejores agentes. El Tasador ya ha pedido cita… para comprar."],
     visitaGuiada: {"club-playa":"El club, en primera línea: pista de baile, piscina natural y un camarero que invita. La marea sube, pero con estilo.","obra-ascensor":"Obra nueva, entrega inmediata… casi. Ascensor de cristal, vistas al andamio y notario en la planta de arriba. El casco, por si acaso.","jardin":"Bienvenidos al jardín de la villa: rosales, jazmín y sombra de sobra. Imaginen aquí las cenas de verano.","bodega":"Bajamos a la bodega, fresca todo el año. Caben más barriles de los que usted va a poder beberse.","azotea":"Esta azotea es el salón de verano de la casa. Por la noche, las estrellas se ven sin moverse de la tumbona.","cala":"Una cala casi privada a dos pasos de casa. Por la mañana, solo usted, el mar y algún cangrejo curioso.","piscina":"La piscina infinita se funde con el mar en el horizonte. Aquí el verano no termina, solo se pone el sol.","cuevas":"Bajo la finca, grutas de roca natural. Temperatura estable todo el año: la bodega perfecta que no pidió.","frigiliana":"Casa encalada en pleno casco antiguo de Frigiliana. Calles empedradas, macetas y vistas al mar a lo lejos.","puerto":"Con amarre a pocos metros de la puerta. Sale usted de casa, sube al barco y a desayunar en alta mar.","cocina":"Cocina de chef con isla central y fogones profesionales. Aquí hasta el huevo frito sale con estrella.","garaje":"Garaje para cinco coches, con plataforma y puerta automática. Sus amigos van a querer aparcar aquí.","faro":"Un faro reconvertido en vivienda única. Arriba, la linterna; abajo, el mar; en medio, su nuevo salón.","obra":"Obra nueva con calidades de primera y entrega próxima. Todavía puede elegir los acabados a su gusto.","mercadillo":"Vivienda sobre la plaza del mercado: producto fresco en la puerta. Los martes, ambiente asegurado.","yate":"Más que un barco, un hogar flotante: tres camarotes, cubierta solárium y su propia lancha auxiliar.","sierra":"Refugio en la sierra de Almijara: pinos, silencio y senderos desde la puerta. El mar se ve a lo lejos.","acueducto":"Finca junto al Acueducto del Águila, en Maro. Vivir al lado de un monumento del siglo XIX es un lujo raro.","invernadero":"Invernadero acristalado con plantas del mundo entero. Ideal para quien tiene buena mano… y guantes.","balcon":"Primera línea en el Balcón de Europa, el mirador más famoso de Nerja. Las vistas no se pagan: se incluyen.","sanjuan":"Casa en primera línea de playa, perfecta para la noche de San Juan. Hogueras abajo y fuegos arriba.","granvilla":"La Gran Villa Stela Mare: la joya de la cartera. Varias plantas, jardines y vistas al mar desde cada rincón."},
-    momentos: {"jardin":"Salta el riego automático y el jardín se llena de arcoíris.","bodega":"Un barril se descorcha solo y todo huele a vino.","azotea":"Una ráfaga de viento hace volar la ropa tendida.","cala":"Sube la marea y el agua llega hasta la primera roca.","piscina":"El pato de goma gigante cruza la piscina a toda vela.","cuevas":"Se va la luz y solo brillan las estalactitas.","frigiliana":"Una fila de gatos cruza la calle sin mirar a nadie.","puerto":"Suena la sirena de un barco y las gaviotas echan a volar.","cocina":"Salta el corcho de una olla a presión: ¡pum!","garaje":"Un coche arranca solo y enciende los faros.","faro":"El haz del faro barre la pantalla de lado a lado.","obra":"Suena la hormigonera y tiembla el andamio.","mercadillo":"Un puesto de naranjas se vuelca y ruedan por el suelo.","yate":"Una ola grande balancea el yate de babor a estribor.","sierra":"Baja la niebla de golpe y solo se ven los pinos cercanos.","acueducto":"Pasa una bandada de vencejos entre los arcos.","invernadero":"Se empañan los cristales y florece un cactus de repente.","balcon":"Pasa una bandada de gaviotas rozando la barandilla.","sanjuan":"Empiezan los fuegos artificiales y el cielo se llena de color.","granvilla":"Se encienden todas las lámparas de la villa a la vez.","r01":"Parpadea la bombilla del sótano, como en 1983.","r02":"Se cierra la puerta de la cámara y baja la temperatura.","r03":"Todos los pájaros pían a la vez y luego, silencio.","r04":"Pasa una vagoneta vacía traqueteando por la mina.","r05":"Suena el timbre del portero automático sin parar.","r06":"Estalla una burbuja enorme y salpica las paredes.","r07":"Sube el agua de la tina un palmo de golpe.","r08":"El gorila se golpea el pecho y tiembla el andamio.","r09":"Las amebas se estiran todas hacia el mismo lado.","r10":"Caen hojas doradas del techo del bosque encantado.","r11":"Suenan todos los teléfonos a la vez… y cuelgan.","r12":"El gorila tira un barril que rueda por la plataforma.","r13":"Sale un chorro de vapor de una tubería.","r14":"Cae una lluvia de satélites que brillan al rebotar.","r15":"La rueda de la caja fuerte gira sola: clic, clic, clic.","r16":"Gotea el techo de la caverna y resuena el eco.","r17":"Se apaga la luz del almacén hasta que encuentras el interruptor.","r18":"Las amebas se multiplican: de una salen dos.","r19":"El rayo del generador se enciende con un zumbido.","r20":"Se abre la cascada y el agua baja hasta el fondo.","feria":"Se encienden todas las luces de la feria de golpe.","caminito":"Una ráfaga de viento hace crujir las tablas del camino.","golf":"Una bola de golf pasa volando por encima de tu cabeza.","spa":"Se llena la sala de vapor y apenas se ve nada.","marina":"Un barco enciende sus luces y se refleja en el agua.","helipuerto":"Aterriza un helicóptero y el viento de las aspas te empuja.","dosplantas":"Se oye un portazo en la planta de arriba: alguien más busca llaves.","biblioteca":"Cae un libro de la estantería y se abre por la mitad.","trastero":"Se derrumba una torre de cajas con gran estruendo.","notaria":"El sello del notario golpea la mesa: ¡plas!, ¡plas!"},
+    momentos: {"jardin":"Salta el riego automático y el jardín se llena de arcoíris.","bodega":"Un barril se descorcha solo y todo huele a vino.","azotea":"Una ráfaga de viento hace volar la ropa tendida.","cala":"Sube la marea y el agua llega hasta la primera roca.","piscina":"El pato de goma gigante cruza la piscina a toda vela.","cuevas":"Se va la luz y solo brillan las estalactitas.","frigiliana":"Una fila de gatos cruza la calle sin mirar a nadie.","puerto":"Suena la sirena de un barco y las gaviotas echan a volar.","cocina":"Salta el corcho de una olla a presión: ¡pum!","garaje":"Un coche arranca solo y enciende los faros.","faro":"El haz del faro barre la pantalla de lado a lado.","obra":"Suena la hormigonera y tiembla el andamio.","mercadillo":"Un puesto de naranjas se vuelca y ruedan por el suelo.","yate":"Una ola grande balancea el yate de babor a estribor.","sierra":"Baja la niebla de golpe y solo se ven los pinos cercanos.","acueducto":"Pasa una bandada de vencejos entre los arcos.","invernadero":"Se empañan los cristales y florece un cactus de repente.","balcon":"Pasa una bandada de gaviotas rozando la barandilla.","sanjuan":"Empiezan los fuegos artificiales y el cielo se llena de color.","granvilla":"Se encienden todas las lámparas de la villa a la vez.","r01":"Parpadea la bombilla del sótano, como en 1983.","r02":"Se cierra la puerta de la cámara y baja la temperatura.","r03":"Todos los pájaros pían a la vez y luego, silencio.","r04":"Pasa una vagoneta vacía traqueteando por la mina.","r05":"Suena el timbre del portero automático sin parar.","r06":"Estalla una burbuja enorme y salpica las paredes.","r07":"Sube el agua de la tina un palmo de golpe.","r08":"El gorila se golpea el pecho y tiembla el andamio.","r09":"Las amebas se estiran todas hacia el mismo lado.","r10":"Caen hojas doradas del techo del bosque encantado.","r11":"Suenan todos los teléfonos a la vez… y cuelgan.","r12":"El gorila tira un barril que rueda por la plataforma.","r13":"Sale un chorro de vapor de una tubería.","r14":"Cae una lluvia de satélites que brillan al rebotar.","r15":"La rueda de la caja fuerte gira sola: clic, clic, clic.","r16":"Gotea el techo de la caverna y resuena el eco.","r17":"Se apaga la luz del almacén hasta que encuentras el interruptor.","r18":"Una ameba dormida en el hueco se despierta cuando quedan pocas llaves.","r19":"El generador resopla y el vapor sube de golpe hasta el techo.","r20":"Se abre la cascada y el agua baja hasta el fondo.","feria":"Se encienden todas las luces de la feria de golpe.","caminito":"Una ráfaga de viento hace crujir las tablas del camino.","golf":"Una bola de golf pasa volando por encima de tu cabeza.","spa":"Se llena la sala de vapor y apenas se ve nada.","marina":"Un barco enciende sus luces y se refleja en el agua.","helipuerto":"Aterriza un helicóptero y el viento de las aspas te empuja.","dosplantas":"Se oye un portazo en la planta de arriba: alguien más busca llaves.","biblioteca":"Cae un libro de la estantería y se abre por la mitad.","trastero":"Se derrumba una torre de cajas con gran estruendo.","notaria":"El sello del notario golpea la mesa: ¡plas!, ¡plas!"},
     trucoCasa: {"jardin":"Los aspersores se encienden a ratos y empujan hacia arriba.","bodega":"Los barriles ruedan por las cintas y cambian de sentido.","azotea":"El Presidente de la Comunidad patrulla y cierra el paso.","cala":"La marea sube y baja: algunas rocas solo se pisan con marea baja.","piscina":"El pato de goma nada de lado a lado y sirve de plataforma.","cuevas":"Las estalactitas gotean y a veces se desprenden.","frigiliana":"Los gatos se tumban en las escaleras y hay que esperar a que se muevan.","puerto":"Las grúas del puerto suben y bajan su gancho.","cocina":"Los fogones se encienden y se apagan a ritmo.","garaje":"Los coches arrancan y cruzan el garaje de punta a punta.","faro":"El haz del faro congela a los bichos un momento.","obra":"La grúa mueve una plataforma de un lado a otro.","mercadillo":"Los toldos de los puestos se abren y se cierran como trampolines.","yate":"El yate se balancea y todo se inclina un poco con cada ola.","sierra":"La niebla va y viene y tapa parte del camino.","acueducto":"Los túneles de los arcos te llevan de un lado a otro de la pantalla.","invernadero":"Los cactus crecen y encogen: tocarlos cuando están grandes duele.","balcon":"El viento del mar sopla a ratos y empuja al agente de lado.","sanjuan":"Las hogueras suben y bajan: se cruzan cuando están bajas.","granvilla":"El Tasador persigue al agente por las plantas de la villa."},
     retoTit: '🎯 Reto', retoOk: '🎯 ¡Reto cumplido! +500', resenaTit: 'Reseña',
     historiaTit: 'La historia', finAventura: '¡Has vendido Nerja entera!', combinacion: 'La combinación de la cámara acorazada:',
@@ -841,6 +848,7 @@
     obj_estatuilla: '🗿 ¡Estatuilla de {m}! ({n}/7)', obj_carta: '✉️ ¡Una carta del antiguo dueño!', obj_gafas: '🕶️ Unas gafas de sol. Alguien las estará buscando…',
     obj_reliquia: '🏺 ¡Una reliquia! Seguro que encaja en algún sitio', obj_llaveInglesa: '🔧 Una llave inglesa. Algo andará averiado…',
     obj_cronometro: '⏱ ¡Contrarreloj secreta! Llega a la meta en 30 s', obj_otro: '🎒 ¡A la mochila!',
+    obj_regadera: '🚿 ¡Una regadera! Alguna maceta tendrá sed…', obj_azulejo: '🟦 ¡Un azulejo pintado! Falta uno en alguna pared',   // (28-sep, D9)
     obj_muelle: '🥾 ¡Las botas de muelle! Son para siempre: vuelve a las casas vendidas y llega a sitios nuevos',   // (26-sep, fase B)
     regalo: '🎁 «¡Mis gafas! Pasa, pasa, estás en tu casa»', pideObjeto: '💬 «Sin mis gafas no sé quién llama. Tráemelas y te abro»',
     puertaCerrada: '🔒 Una puerta sin número… Vende antes todas las casas de por aquí', pideEstatuillas: '🔒 La cámara acorazada: hacen falta las 7 estatuillas ({n}/7)',
@@ -978,6 +986,50 @@
     fantasmaEmpate: '👻 Empate con tu fantasma (¿seguro que no eres tú?)', fantasmaNoLlegas: '👻 Tu fantasma vendió la casa y tú no. Otra vez será',
     fantasmaLlega: '👻 Tu fantasma ya ha vendido la casa…', fantasmaFin: 'Contra tu fantasma',
     fuego: '🔥 ¡MODO FUEGO! 3 casas sin morir: llaves ×2', fuegoFuera: '🔥 Se apagó el fuego', fuegoRec: '🔥 Tu mejor racha: {n} casas seguidas sin morir',
+    // (27-sep, D1) trucos y palancas nuevas
+    dCampana: '🔔 ¡DING! Un peluche para ti 🧸', dHoyo: '⛳ ¡HOYO EN UNO!', dCaida: '📦 ¡FRÁGIL… y aguantó!', dVuelta: '🎡 ¡Vuelta entera!',
+    dEncima: '🔥 ×{n}', dOrdenMal: '🎵 Esa no tocaba…', dBaldosa: '✨', dPaga: '🤝 ¡Trato hecho! (−10 s de aire)',
+    dSinAire: '😅 No te llega el aire para pagar', dVendedor: 'Te lo dejo en 10 segundos', dBum: '💥 ¡BUM!',
+    // (27-sep, D3) el ritmo
+    dCharco: '⚠️ ¡Cuidado, suelo mojado!', dRacha: '💨 ¡Racha!',
+    // (28-sep, D7) parar a los bichos
+    dPara: '✋ ¡Quietos!', dRecarga: '⏳ Aún no: recargando…', dCebo: '🐟 ¡Un pescado! Pasa junto a un pingüino', dCome: '🐟 ¡Ñam! Se ha parado a comer',
+    dFrena: '🥚 Las amebas van más despacio', dDuerme: '😴 ¡Se ha dormido!', dBalanzaMal: '⚖️ La balanza no se equilibra: ya has muerto aquí',
+    // (28-sep, D6) los que no matan
+    dReverencia: '🙇 ¡Una reverencia! Y un regalo', dMansoPremio: '🎁 ¡Te lo has ganado!', dConcha: '🦀 ¡Se ha escondido en su concha!', dSello: '🖋️ ¡Tinta! Los zapatos se pegan',
+    dPillado: '🔦 ¡Pillado! Vuelta a empezar la sala', dVozChsss: '¡Chsss!', dVozExtras: '¿Le enseño los extras?', dVozFore: '¡FORE!', dVozSuegra: '¡Ay, hijo, qué delgado estás!', dVozGuau: '¡Guau!',
+    // (28-sep, D8) plataformas y suelos nuevos
+    dGrieta: '💥 ¡El cristal se agrieta!', dRompe: '💥 ¡Se rompe el cristal!', dArranca: '▶ ¡Arranca!', dAgarra: '🦾 ¡La garra te agarra!',
+    // (28-sep, D2) retos y premios
+    dReto: '📞 ¡Ring! Llega a la estrella en 3 segundos', dRetoBien: '📞 ¡Reto conseguido!', dRetoMal: '📞 Se acabó el tiempo',
+    dCuenta: '⏱️ ¡Última llave! Corre a la puerta', dCuentaBien: '⏱️ ¡A tiempo! +2.000', dTodas: '🪙 ¡Todas las monedas! +5.000',
+    dZarpaPita: '🛥️ ¡Piiii! El yate está a punto de zarpar', dZarpaAmarras: '🛥️ ¡Suelta amarras! Date prisa', dZarpaPropina: '🛥️ ¡Llegaste antes! Propina del capitán',
+    dTragaTres: '🎰 ¡TRES IGUALES!', dTragaDos: '🎰 ¡Dos iguales!', dTragaNada: '🎰 Nada esta vez', dLeyendaDorada: '✨ ¡La leyenda dorada!',
+    dFuente: '⛲ ¡Plof! {n} en la fuente', dFuenteSin: '⛲ Necesitas 1 🪙 para pedir un deseo', dFuenteLlena: '⛲ La fuente ya te lo ha dado todo',
+    dFuenteGema: '⛲ ¡Deseo cumplido! Una gema', dFuenteVida: '⛲ ¡Deseo cumplido! Una vida', dMando: '🔑 ¡Pi-pi! Un maletero se abre',
+    // (28-sep, D11) los jefes
+    dVenda: '🩹 ¡Se ha enredado en su venda!', dGarra: '🧸 ¡La garra te ha pescado! Vuelta a la entrada', dEscarabajos: '🪲 ¡Escarabajos de la vitrina!',
+    // (28-sep, D12) historia y coleccionables (faltan los 14 idiomas)
+    dCuaderno: '📓 Nueva página en el Cuaderno del agente', dPostalMundo: '✉️ Una postal del mundo para la Vitrina', dPegatina: '🏷️ Pegatina: {p}',
+    pegatinas: { sieteSinMorir: 'Siete mundos sin morir', herencia: 'La herencia', llavero: 'El llavero completo', postales: 'Todas las postales escondidas', deseos: 'Cinco deseos cumplidos', sinTrucos: '100 % sin trucos', leyenda: 'Leyenda terminada', caballero: 'Caballero completo' /* (28-sep, caballero) */ },
+    dDeseo: '🎁 ¡Justo lo que quería el cliente! +{m} 🪙', resenaDeseo: '«¡Y encima me has traído {o}! Te pongo otra reseña»', famosoMarca: '⭐',
+    dCafe: '☕ Un café (1 🪙) y una pista: {p}', dCafeFalta: '«Yo que tú miraría bien en {c}…»', dCafeNada: '«En este mundo ya lo tienes todo, compañero»', dCafeNo: '☕ «¿Me invitas a un café? (1 🪙)»',
+    dOficina: 'STELA MARE', dOficinaTxt: '🏢 ¡Nueva oficina de Stela Mare!',
+    epiHerencia: 'Con las siete estatuillas en la vitrina y las doce cartas del capitán leídas, el notario abre un sobre lacrado: «La Gran Villa no se vende. Se hereda». El Tasador se quita el sombrero. En la pared de Stela Mare, tu foto; en la de la Gran Villa, también.',
+    vitLlavero: '🗝 Llavero', vitPostales: '✉️ Postales', vitPostalesMundo: '✉️ Postales de mundo', vitCuaderno: '📓 Cuaderno del agente', vitDeseos: '🎁 Deseos cumplidos', vitPegatinas: '🏷️ Pegatinas', vitHerencia: '📜 La herencia', vitHerenciaSi: 'abierta', vitCuadernoPag: '{m}: {v} casas, {s} secretos, {c} caídas{t}',
+    obj_postal: '✉️ ¡Una postal escondida! A la Vitrina', obj_llaveRara: '🗝 ¡Una llave rara! Al llavero',
+    obj_pieza: '🛡️ ¡Una pieza de armadura! ({n}/6)', caballeroListo: '🛡️ ¡Armadura completa! El Caballero de la Llave ya se puede elegir en el menú',   // (28-sep, caballero)
+    avatarCaballero: '🔒 Reúne las 6 piezas de armadura escondidas por los mundos (llevas {n}/6)', vitCaballero: '🛡️ Armadura del caballero', secretosNuevos: '✨ hay secretos nuevos',
+    dSeVende: 'SE VENDE', dVendido: 'VENDIDO', dMomiaCasa: '«¿Y ahora dónde vivo? Tres mil años en una vitrina… ¿Me enseñas algo con vistas al mar?»',
+    // (28-sep, D14) Nerja de verdad: la casa del mes (de muestra) en el Paseo
+    dCasaMes: '★ Casa del mes: {casa}', casaMesMuestra: 'Villa blanca con vistas al Balcón de Europa',
+    // (28-sep, D10) carteles, contadores y efectos
+    dCartelJardin: 'No pisar el césped. Firmado: el jardinero', dTablonPortal: 'Aviso: la planta 13 NO EXISTE. La Comunidad',
+    dVozVecino: '«Vivo aquí desde 1983…»', dQuiosco: 'ÚLTIMA HORA: un agente vende {casa} en {seg} s', dQuiosco0: 'ÚLTIMA HORA: Stela Mare busca agente',
+    dPrismaticos: 'Por los prismáticos: algo te espera en {calle}', dPrismaticosNada: 'Por los prismáticos: Nerja, sin secretos para ti',
+    dCohete: 'Próximo despegue: cuando vendas {n} salas más', dCoheteListo: '¡Listo para despegar!', dPlaca: '{pct} % del viaje · {casas} casas vendidas',
+    dMayordomo: '«El señor le recibirá cuando venda {n} casas más»', dImposible: 'VENDIDA IMPOSIBLE', dTarjeta: '«Nos veremos en la azotea de la Gran Villa»',
+    duenoCamara: '«Guardé aquí todo lo que tenía. Lo más valioso resultó ser la llave»',
     peques: '🧸 Modo peques: {e}', pequesInfo: 'Más despacio y sin morir, para aprender jugando (no cuenta para el ranking)',
     pequesBadge: '🧸 MODO PEQUES', pequesUy: '🧸 ¡Uy! No pasa nada',
     mando: '🎮 Mando conectado: {n}', mandoFuera: '🎮 Mando desconectado', mandoInfo: '🎮 Con mando: cruceta o palanca para andar · A o B saltar · Start pausa',
@@ -1046,7 +1098,7 @@
     creditos: ['Una aventura de Stela Mare', 'Idea y dirección: Alejandro', 'Agentes de campo: todo el equipo de Stela Mare', 'Tasaciones: el Gran Tasador (a regañadientes)',
       'Limpieza de casas: la aspiradora (se comió las monedas)', 'Seguridad: el perro guardián (dormía)', 'Y tú, que vendiste la Gran Villa', 'Gracias por jugar'],
     creditosDesfile: 'El reparto (por orden de aparición)', creditosEquipo: 'El equipo de Stela Mare', creditosFin: 'FIN · pulsa una tecla',
-    bichos: { cascote: 'Cascote de Obra', vecina: 'La Vecina de las Obras', robot: 'Robot de la limpieza', pato: 'Pato', rata: 'Rata', cangrejo: 'Cangrejo', gato: 'Gato', pinguino: 'Pingüino', camarero: 'Camarero', vendedor: 'Vendedor', cabra: 'Cabra', presidente: 'El Presidente de la Comunidad', tasador: 'El Tasador',
+    bichos: { jeque: 'El Jeque del Helipuerto', /* (28-sep, D8) */ agenta: 'La Agente', /* (28-sep, junta final) */ retroBit: 'El Robotito Retro', joyBot: 'El Robot del Mando', astronauta: 'El Astronauta Perdido', /* (28-sep, D13) */ turista: 'El Turista Despistado', /* (28-sep, D10) el `spr` provisional de D6 (estatua, maniquí y vigilantes) */ cascote: 'Cascote de Obra', vecina: 'La Vecina de las Obras', robot: 'Robot de la limpieza', pato: 'Pato', rata: 'Rata', cangrejo: 'Cangrejo', gato: 'Gato', pinguino: 'Pingüino', camarero: 'Camarero', vendedor: 'Vendedor', cabra: 'Cabra', presidente: 'El Presidente de la Comunidad', tasador: 'El Tasador',
       barril: 'Barril Rodante', gaviota: 'Gaviota Ladrona', gigante: 'El Gigante', medusa: 'Medusa', murcielago: 'Murciélago', ameba: 'Ameba', telefono: 'Teléfono Pesado', satelite: 'Satélite', pelota: 'Pelota Loca', timido: 'El Tímido', notario: 'El Notario', inspector: 'El Inspector de Hacienda', furgoneta: 'Furgoneta de Mudanzas', cocheRojo: 'Coche Rojo', kaboomKitty: 'Gata Petarda', vectorViper: 'Víbora de Vectores', pixelPhoenix: 'Fénix de Píxeles', screenSpider: 'Araña de Pantalla', vectorBeast: 'Bestia de Vectores', gameGriffin: 'Grifo Jugón', glitchGhoul: 'Fantasma del Fallo', pixelPegasus: 'Pegaso de Píxeles', chronoClockwork: 'Reloj de Cuerda', chronoClown: 'Payaso Cronómetro', polterStick: 'Palanca Encantada', gridGargoyle: 'Gárgola Cuadriculada', coinGnome: 'Gnomo de las Monedas', powerPuck: 'Disco Saltarín', controllerCrab: 'Cangrejo Mando', tokenTank: 'Tanque de Fichas', trackballTitan: 'Titán de la Bola', circuitSpectre: 'Espectro del Circuito', rompo: 'Rompo', nandiBear: 'Oso Nandi', adze: 'Adze', hormigaTerciopelo: 'Hormiga de Terciopelo', inkanyamba: 'Inkanyamba', mbieluMbielu: 'Mbielu-Mbielu', aigamuxa: 'Aigamuxa', kongamato: 'Kongamato', grootslang: 'Grootslang', mantis: 'Mantis', hormigaCortadora: 'Hormiga Cortadora', tokoloshe: 'Tokoloshe', catoblepas: 'Catoblepas', hombreHiena: 'Hombre Hiena', bonnacon: 'Bonacón', 'arañaPavo': 'Araña Pavo Real', ammit: 'Ammit', yalunkaBa: 'Yalunka Ba', sabaLeiba: 'Saba Leiba', esfinge: 'La Esfinge', basilisco: 'Basilisco', biloko: 'Biloko', perroGuardian: 'Perro Guardián', suegra: 'La Suegra', polillaColibri: 'Polilla Colibrí', termitas: 'Termitas', moroso: 'El Moroso', cofreTrampa: 'Cofre Trampa', 'arañita': 'Arañita', fantasmaDueno: 'El Fantasma del Antiguo Dueño', okupa: 'El Okupa', aspiradora: 'Aspiradora Come-Monedas', agente: 'Tu Fotocopia', generoso: 'El Cerdito Generoso' },
     // ── (26-sep, TANDA «PENDIENTES DE ANTES»: ideas 12, 15, 29, 60, 80, 51, 108, 109, 84/86/87, 39, 48, 49, 50, 71, 73/74, 66, 67,
     // 64/21, 45, 69, 102 y 42) solo en español: se traducen al final ──
@@ -1384,11 +1436,20 @@
     if (P.aventura) P.aventura.v = 2;
     if (c && guardar()) quitaCajon(llaveRanura(P.ranura));
   })();
-  function avatar() { return M.AVATARES.indexOf(P.avatar) >= 0 || (M.AVATARES_EXTRA.indexOf(P.avatar) >= 0 && P.desbloq[P.avatar]) ? P.avatar : 'agente'; }
+  // (28-sep, caballero) el Caballero de la Llave: SOLO con las 6 piezas (en P.desbloq para siempre); nunca por ventas ni con el truco
+  var CABALLERO = 'caballero';
+  function caballeroLibre() {
+    if (P.desbloq && P.desbloq[CABALLERO]) return true;
+    var av = (J && J.av) || P.aventura;
+    if (av && M.caballeroAv && M.caballeroAv(av)) { P.desbloq = P.desbloq || {}; P.desbloq[CABALLERO] = 1; return true; }
+    return false;
+  }
+  function extrasSinCab() { return M.AVATARES_EXTRA.filter(function (a) { return a !== CABALLERO; }); }
+  function avatar() { if (P.avatar === CABALLERO) return caballeroLibre() && M.SPR[CABALLERO] && PAL[CABALLERO] ? CABALLERO : 'agente'; return M.AVATARES.indexOf(P.avatar) >= 0 || (M.AVATARES_EXTRA.indexOf(P.avatar) >= 0 && P.desbloq[P.avatar]) ? P.avatar : 'agente'; }
   // (24-sep) personajes que se ganan: uno más por cada 3 casas vendidas en la aventura (en el orden de la lista)
   function desbloqueaPorVentas(n) {
     var gan = Math.floor(n / 3), nuevos = [];   // (21 personajes: uno cada 3 casas vendidas)
-    M.AVATARES_EXTRA.slice(0, gan).forEach(function (a) { if (!P.desbloq[a]) { P.desbloq[a] = 1; nuevos.push(a); } });
+    extrasSinCab().slice(0, gan).forEach(function (a) { if (!P.desbloq[a]) { P.desbloq[a] = 1; nuevos.push(a); } });   // (28-sep, caballero) sin el caballero
     if (nuevos.length) guardar();
     return nuevos;
   }
@@ -1921,13 +1982,15 @@
   }
   // (idea 96) el cliente de cada casa: siempre el mismo para la misma casa
   var CLIENTES = ['pareja', 'familia', 'jeque', 'actriz', 'jubilados', 'futbolista', 'influencer', 'escritora', 'inversor', 'novios', 'arquitecta', 'abuela'];
-  function clienteDe(id) { var h = 0; String(id || '').split('').forEach(function (ch) { h = (h * 31 + ch.charCodeAt(0)) >>> 0; }); return CLIENTES[h % CLIENTES.length]; }
+  function clienteDe(id) { var fd = M.casaPorId && M.casaPorId(String(id || '').replace(/-espejo$/, '')), fm = fd && fd.def && fd.def.famoso; if (fm && CLIENTES.indexOf(fm) >= 0) return fm;   /* (28-sep, D12) (163) clientes famosos: `famoso: 'jeque'` */
+    var h = 0; String(id || '').split('').forEach(function (ch) { h = (h * 31 + ch.charCodeAt(0)) >>> 0; }); return CLIENTES[h % CLIENTES.length]; }
   // (idea 97) la RESEÑA del cliente al acabar: de 1 a 5 estrellas (2 + cada estrella de la casa; −1 si has muerto en ella)
   function resena() {
     var e = M.estrellas(J.s).filter(Boolean).length, n = Math.max(1, Math.min(5, 2 + e - (J.muertes > (J.muertesCasa0 || 0) ? 1 : 0)));
     var fr = (t('resenas') || {})[n] || []; var q = fr.length ? fr[(J.pasosCasa + n) % fr.length] : '';
     var cl = (t('clientes') || {})[clienteDe(J.s.def.id)];
-    return { n: n, txt: '★★★★★'.slice(0, n) + '☆☆☆☆☆'.slice(0, 5 - n) + (q ? ' «' + q + '»' : '') + (cl ? ' — ' + cl.nombre : '') };
+    var fam = !!(J.s.def && M.casaPorId && (M.casaPorId(String(J.s.def.id).replace(/-espejo$/, '')) || { def: {} }).def.famoso); if (fam) VISTO.d12famoso = (VISTO.d12famoso || 0) + 1;   // (28-sep, D12)
+    return { n: n, txt: '★★★★★'.slice(0, n) + '☆☆☆☆☆'.slice(0, 5 - n) + (q ? ' «' + q + '»' : '') + (cl ? ' — ' + (fam ? t('famosoMarca') + ' ' : '') + cl.nombre : '') };
   }
   // (idea 83) ¿se ha cumplido el reto de la casa? (se mira al salir por la puerta)
   function retoCumplido() {
@@ -2314,6 +2377,10 @@
     var vi = (t('superadoTxt') || {})[su.mundo]; if (vi) pa.push('«' + vi + '»');
     if (su.botas) { pa.push(t('botasTit') + ' ' + t('botasTxt')); VISTO.botas = 1; }
     if (su.acto === 'vuelta') { pa.push(t('superadoVuelta')); VISTO.superadoVuelta = 1; }   // (27-sep, P5)
+    var cu = (J.av.cuaderno || {})[su.mundo];            // (28-sep, D12) la página del cuaderno (con el tiempo), la postal y las pegatinas nuevas
+    if (cu) { if (me.t0 != null) cu.t = Math.max(0, (+J.pasosAv || 0) - me.t0); pa.push(t('dCuaderno')); VISTO.d12cuaderno = su.mundo; }
+    if ((J.av.postales || {})['mundo:' + su.mundo]) { pa.push(t('dPostalMundo')); VISTO.d12postal = su.mundo; }
+    pegatinasD12().forEach(function (p) { pa.push(t('dPegatina', { p: (t('pegatinas') || {})[p] || p })); });
     pa.push(t('guardando'));
     cartel(t('superadoTit'), t('mundo_' + su.mundo) || su.mundo, pa.join('  ·  ') + '  ·  ' + t('pulsa'), false, true);
     $('c2').classList.add('mundo');
@@ -2437,6 +2504,7 @@
   function guardaAventura() {
     if (!J || !J.av || J.peques) return;              // (182) el modo peques no cuenta: ni pisa la aventura guardada
     marcaConTrucos();                                 // (27-sep, P10) con trucos, lo hecho no suma al %
+    pegatinasD12();                                   // (28-sep, D12) las pegatinas ganadas, apuntadas en la partida
     var a = M.guardadoAventura(J); a.fecha = Date.now(); a.avatar = avatar();
     a.secretos = JSON.parse(JSON.stringify(J.av.secretos || {}));   // (25-sep, idea 135) lo más encontrado en cada casa y calle · (26-sep, revisión R1) una copia
     cobraMonedas(); a.huchaIni = +J.puntosIni || 0;   // (179) · (27-sep, P13) lo ganado hasta aquí, ya en 🪙: huchaIni = lo ya cobrado
@@ -2466,7 +2534,7 @@
   function fichaDe(a) {
     a = valeAv(a); if (!a) return null;
     var c = M.calle ? M.calle(a.pantalla) : null, cu = M.cuentaAv ? M.cuentaAv(a) : { vendidas: 0, total: 0 };
-    return { v: 2, avatar: String(a.avatar || ''), mundo: (c && c.mundo) || '', vendidas: cu.vendidas, total: cu.total, pasos: +a.pasos || 0, fecha: +a.fecha || 0, marcas: marcasFicha(a) /* (27-sep, P12) 🎯🐢 · (P11) 🏅 */, terminada: !!a.terminada, pct: pctDe(a), leyenda: !!a.leyenda };   // (27-sep, P14) + la Leyenda   // (27-sep, P10) + el %
+    return { v: 2, avatar: String(a.avatar || ''), mundo: (c && c.mundo) || '', vendidas: cu.vendidas, total: cu.total, pasos: +a.pasos || 0, fecha: +a.fecha || 0, marcas: marcasFicha(a) /* (27-sep, P12) 🎯🐢 · (P11) 🏅 */, terminada: !!a.terminada, pct: pctDe(a), leyenda: !!a.leyenda, nuevos: !!a.epilogo && pctDe(a) < 100 /* (28-sep, caballero) */ };   // (27-sep, P14) + la Leyenda   // (27-sep, P10) + el %
   }
   function tiempoJugado(pasos) { var m = Math.round((+pasos || 0) * 66 / 60000); return m < 60 ? t('ranMin', { m: m }) : t('ranHoras', { h: Math.floor(m / 60), m: ('0' + (m % 60)).slice(-2) }); }
   function fechaCorta(ms) { if (!ms) return ''; var d = new Date(+ms); return ('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth() + 1)).slice(-2); }
@@ -2474,7 +2542,7 @@
   function resumenFicha(f) {
     if (!f) return t('ranLibre');
     var nom = (t('avatares') || {})[f.avatar] || '', mu = f.mundo && T.es['mundo_' + f.mundo] ? t('mundo_' + f.mundo) : '';
-    return [nom, mu, '🏠 ' + f.vendidas + ' / ' + f.total, f.pct != null ? f.pct + ' % · ' + nombreRango(f.pct) : '', '⏱ ' + tiempoJugado(f.pasos),   /* (27-sep, P10) + el % y el rango */ fechaCorta(f.fecha), f.terminada ? t('avTerminada') : '', f.leyenda ? t('leyendaMarca') /* (27-sep, P14) */ : '', f.marcas || ''].filter(Boolean).join(' · ');
+    return [nom, mu, '🏠 ' + f.vendidas + ' / ' + f.total, f.pct != null ? f.pct + ' % · ' + nombreRango(f.pct) : '', '⏱ ' + tiempoJugado(f.pasos),   /* (27-sep, P10) + el % y el rango */ fechaCorta(f.fecha), f.terminada ? t('avTerminada') : '', f.leyenda ? t('leyendaMarca') /* (27-sep, P14) */ : '', f.marcas || '', f.nuevos ? t('secretosNuevos') /* (28-sep, caballero) */ : ''].filter(Boolean).join(' · ');
   }
   function hayPartidas() { return RANURAS.some(function (q) { return !!partidaDe(q); }); }
   // cambiar de ranura: la activa va a su cajón y la nueva pasa a P.aventura. Si algo no cabe, NO se cambia (no se pierde nada)
@@ -2650,8 +2718,10 @@
   function popupMenu(txt) { ['formHint', 'menuHint'].forEach(function (id) { var n = $(id); if (n) { n.textContent = txt; n.style.color = '#F0C860'; } }); }   // (27-sep, P7) + en el título
   function pintaAvatares() {
     var c = $('avatares'); c.innerHTML = '';
-    M.AVATARES.concat(M.AVATARES_EXTRA).forEach(function (a, ia) {
-      var bloq = ia >= M.AVATARES.length && !P.desbloq[a] && !(P.truco.on && P.truco.casas);
+    var baseA = M.AVATARES.filter(function (a) { return a !== CABALLERO; }), extA = extrasSinCab();   // (28-sep, caballero) el caballero va al final, aparte
+    baseA.concat(extA, M.SPR[CABALLERO] && PAL[CABALLERO] ? [CABALLERO] : []).forEach(function (a, ia) {   // (sin su dibujo y su paleta —la junta—, no sale)
+      var esCab = a === CABALLERO, nPz = esCab && M.piezasAv ? M.piezasAv((J && J.av) || P.aventura) : 0;
+      var bloq = esCab ? !caballeroLibre() : ia >= baseA.length && !P.desbloq[a] && !(P.truco.on && P.truco.casas);
       var b = document.createElement('button'); b.type = 'button'; b.setAttribute('data-av', a);
       b.className = (a === avatar() ? 'on' : '') + (bloq ? ' bloq' : '');
       var spA = sprite(a, (animT >> 2) & 3, false, palAvatar(a));          // 16 bits: la miniatura, con todo su detalle
@@ -2659,8 +2729,9 @@
       var x = cv.getContext('2d'); if (x) x.drawImage(spA, 0, 0);
       b.appendChild(cv);
       var sp = document.createElement('span'); sp.textContent = bloq ? '🔒' : (t('avatares')[a] || a); b.appendChild(sp);
-      b.onclick = bloq ? function () { popupMenu(t('avatarBloq', { n: (ia - M.AVATARES.length + 1) * 3 })); } : function () { P.avatar = a; guardar(); pintaAvatares(); };
-      b.title = bloq ? t('avatarBloq', { n: (ia - M.AVATARES.length + 1) * 3 }) : t('avatarTit');
+      var pista = esCab ? t('avatarCaballero', { n: nPz }) : t('avatarBloq', { n: (ia - baseA.length + 1) * 3 });   // (28-sep, caballero)
+      b.onclick = bloq ? function () { popupMenu(pista); } : function () { P.avatar = a; guardar(); pintaAvatares(); };
+      b.title = bloq ? pista : t('avatarTit');
       c.appendChild(b);
     });
   }
@@ -3239,7 +3310,7 @@
   }
   $('tiendaBtn').onclick = function () { var c = $('tienda'); if (c.classList.contains('hidden')) { pintaTienda(); c.classList.remove('hidden'); } else c.classList.add('hidden'); };
   $('semanaBtn').onclick = function () { if (!leeJugador()) return; var c = casaHoy('semana'); if (c) { M.cambiaPack(c.pack); empezar(c.n, { semana: true }); } else empezar(M.retoSemana(hoy()).casa, { semana: true }); };   // (27-sep, P10) una casa ya vendida
-  $('dosBtn').onclick = function () { var l = casasDos(); if (l.length) empezarDos(l[0]); else if (leeJugador()) empezar(0, { dos: true }); };   // (27-sep, P10) con casas ya vendidas (sin jefes)
+  $('dosBtn').onclick = function () { var l = casasDos(); if (l.length) empezarDos(l[0]); else if (leeJugador()) empezarDosCosta(); };   // (27-sep, D0) sin vendidas: la costa, sin jefes   // (27-sep, P10) con casas ya vendidas (sin jefes)
   $('turboBtn').onclick = function () { P.turbo = !P.turbo; guardar(); pintaModos(); };
   $('seguirBtn').onclick = function () { if (leeJugador()) empezar(P.maxCasa, { practica: true }); };
   $('diaBtn').onclick = function () { if (!leeJugador()) return; var c = casaHoy('dia'); if (c) { M.cambiaPack(c.pack); empezar(c.n, { dia: true }); } else empezar(M.casaDelDia(hoy()), { dia: true }); };   // (27-sep, P10) una casa ya vendida
@@ -3419,6 +3490,7 @@
       J.rastro.push({ x: ax0, y: J.w.y, d: J.w.dir }); if (J.rastro.length > 14) J.rastro.shift();
       if (J.w.aire === 0 && J.pasosCasa % 5 === 0 && (ARENA[J.s.def.tema] || /hielo/.test(J.s.def.paleta || '')) && (!J.huellas || !J.huellas.length || J.huellas[J.huellas.length - 1].x !== ax0 + 4)) (J.huellas = J.huellas || []).push({ x: ax0 + 4, y: J.w.y + 15, t: animT });
       pasoMusica();
+      pasoD14();                                   // (28-sep, D14) campanas, gaviotas y olas de Nerja
       pasoEnsena(ev);                              // (27-sep, P8) los dibujos del Paseo y la barra del aire que parpadea
       pasoPendientes();                            // (26-sep) gestos, giro de la casa, vuelos del imán, fantasma del bonus, música secreta
       ev.forEach(suceso);
@@ -3506,7 +3578,7 @@
         if (J.revisita) cartel('🥾 ' + t('revisitaTit'), titulo, t('revisitaTxt', { n: muelleCasa(J.enCasa) }), true, true);
         else if (sotano) cartel('🪙 ' + t('sotanoFin'), titulo, t('sotanoFinTxt'), true, true);
         else if (superB) cartel('🕳️ ' + t('tunelFin'), nombreDe(J.s.def), t('tunelFinTxt') + ' · ' + resumenCasa(), true, true);
-        else cartel('🏷️ ' + t('vendida'), titulo, t('vendidaTxt', { n: vendidasAv() + (J.av.vendidas[J.enCasa] ? 0 : 1), t: totalAv() }) + ' · ' + resumenCasa() + ' · ' + rs.txt + (J.salidaSec ? ' · ' + t('salidaSecretaTxt') : ''), true, true);
+        else cartel('🏷️ ' + t('vendida'), titulo, t('vendidaTxt', { n: vendidasAv() + (J.av.vendidas[J.enCasa] ? 0 : 1), t: totalAv() }) + ' · ' + resumenCasa() + ' · ' + rs.txt + deseoTxtD12() + (J.salidaSec ? ' · ' + t('salidaSecretaTxt') : ''), true, true);
         if (!J.revisita && !sotano && !superB && retoCumplido()) { M.sumar(J, 500, []); anuncio = { txt: t('retoOk'), t: 50 }; J.reto83 = null; }
         if (estrellasCasa) pintaEstrellas(estrellasCasa);
         lluviaConfeti(50);
@@ -3850,7 +3922,7 @@
     var l = [];
     (s.secretos || []).forEach(function (g) { if (g.visto) return; var c = Object.keys(g.celdas)[0].split(','); l.push([+c[0], +c[1]]); });
     trucosDe(s).forEach(function (tr) {
-      if (tr.hecho || tr.tipo === 'paciente' || tr.tipo === 'alReves') return;       // (esos dos no están en un sitio)
+      if (tr.hecho || tr.tipo === 'paciente' || tr.tipo === 'alReves' || tr.tipo === 'combo' || tr.tipo === 'vuelta') return;       // (esos no están en un sitio · 27-sep, D1: combo y vuelta)
       if (tr.x != null) l.push([tr.x, tr.y]); else if (tr.celdas && tr.celdas[0]) l.push([tr.celdas[0][0], tr.celdas[0][1]]);
     });
     objetosDe(s).forEach(function (o) { if (!o.cogido && (o.tipo === 'estatuilla' || o.tipo === 'carta')) l.push([o.x, o.y]); });
@@ -3915,6 +3987,8 @@
     var s = J.s, w = J.w;
     if (J.esfingeEspera > 0) J.esfingeEspera--;
     if (J.bocadillo && J.bocadillo.t > 0) J.bocadillo.t--;
+    pasoD1();                                        // (27-sep, D1) la melodía al entrar y lo que se apaga
+    pasoD3();                                        // (27-sep, D3) sirena, bufidos, la estalagmita que se rompe, el charco
     if (J.flecha && J.flecha.t > 0 && J.flecha.casa === s.def.id) {
       if (!J.flecha.avisada) { J.flecha.avisada = true; anuncio = { txt: t('flecha'), t: 40 }; tono(660, 0.3, 'sine', 0.05, 0, 990); }
       J.flecha.t--;
@@ -3990,6 +4064,10 @@
       SND.poder(); popup(t('obj_carta'), ax, w.y - 10, '#FBEFC9');
       if (id != null) abreCarta(id);
     } else if (tipo === 'cronometro') { anuncio = { txt: t('obj_cronometro'), t: 60 }; tono(1200, 0.05, 'square', 0.05); tono(900, 0.05, 'square', 0.05, luego(0.12)); }
+    else if (tipo === 'pieza' && M.piezasAv) {   // (28-sep, caballero) una pieza de armadura; con la 6.ª, el caballero
+      SND.poder(); popup(t('obj_pieza', { n: M.piezasAv(J.av || {}) }), ax, w.y - 10, '#F0C860');
+      if (J.av && M.caballeroAv(J.av) && !(P.desbloq && P.desbloq[CABALLERO])) { caballeroLibre(); guardar(); anuncio = { txt: t('caballeroListo'), t: 110 }; SND.medalla(); lluviaConfeti(120); }
+    }
     else { SND.poder(); var tx = t('obj_' + tipo); popup(tx !== 'obj_' + tipo ? tx : t('obj_otro'), ax, w.y - 10, '#FBEFC9'); }
     if (J.av) guardaAventura();
   }
@@ -4078,6 +4156,1100 @@
     return h;
   }
   // los avisos y sonidos de cada suceso NUEVO del motor; devuelve true si ya está (y el suceso no sigue)
+  /* ══ (27-sep, D1) TRUCOS Y PALANCAS NUEVAS · la pantalla ═══════════════════════════════════════════════════════
+     El motor manda 'nota:<n>' (n = semitonos sobre el do central, o do/re/mi…), 'ordenMal', 'baldosa', 'encima:<n>',
+     'encimaMal', 'campana', 'vuelta', 'globoSube', 'hoyoEnUno', 'caidaLarga', 'paga', 'sinAire', 'cuenta', 'cuenta:<n>'
+     y 'bum'. Aquí suenan y se ven. VISTO.* lo mira la prueba (fase-d1). */
+  /* ══ (27-sep, D3) EL RITMO · la pantalla ═════════════════════════════════════════════════════════
+     Rachas (con su manga, que se hincha 15 pasos antes; arena si `polvo: 'arena'`; sirena si `sonido: 'sirena'`), vapor
+     a bufidos (tobera), charcos con portera, fregona y cartelito, la gota y la estalagmita, y los VELOS que solo se ven
+     (`velos: [{ zona, tipo: 'niebla'|'rio'|'bola'|'lluvia'|'chorro', periodo, on, fase }]`: el motor no los lee).
+     VISTO.* lo mira la prueba (fase-d3). */
+  function pasoD3() {
+    var s = J.s, w = J.w; if (!s || !M.rachaSopla) return;
+    var t = s.t;
+    (s.rachas || []).forEach(function (r) {
+      if (M.rachaSopla(r, t) && !M.rachaSopla(r, t - 1)) {
+        if (r.sonido === 'sirena') { tono(520, 0.9, 'sine', 0.05, 0, 780); tono(780, 0.9, 'sine', 0.04, luego(0.9), 520); VISTO.sirena = (VISTO.sirena || 0) + 1; }
+        else { tono(220, 0.5, 'sawtooth', 0.03, 0, 90, true); VISTO.silbido = (VISTO.silbido || 0) + 1; }
+      }
+    });
+    (s.vaporRitmo || []).forEach(function (rt) {
+      if (rt && M.ritmoOn(rt, t) && !M.ritmoOn(rt, t - 1)) { tono(110, 0.35, 'sawtooth', 0.05, 0, 60, true); VISTO.bufido = (VISTO.bufido || 0) + 1; }
+    });
+    (s.crece || []).forEach(function (c) {
+      if (M.creceAlto(c, t) === 0 && M.creceAlto(c, t - 1) > 0) { tono(180, 0.25, 'square', 0.06, 0, 70); nube(c.x * 8 + 4, (c.yBase + 1) * 8 - 4, 8, '#b8a88a'); VISTO.rompe = (VISTO.rompe || 0) + 1; }
+    });
+    if (w && s.charcos && s.charcos.length && M.resbalaEn(s, w) && J.charcoD3 !== s) {
+      J.charcoD3 = s; popup(t0D3('dCharco'), w.x * 8 + 5, w.y - 10, '#F0C860'); VISTO.avisoCharco = 1;
+    }
+  }
+  function t0D3(k) { return t(k); }
+  function pintaD3(c, s, w) {
+    if (!M.rachaSopla) return;
+    var tt = s.t, i;
+    (s.rachas || []).forEach(function (r, n) {
+      var z = r.zona, zx = z[0] * 8, zy = z[1] * 8, an = (z[2] - z[0] + 1) * 8, al = (z[3] - z[1] + 1) * 8;
+      var sd = M.rachaSopla(r, tt), falta = M.rachaFalta(r, tt), arena = r.polvo === 'arena';
+      if (sd) {
+        VISTO.rachas = (VISTO.rachas || 0) + 1; VISTO.rachaSentido = sd;
+        for (i = 0; i < Math.max(4, an * al / 140); i++) {
+          var sem = n * 23 + i * 7, v = (animT * (2.5 + azar(sem) * 1.5) + azar(sem + 1) * an) % an, ly = zy + azar(sem + 2) * (al - 2);
+          var lg = arena ? 1.5 : 3 + azar(sem + 3) * 5, lx = sd > 0 ? zx + v : zx + an - v;
+          c.fillStyle = arena ? 'rgba(222,184,120,.65)' : 'rgba(255,255,255,.32)';
+          c.fillRect(sd > 0 ? lx - lg : lx, ly, lg, arena ? 1.5 : 0.5);
+        }
+        if (arena) VISTO.arena = 1;
+      }
+      if (r.manga) {                                   // la manga: lacia, se hincha 15 pasos antes y ondea mientras sopla
+        var hin = sd ? 1 : falta <= 15 ? (15 - falta) / 15 : 0, mx = r.manga[0] * 8, my = r.manga[1] * 8, dir = sd || (r.sentido < 0 ? -1 : 1);
+        c.fillStyle = '#9aa3ad'; c.fillRect(mx + 3, my, 1, 8);
+        if (M.SPR.manga && hin >= 0.5) dib(c, sprite('manga', sd ? (animT >> 2) & 1 : 0, dir < 0), mx, my);
+        else {
+          var lg2 = 1 + Math.round(4 * hin);
+          c.fillStyle = '#ff7a3a'; c.fillRect(dir > 0 ? mx + 4 : mx + 3 - lg2, my + 1, lg2, hin > 0.5 ? 3 : 2);
+          c.fillStyle = '#ffffff'; if (lg2 > 2) c.fillRect(dir > 0 ? mx + 5 : mx + 1, my + 1, 1, 2);
+        }
+        VISTO.manga = Math.max(VISTO.manga || 0, hin);
+      }
+    });
+    (s.vaporRitmo || []).forEach(function (rt, n) {   // las toberas (354) y los chorros (276)
+      if (!rt || !rt.dibujo) return;
+      var z = s.vapor[n], bx = z[0] * 8 + (z[2] - z[0] + 1) * 4 - 4, by = (z[3] + 1) * 8 - 8;
+      if (M.SPR[rt.dibujo]) dib(c, sprite(rt.dibujo, M.ritmoOn(rt, tt) ? 1 : 0, false), bx, by);
+      else { c.fillStyle = '#6b7380'; c.fillRect(bx + 1, by + 4, 6, 4); c.fillStyle = M.ritmoOn(rt, tt) ? '#ffb84a' : '#3a3f48'; c.fillRect(bx + 2, by + 3, 4, 1); }
+      VISTO.tobera = (VISTO.tobera || 0) + 1;
+    });
+    (s.charcos || []).forEach(function (ch) {
+      var moj = M.charcoMojado(ch, tt), y0 = ch.y * 8;
+      if (moj) {
+        c.fillStyle = 'rgba(120,190,255,.55)'; c.fillRect(ch.x1 * 8, y0 - 1, (ch.x2 - ch.x1 + 1) * 8, 2);
+        c.fillStyle = 'rgba(255,255,255,.75)'; c.fillRect(ch.x1 * 8 + 2 + ((animT >> 3) % 6), y0 - 1, 2, 1);
+        VISTO.charco = (VISTO.charco || 0) + 1;
+      }
+      if (ch.cartel && moj) {
+        var cx = ch.cartel[0] * 8, cy = ch.cartel[1] * 8;
+        if (M.SPR.cartelito) dib(c, sprite('cartelito', 0, false), cx, cy);
+        else { c.fillStyle = '#F0C860'; c.fillRect(cx + 1, cy, 6, 6); c.fillStyle = '#2b2b2b'; c.fillRect(cx + 3, cy + 1, 2, 3); c.fillRect(cx + 1, cy + 6, 1, 2); c.fillRect(cx + 6, cy + 6, 1, 2); }
+        VISTO.cartelito = 1;
+      }
+      if (ch.portera) {                               // la portera friega mientras está mojado; seco, se apoya en la fregona
+        var px = ch.portera[0] * 8, py = ch.portera[1] * 8, fr = moj ? (animT >> 3) & 1 : 0;
+        if (M.SPR.portera) dib(c, sprite('portera', fr, px > (w ? w.x * 8 : 0)), px, py);
+        else { c.fillStyle = '#c05a8a'; c.fillRect(px + 2, py + 3, 5, 9); c.fillStyle = '#f2c9a0'; c.fillRect(px + 3, py, 3, 3); c.fillStyle = '#b08a50'; c.fillRect(px + (fr ? 8 : 9), py + 4, 1, 11); c.fillStyle = '#dfe6ee'; c.fillRect(px + (fr ? 7 : 8), py + 14, 3, 2); }
+        VISTO.portera = 1;
+      }
+    });
+    (s.crece || []).forEach(function (cr) {           // la estalagmita que crece y la gota que la hace crecer
+      var h = M.creceAlto(cr, tt), x0 = cr.x * 8, al = cr.alto || 3, P = cr.periodo || 96;
+      for (i = 0; i < h; i++) {
+        var yy = (cr.yBase - i) * 8, top = i === h - 1;
+        if (top && M.SPR.estalagmita) dib(c, sprite('estalagmita', 0, false), x0, yy);
+        else { c.fillStyle = '#8f7f68'; c.fillRect(x0 + (top ? 2 : 1), yy + (top ? 2 : 0), top ? 4 : 6, top ? 6 : 8); c.fillStyle = '#b8a88a'; c.fillRect(x0 + 3, yy + (top ? 1 : 0), 1, top ? 7 : 8); }
+      }
+      var paso = P / (al + 1), q = ((tt + (cr.fase || 0)) % paso + paso) % paso, techoY = (cr.yBase - al) * 8, gy = techoY + (q / paso) * ((cr.yBase - h + 1) * 8 - techoY);
+      if (M.SPR.gotaTecho) dib(c, sprite('gotaTecho', 0, false), x0, gy - 4);   // (28-sep) gotaTecho
+      else { c.fillStyle = 'rgba(160,210,255,.9)'; c.fillRect(x0 + 3, gy, 2, 3); }
+      VISTO.estalagmita = h; VISTO.gota = 1;
+    });
+    (s.def && s.def.velos || []).forEach(function (v, n) {   // lo que solo se ve: niebla que va y viene, río, bola de agua, lluvia
+      var z = v.zona, zx = z[0] * 8, zy = z[1] * 8, an = (z[2] - z[0] + 1) * 8, al = (z[3] - z[1] + 1) * 8;
+      var on = !v.periodo || M.ritmoOn(v, tt), P = v.periodo || 96, q = ((tt + (v.fase || 0)) % P + P) % P, onL = v.on != null ? v.on : P / 2;
+      var fuerza = !v.periodo ? 1 : on ? Math.min(1, q / 12, (onL - q) / 12 + 0.2) : 0;
+      if (v.tipo === 'niebla') { if (fuerza > 0) { c.fillStyle = 'rgba(225,230,238,' + (0.8 * fuerza).toFixed(2) + ')'; c.fillRect(zx, zy, an, al); } VISTO.niebla = Math.max(VISTO.niebla || 0, fuerza); }
+      else if (v.tipo === 'rio') { c.fillStyle = 'rgba(70,150,210,.45)'; c.fillRect(zx, zy, an, al); c.fillStyle = 'rgba(220,240,255,.6)'; for (i = 0; i < an; i += 5) c.fillRect(zx + ((i + animT) % an), zy + (i % al), 3, 1); VISTO.rio = 1; }
+      else if (v.tipo === 'bola') { var r0 = Math.min(an, al) / 2, bx = zx + an / 2, by = zy + al / 2 + Math.sin(animT / 20) * 2; c.fillStyle = 'rgba(110,190,255,.35)'; c.fillRect(bx - r0 * 0.7, by - r0 * 0.7, r0 * 1.4, r0 * 1.4); c.fillStyle = 'rgba(255,255,255,.6)'; c.fillRect(bx - r0 * 0.4, by - r0 * 0.5, 2, 2); VISTO.bola = 1; }
+      else if (v.tipo === 'lluvia' || v.tipo === 'chorro') {
+        if (fuerza > 0) { var ch2 = v.tipo === 'chorro'; c.fillStyle = ch2 ? 'rgba(240,245,255,.5)' : 'rgba(170,200,240,.5)'; for (i = 0; i < an; i += ch2 ? 2 : 4) c.fillRect(zx + i, zy + ((animT * (ch2 ? 4 : 3) + i * 7) % al), 1, ch2 ? 4 : 3); }
+        VISTO[v.tipo] = fuerza;
+      }
+      VISTO.velos = (VISTO.velos || 0) + 1;
+    });
+  }
+  var NOTA_D1 = { 'do': 0, re: 2, mi: 4, fa: 5, sol: 7, la: 9, si: 11 };
+  function semitonoD1(n) { return typeof n === 'number' ? n : NOTA_D1[n] != null ? NOTA_D1[n] : (+n || 0); }
+  function tocaNotaD1(n, cuando) { var st = semitonoD1(n); tono(midi(60 + st), 0.28, 'triangle', 0.07, cuando); VISTO.nota = (VISTO.nota || []).concat([st]); }
+  /* (27-sep, D4) bichos que despiertan y que esperan: el aviso antes de salir y el despertar */
+  /* (27-sep, D5) lo de los bichos con recorrido nuevo: los agujeros (de la pared para la rata, de la tierra para el topo) y el
+     rastro de la chispa alrededor de su plataforma. El bicho en sí lo pinta el bucle de siempre (escondido, no: está dormido). */
+  function pintaD5(c, s) {
+    (s.enemigos || []).forEach(function (e) {
+      if (e.fuera || !(e.tipo === 'r' || e.tipo === 'topo')) return;
+      var an = M.SPR[e.spr] ? M.SPR[e.spr][0][0].length : 16, al = M.SPR[e.spr] ? M.SPR[e.spr][0].length : 16, hs = [];
+      if (e.tipo === 'topo') hs = e.agujeros || [];
+      else if (e.agujeros) hs = e.agujeros;
+      hs.forEach(function (h, i) {
+        VISTO.agujerosD5 = (VISTO.agujerosD5 || 0) + 1;
+        if (M.SPR.agujero) { dib(c, sprite('agujero', 0, false), h[0] + (an - 10) / 2, h[1] + al - 8); return; }
+        c.fillStyle = '#1a0f08';
+        if (e.tipo === 'topo') { c.fillRect(h[0] - 1, h[1] + al - 2, an + 2, 2); c.fillStyle = '#6b4a2b'; c.fillRect(h[0] - 2, h[1] + al - 3, 2, 1); c.fillRect(h[0] + an, h[1] + al - 3, 2, 1); }
+        else { c.fillRect(h[0] + 1, h[1] + al - 7, an - 2, 7); c.fillRect(h[0] + 2, h[1] + al - 8, an - 4, 1); }
+      });
+      if (e.rodea || e.rodeaEspejo) {                    // la chispa: la plataforma chisporrotea a ratos
+        VISTO.chispaD5 = 1;
+        var r = e.rodea || e.rodeaEspejo, x1 = r[0] * 8, x2 = (r[2] + 1) * 8;
+        if ((animT >> 1) & 1) { c.fillStyle = 'rgba(255,241,168,.45)'; c.fillRect(x1, r[1] * 8 - 1, x2 - x1, 1); c.fillRect(x1, (r[3] + 1) * 8, x2 - x1, 1); }
+      }
+    });
+  }
+  function pintaAvisoD4(c, e, p) {
+    var an = M.SPR[e.spr] ? M.SPR[e.spr][0][0].length : 16, on = (animT >> 2) & 1;
+    VISTO.avisaD4 = (VISTO.avisaD4 || 0) + 1;
+    if (/coche|furgoneta/.test(e.spr || '')) {           // luces de marcha atrás: blancas detrás del coche
+      VISTO.lucesAtras = 1;
+      if (!on) return;
+      var atras = e.dir < 0 ? p.x + an - 2 : p.x;
+      c.fillStyle = '#ffffff'; c.fillRect(atras, p.y + 9, 2, 2); c.fillStyle = 'rgba(255,255,255,.35)'; c.fillRect(atras + (e.dir < 0 ? 2 : -3), p.y + 8, 3, 4);
+      return;
+    }
+    if (e.tipo === 'a') { VISTO.pajaroAvisa = 1; c.fillStyle = on ? '#ff5050' : '#ffd166'; c.fillRect(p.x + 7, p.y - 4, 2, 3); return; }
+    VISTO.campanaD4 = 1;                                  // campanita / cristal que parpadea encima
+    c.fillStyle = on ? '#F0C860' : '#fff1a8'; c.fillRect(p.x + an / 2 - 2, p.y - 5, 4, 3); c.fillRect(p.x + an / 2 - 1, p.y - 2, 2, 1);
+  }
+  // (28-sep, D8) PLATAFORMAS Y SUELOS NUEVOS: sonidos, las plataformas con su dibujo (si la junta aún no lo ha hecho, recuadros),
+  // el tobogán, la garra, las grietas del cristal y la flechita de los teletransportes que piden SALTAR
+  /* (28-sep, D2) RETOS Y PREMIOS: los carteles y sonidos; la FUENTE cobra aquí su 🪙 (el motor no ve el monedero) y guarda enseguida
+     (lo echado va en J.av.dado, y la 🪙 gastada en P: así no se pierde ni se repite con «Menú» + «Continuar») */
+  function sucesoD2(e) {
+    if (!J || typeof e !== 'string') return false;
+    var w = J.w, ax = w.x * 8 + w.f * 2 + 5, ay = w.y - 10;
+    var dice = function (k, col) { popup(t(k), ax, ay, col || '#F0C860'); VISTO['d2_' + e] = (VISTO['d2_' + e] || 0) + 1; };
+    if (e === 'retoEmpieza') { tono(1320, 0.08, 'square', 0.04); tono(1320, 0.08, 'square', 0.04, luego(0.16)); dice('dReto'); return true; }
+    if (e === 'retoBien') { SND.poder(); dice('dRetoBien', '#7ee2a8'); return true; }
+    if (e === 'retoMal') { tono(220, 0.2, 'square', 0.04); dice('dRetoMal', '#e07b39'); return true; }
+    if (e === 'cuentaEmpieza') { tono(880, 0.1, 'square', 0.05); dice('dCuenta'); return true; }
+    if (e === 'cuentaBien') { lluviaConfeti(60); dice('dCuentaBien', '#7ee2a8'); return true; }
+    if (e === 'cuentaFuera') { tono(196, 0.25, 'triangle', 0.04); VISTO.d2_cuentaFuera = 1; return true; }
+    if (e === 'todasMonedas') { lluviaConfeti(80); anuncio = { txt: t('dTodas'), t: 80 }; SND.medalla(); VISTO.d2_todasMonedas = 1; return true; }
+    if (e === 'zarpaPita') { tono(147, 0.5, 'sawtooth', 0.05); dice('dZarpaPita', '#e07b39'); return true; }
+    if (e === 'zarpaAmarras') { tono(147, 0.3, 'sawtooth', 0.05); tono(147, 0.3, 'sawtooth', 0.05, luego(0.4)); dice('dZarpaAmarras', '#e07b39'); sacude(false); return true; }
+    if (e === 'zarpaPropina') { dice('dZarpaPropina', '#7ee2a8'); return true; }
+    if (e === 'rodillo') { tono(660, 0.06, 'square', 0.04); VISTO.d2_rodillo = (VISTO.d2_rodillo || 0) + 1; return true; }
+    if (e === 'tragaTres') { lluviaConfeti(90); anuncio = { txt: t('dTragaTres'), t: 80 }; SND.medalla(); VISTO.d2_tragaTres = 1; return true; }
+    if (e === 'tragaDos') { dice('dTragaDos', '#7ee2a8'); return true; }
+    if (e === 'tragaNada') { tono(262, 0.2, 'triangle', 0.04); dice('dTragaNada', '#cfe3ff'); return true; }
+    if (e === 'ficha') { VISTO.d2_ficha = (VISTO.d2_ficha || 0) + 1; return true; }
+    if (e === 'leyendaDorada') { lluviaConfeti(60); anuncio = { txt: t('dLeyendaDorada'), t: 80 }; tono(1568, 0.3, 'sine', 0.05, 0, 3136); VISTO.d2_leyendaDorada = 1; return true; }
+    if (e === 'mandoPita') { tono(988, 0.09, 'square', 0.05); tono(988, 0.09, 'square', 0.05, luego(0.15)); dice('dMando'); return true; }
+    if (e === 'fuente') { fuenteD2(); return true; }
+    return false;
+  }
+  function fuenteD2() {
+    var w = J.w, ax = w.x * 8 + w.f * 2 + 5, ay = w.y - 10;
+    if (M.fuenteCuenta(J) >= M.FUENTE_VIDA) { popup(t('dFuenteLlena'), ax, ay, '#cfe3ff'); VISTO.d2_fuenteLlena = 1; return; }
+    if ((+P.monedas || 0) < 1) { popup(t('dFuenteSin'), ax, ay, '#cfe3ff'); tono(196, 0.15, 'triangle', 0.04); VISTO.d2_fuenteSin = (VISTO.d2_fuenteSin || 0) + 1; return; }
+    P.monedas = (+P.monedas || 0) - 1;
+    var evs = M.fuenteEcha(J);
+    tono(1568, 0.08, 'sine', 0.05); tono(784, 0.2, 'sine', 0.04, luego(0.12), 392);
+    popup(t('dFuente', { n: num(M.fuenteCuenta(J)) }), ax, ay, '#6FD3E0'); VISTO.d2_fuente = (VISTO.d2_fuente || 0) + 1;
+    evs.forEach(function (x) {
+      if (x === 'fuenteGema') { popup(t('dFuenteGema'), ax, ay - 10, '#6FD3E0'); lluviaConfeti(40); VISTO.d2_fuenteGema = 1; }
+      else if (x === 'fuenteVida') { anuncio = { txt: t('dFuenteVida'), t: 80 }; VISTO.d2_fuenteVida = 1; }
+      else if (x !== 'fuenteMoneda') suceso(x);
+    });
+    if (J.av && !J.peques) guardaAventura(); else guardar();
+  }
+  function pintaD2(c, s) {
+    var d = s.def || {}, o = s.d2 || {}, parpa = (animT >> 3) & 1;
+    var numero = function (n, x, y, col) { c.fillStyle = col || '#FBEFC9'; c.font = '8px Montserrat, sans-serif'; c.fillText(String(n), x, y); };
+    M.retosD2(d).forEach(function (r, i) {
+      var q = o.retos && o.retos[i];
+      if (r.en) { c.fillStyle = '#c0392b'; c.fillRect(r.en[0] * 8 + 2, r.en[1] * 8 + 2, 4, 5); c.fillStyle = '#1b1b1b'; c.fillRect(r.en[0] * 8 + 3, r.en[1] * 8 + 3, 2, 1); VISTO.d2_telefono = (VISTO.d2_telefono || 0) + 1; }
+      if (q && q.vivo) { if (parpa) { c.fillStyle = '#F0C860'; c.fillRect(r.x * 8 + 2, r.y * 8 + 2, 4, 4); } numero(Math.max(0, Math.ceil((q.fin - s.t) / 15)), r.x * 8 + 1, r.y * 8 - 2, '#F0C860'); VISTO.d2_retoVivo = (VISTO.d2_retoVivo || 0) + 1; }
+    });
+    if (s.cuenta && !s.cuenta.fuera && s.puerta) { numero(Math.max(0, Math.ceil((s.cuenta.fin - s.t) / 15)), s.puerta.x * 8 + 4, s.puerta.y * 8 - 3, parpa ? '#ff6b6b' : '#FBEFC9'); VISTO.d2_reloj = (VISTO.d2_reloj || 0) + 1; }
+    if (d.tragaperras) {
+      var COL = ['#c0392b', '#F0C860', '#6FD3E0', '#7ee2a8', '#b98ce0'];
+      d.tragaperras.rodillos.forEach(function (r, i) {
+        var v = o.traga && o.traga.rod[i] >= 0 ? o.traga.rod[i] : (o.traga && o.traga.hecho ? -1 : M.simboloD2(s.t, i));
+        c.fillStyle = '#2b2b2b'; c.fillRect(r[0] * 8, r[1] * 8, 8, 8); c.fillStyle = '#ffffff'; c.fillRect(r[0] * 8 + 1, r[1] * 8 + 1, 6, 6);
+        if (v >= 0) { c.fillStyle = COL[v % COL.length]; c.fillRect(r[0] * 8 + 2, r[1] * 8 + 2, 4, 4); }
+      });
+      VISTO.d2_rodillos = (VISTO.d2_rodillos || 0) + 1;
+    }
+    if (d.fuente) {
+      var fx = d.fuente.x * 8, fy = d.fuente.y * 8;
+      c.fillStyle = '#9aa3ad'; c.fillRect(fx - 4, fy - 4, 16, 4); c.fillStyle = '#6FD3E0'; c.fillRect(fx - 3, fy - 3, 14, 2);
+      c.fillStyle = '#cfe3ff'; c.fillRect(fx + 3, fy - 10 + (parpa ? 1 : 0), 2, 6); VISTO.d2_fuenteDib = (VISTO.d2_fuenteDib || 0) + 1;
+    }
+    if (d.maletero && d.maletero.coche) {
+      var cx = d.maletero.coche[0] * 8, cy = d.maletero.coche[1] * 8;
+      c.fillStyle = '#7a7f87'; c.fillRect(cx, cy + 2, 16, 5); c.fillStyle = '#1b1b1b'; c.fillRect(cx + 2, cy + 7, 3, 2); c.fillRect(cx + 11, cy + 7, 3, 2);
+      if (o.maletero && parpa) { c.fillStyle = '#FFB000'; c.fillRect(cx, cy + 3, 1, 2); c.fillRect(cx + 15, cy + 3, 1, 2); }
+      VISTO.d2_coche = (VISTO.d2_coche || 0) + 1;
+    }
+    if (d.valeFila || s.bonus.some(function (b) { return b.vale; })) s.bonus.forEach(function (b) {
+      if (b.cogido || b.tipo !== 'moneda') return; var v = M.valeD2(s, b); if (!v) return;
+      c.fillStyle = v >= 1000 ? '#F0C860' : v >= 500 ? '#b98ce0' : '#6FD3E0'; c.fillRect(b.x * 8 + 1, b.y * 8 + 7, 6, 1); VISTO.d2_fichas = (VISTO.d2_fichas || 0) + 1;
+    });
+    if (s.bonus.some(function (b) { return b.marea && !b.cogido; })) { VISTO.d2_marea = (VISTO.d2_marea || 0) + 1; if (!M.mareaBajaD2(s)) VISTO.d2_mareaTapa = 1; }
+    if (s.bonus.some(function (b) { return b.dorada && !b.cogido; })) VISTO.d2_dorada = (VISTO.d2_dorada || 0) + 1;
+  }
+  function sucesoD8(e) {
+    if (!J || typeof e !== 'string') return false;
+    var w = J.w, ax = w.x * 8 + w.f * 2 + 5;
+    if (e === 'delfin') { tono(700, 0.12, 'sine', 0.05, 0, 1400); VISTO.delfinFx = 1; return true; }
+    if (e === 'arranca') { tono(330, 0.1, 'square', 0.04); tono(495, 0.12, 'square', 0.04, luego(0.1)); popup(t('dArranca'), ax, w.y - 10, '#7ee2a8'); VISTO.arrancaFx = 1; return true; }
+    if (e === 'garra') { tono(220, 0.2, 'sawtooth', 0.04, 0, 440); popup(t('dAgarra'), ax, w.y - 10, '#F0C860'); VISTO.garraFx = 1; return true; }
+    if (e === 'garraSuelta') { tono(660, 0.08, 'triangle', 0.05); VISTO.garraSuelta = 1; return true; }
+    if (e === 'cristalGrieta') { tono(1800, 0.06, 'square', 0.04); popup(t('dGrieta'), ax, w.y - 10, '#bfeff5'); sacude(false); VISTO.grietaFx = 1; return true; }
+    if (e === 'cristalRompe') { tono(2400, 0.05, 'square', 0.05); tono(900, 0.25, 'sawtooth', 0.05, luego(0.05), 200); popup(t('dRompe'), ax, w.y - 10, '#bfeff5'); sacude(true); VISTO.rompeFx = 1; return true; }
+    return false;
+  }
+  /* (28-sep, D9) DIBUJOS DE LO QUE YA SE JUEGA (filas 60-68 de PLAN-FASE-D): campos de SOLO dibujo de la casa (el motor no los
+     usa). Si el dibujo aún no está (la junta de dibujos no ha pasado), se pinta como siempre. Cada dibujo apunta en VISTO
+     'd9_<nombre>' (la prueba lo mira).
+       dibujos: { E, T, S… (letra del plano → dibujo de 8×8), punta: { E: … } (la casilla de ARRIBA de cada columna; si es
+                más ancha, se centra encima: la copa de la palmera), tele: dibujo 16×16 de los teletransportes,
+                moneda: dibujo de las monedas (dátiles, pelotas de golf) }
+       pinta: [[x, y, 'dibujo']] casillas sueltas, ENCIMA de lo que haya (el fondo de la piscina, el cajetín)
+       adornos: [[x, y, 'dibujo', voltea]] solo se ven, detrás del agente (en espejo los da la vuelta el motor)
+       palancas y trucos (cuadro, baldosa, objeto, golpes) con `dibujo`: su sitio pintado (0 sin hacer · 1 hecho)
+       rayos con `dibujo`: 'fuego' | 'vapor' | 'rojo' (este, con su piloto de alarma) · hazDibujo: 'rojo' · barras con `neon`
+       plataformas tipo 'vagoneta' | 'burbuja' | 'burro' | 'sofa' (dibujo platVagoneta…; sin él, un recuadro de su color) */
+  function hayD9(nom) { return !!(nom && M.SPR[nom]); }
+  function dibD9(c, nom, fr, x, y, flip) {
+    if (!hayD9(nom)) return false;
+    var n = M.SPR[nom].length;
+    dib(c, sprite(nom, fr == null ? (animT >> 3) % n : fr, !!flip), x, y);
+    VISTO['d9_' + nom] = (VISTO['d9_' + nom] || 0) + 1;
+    return true;
+  }
+  // centrado en su casilla y apoyado en su suelo (la maceta, la fila de azulejos, el coche, el brocal…)
+  function sitioD9(c, nom, fr, tx, ty) {
+    if (!hayD9(nom)) return false;
+    var a = M.SPR[nom][0];
+    return dibD9(c, nom, fr, tx + 4 - (a[0].length >> 1), ty + 8 - a.length, false);
+  }
+  // una casilla del plano pintada según la casa (E, T, S…): true = ya está, no se pinta la de siempre
+  function casillaD9(c, ch, x, y, s) {
+    var d = s && s.def, dj = d && d.dibujos;
+    if (!dj || !dj[ch] || !hayD9(dj[ch])) return false;
+    var nom = dj[ch], arriba = !(y > 0 && s.mapa[y - 1][x] === ch), fr = 0;
+    if (ch === 'T' && M.SPR[nom].length > 1) fr = (animT >> 1) % 4 === 0 ? 1 : 0;       // el muelle, como el de siempre
+    var hu = ch === 'S' ? Math.min(4, ((s.derr && s.derr[x + ',' + y]) || 0) >> 2) : 0;   // la arena que se hunde
+    dibD9(c, nom, fr, x * 8, y * 8 + hu, d.espejo);
+    var pt = arriba && dj.punta && dj.punta[ch];
+    if (hayD9(pt)) { var a = M.SPR[pt][0]; dibD9(c, pt, null, x * 8 + 4 - (a[0].length >> 1), a[0].length > 8 ? y * 8 - a.length + 4 : y * 8, d.espejo); }
+    return true;
+  }
+  // lo que va detrás del agente: las casillas pintadas por encima y los adornos
+  function adornosD9(c, s) {
+    var d = s && s.def; if (!d) return;
+    (d.pinta || []).forEach(function (p) { dibD9(c, p[2], null, p[0] * 8, p[1] * 8, d.espejo); });
+    (d.adornos || []).forEach(function (a) { dibD9(c, a[2], null, a[0] * 8, a[1] * 8, !!a[3]); });
+  }
+  function teleD9(c, s, q, col) {
+    var nom = s.def && s.def.dibujos && s.def.dibujos.tele;
+    if (!dibD9(c, nom, null, q[0] * 8, q[1] * 8, s.def.espejo)) return false;
+    c.fillStyle = col; c.fillRect(q[0] * 8 + 7, q[1] * 8, 2, 1);                             // una marquita del color de su pareja
+    return true;
+  }
+  function rayoD9(c, p, x1, y1, x2, y2, on, aviso) {
+    var nom = p.dibujo ? 'rayo' + p.dibujo.charAt(0).toUpperCase() + p.dibujo.slice(1) : null, xx, yy;
+    if (!hayD9(nom)) return false;
+    if (p.dibujo === 'rojo') dibD9(c, 'alarma', (on || aviso) && (animT & 4) ? 1 : 0, (x1 + x2) / 2 - 4, y1 - 10);   // el piloto de la alarma
+    if (!on && !(aviso && (animT & 2))) return true;
+    if (!on) c.globalAlpha = 0.35;
+    for (yy = y1; yy < y2; yy += 8) for (xx = x1; xx < x2; xx += 8) dibD9(c, nom, ((animT >> 2) + (yy >> 3)) % 4, xx, yy);
+    c.globalAlpha = 1;
+    return true;
+  }
+  function hazD9(c, s, hx, hy, an, al) {
+    if (!s.def || s.def.hazDibujo !== 'rojo') return false;
+    c.fillStyle = 'rgba(255,60,60,.2)'; c.fillRect(hx, hy, an, al);
+    c.fillStyle = 'rgba(255,120,120,.6)'; for (var i = (animT * 2) % 8; i < al; i += 8) c.fillRect(hx, hy + i, an, 1);
+    c.fillStyle = '#e03a3a'; c.fillRect(hx, hy, an, 1); c.fillRect(hx, hy + al - 1, an, 1);
+    dibD9(c, 'alarma', (animT >> 2) & 1, hx + an / 2 - 4, hy - 9);
+    VISTO.hazRojo = 1;
+    return true;
+  }
+  function monedaD9(c, s, b, i) {
+    var nom = b.tipo === 'moneda' && s.def && s.def.dibujos && s.def.dibujos.moneda;
+    return !!nom && dibD9(c, nom, null, b.x * 8, b.y * 8 + Math.round(Math.sin((animT + i * 7) / 4)), false);
+  }
+  // los trucos de siempre con su sitio pintado (la maceta, la fila de azulejos, el coche del garaje, la X, el pozo…)
+  var TRUCO_D9 = { cuadro: 1, baldosa: 1, objeto: 1, golpes: 1 };
+  function trucoD9(c, s, tr, n, tx, ty) {
+    var d0 = ((s.def && s.def.trucos) || [])[n], nom = tr.dibujo || (d0 && d0.dibujo);   // (la sala copia sus trucos sin el dibujo: se mira en la casa)
+    if (!nom || !TRUCO_D9[tr.tipo] || !sitioD9(c, nom, tr.hecho ? 1 : 0, tx, ty)) return false;
+    if (nom === 'cocheCapo' && !tr.hecho) dibD9(c, 'humito', null, tx - 2, ty - 16);      // el coche averiado echa humo
+    return true;
+  }
+  var PLAT_D9 = { vagoneta: ['platVagoneta', '#6b4a2b', '#9aa3ad'], burbuja: ['platBurbuja', 'rgba(190,235,255,.45)', '#ffffff'],
+    burro: ['platBurro', '#8a7a6a', '#4a3a2a'], sofa: ['platSofa', '#8b2a3a', '#c9a96e'] };
+  function pintaPlatD9(c, p, q, an, s) {
+    var t = PLAT_D9[p.tipo]; if (!t) return false;
+    VISTO['plat_' + p.tipo] = (VISTO['plat_' + p.tipo] || 0) + 1;
+    if (hayD9(t[0])) {
+      var a = M.SPR[t[0]][0], cx0 = a[0].length >> 1, arriba = 0;
+      while (arriba < a.length - 1 && a[arriba][cx0] === '.') arriba++;                         // lo que se pisa, a la altura de la plataforma
+      var q0 = M.posPlat(p, s.t - 1), anda = q0.x !== q.x || q0.y !== q.y;
+      dibD9(c, t[0], anda ? (animT >> 2) % M.SPR[t[0]].length : 0, q.x + (an >> 1) - cx0, q.y - arriba, q0.x > q.x);
+      return true;
+    }
+    c.fillStyle = t[1]; c.fillRect(q.x, q.y, an, 6);
+    c.fillStyle = t[2]; c.fillRect(q.x, q.y, an, 1); c.fillRect(q.x + 2, q.y + 6, 3, 2); c.fillRect(q.x + an - 5, q.y + 6, 3, 2);
+    return true;
+  }
+  function pintaPlatD8(c, p, q, an, s) {
+    var tipos = { roca: 1, cocheAzul: 1, patito: 1, luna: 1, caja: 1, delfin: 1, helicoptero: 1 }, i;
+    if (!tipos[p.tipo]) return false;
+    VISTO['plat_' + p.tipo] = (VISTO['plat_' + p.tipo] || 0) + 1;
+    if (p.arranca && p.desde == null && (animT >> 4) & 1) { c.fillStyle = '#7ee2a8'; c.fillRect(q.x + an / 2 - 1, q.y - 4, 2, 2); VISTO.arrancaQuieta = 1; }
+    if (M.SPR[p.tipo]) { dib(c, sprite(p.tipo, (animT >> 3) & 1, p.inv || false), q.x, q.y); return true; }   // (tras la junta de dibujos)
+    if (p.tipo === 'roca') {
+      c.fillStyle = '#8d8a96'; c.fillRect(q.x + 1, q.y, an - 2, 6); c.fillRect(q.x, q.y + 1, an, 4);
+      c.fillStyle = '#b9b6c4'; c.fillRect(q.x + 2, q.y, an - 6, 1); c.fillStyle = '#5b5866'; c.fillRect(q.x + 4, q.y + 2, 2, 2); c.fillRect(q.x + an - 7, q.y + 3, 3, 2);
+    } else if (p.tipo === 'cocheAzul') {
+      c.fillStyle = '#2d6fd6'; c.fillRect(q.x + 3, q.y, an - 6, 4); c.fillRect(q.x, q.y + 4, an, 5);
+      c.fillStyle = 'rgba(190,230,255,.85)'; c.fillRect(q.x + 5, q.y + 1, an - 10, 2);
+      c.fillStyle = '#1b1b1b'; c.fillRect(q.x + 3, q.y + 8, 5, 3); c.fillRect(q.x + an - 8, q.y + 8, 5, 3);
+      c.fillStyle = p.desde != null && (animT & 4) ? '#fff6c8' : '#FFE08A'; c.fillRect(q.x + an - 1, q.y + 5, 1, 2); c.fillRect(q.x, q.y + 5, 1, 2);   // faros (parpadean al arrancar)
+    } else if (p.tipo === 'patito') {
+      for (i = 0; i < an; i += 8) { c.fillStyle = '#ffd23f'; c.fillRect(q.x + i + 1, q.y, 6, 4); c.fillRect(q.x + i + 4, q.y - 3, 3, 3); c.fillStyle = '#ff8c1a'; c.fillRect(q.x + i + 7, q.y - 2, 1, 1); }
+    } else if (p.tipo === 'luna') {
+      c.fillStyle = '#e8e4d8'; c.fillRect(q.x + 1, q.y, an - 2, 6); c.fillRect(q.x, q.y + 1, an, 4);
+      c.fillStyle = '#b5b0a0'; c.fillRect(q.x + 3, q.y + 2, 2, 2); c.fillRect(q.x + an - 6, q.y + 1, 3, 2);
+    } else if (p.tipo === 'caja') {
+      c.fillStyle = '#a0703c'; c.fillRect(q.x, q.y, an, 7); c.fillStyle = '#6b4423'; c.fillRect(q.x, q.y + 3, an, 1);
+      for (i = 0; i < an; i += 8) c.fillRect(q.x + i, q.y, 1, 7);
+    } else if (p.tipo === 'delfin') {
+      c.fillStyle = '#5b8fb9'; c.fillRect(q.x, q.y + 1, an, 4); c.fillRect(q.x + 2, q.y, an - 5, 1);
+      c.fillStyle = '#cfe3f2'; c.fillRect(q.x + 2, q.y + 4, an - 5, 1); c.fillStyle = '#1b1b1b'; c.fillRect(q.x + an - 4, q.y + 1, 1, 1);
+      c.fillStyle = '#5b8fb9'; c.fillRect(q.x + an / 2 - 1, q.y - 2, 2, 2);
+    } else if (p.tipo === 'helicoptero') {
+      var rot = (animT >> 1) & 1;
+      c.fillStyle = '#3b3f45'; c.fillRect(q.x + an / 2 - 1, q.y - 6, 2, 6); c.fillRect(rot ? q.x - 4 : q.x + 2, q.y - 7, rot ? an + 8 : an - 4, 1);
+      c.fillStyle = '#d4af37'; c.fillRect(q.x, q.y, an, 3); c.fillStyle = '#8a8f98'; c.fillRect(q.x, q.y + 3, an, 2);
+      c.fillStyle = 'rgba(190,230,255,.85)'; c.fillRect(q.x + 2, q.y + 1, 4, 1);
+    }
+    return true;
+  }
+  function pintaD8(c, s) {
+    var d = s.def || {}, i;
+    (d.toboganes || []).forEach(function (z) {
+      VISTO.tobogan = (VISTO.tobogan || 0) + 1;
+      for (var y = z.y1; y <= z.y2; y++) for (var x = z.x1; x <= z.x2; x++) {
+        if (!s.mapa[y] || s.mapa[y][x] === ' ') continue;
+        c.fillStyle = '#e07b39'; c.fillRect(x * 8, y * 8, 8, 2); c.fillStyle = '#ffd08a'; c.fillRect(x * 8 + ((animT + x * 3) % 8), y * 8, 1, 1);
+      }
+    });
+    (d.garras || []).forEach(function (g, n) {
+      VISTO.garra = (VISTO.garra || 0) + 1;
+      var agarra = J && J.w && J.w.garra && J.w.garra.i === n, gx = (agarra ? J.w.x * 8 + J.w.f * 2 : g.x * 8) + 5, gy = agarra ? J.w.y - 3 : (g.y - 1) * 8;
+      c.fillStyle = '#6b6f78'; c.fillRect(gx, 8, 1, Math.max(0, gy - 8));
+      c.fillStyle = '#c9ced6'; c.fillRect(gx - 4, gy, 9, 2); c.fillRect(gx - 4, gy + 2, 1, agarra ? 2 : 3); c.fillRect(gx + 4, gy + 2, 1, agarra ? 2 : 3);
+      if (agarra) VISTO.garraLleva = 1;
+    });
+    Object.keys(s.cristal || {}).forEach(function (k) {
+      var xy = k.split(','), x = +xy[0], y = +xy[1];
+      if (!s.mapa[y] || s.mapa[y][x] !== 'G') return;
+      VISTO.grieta = (VISTO.grieta || 0) + 1;
+      c.fillStyle = 'rgba(255,255,255,.9)'; for (i = 0; i < 6; i++) c.fillRect(x * 8 + 1 + i, y * 8 + (i % 3), 1, 1); c.fillRect(x * 8 + 4, y * 8 + 3, 1, 2);
+    });
+    if (d.pideSaltar && s.teles) Object.keys(s.teles).forEach(function (n) {
+      (s.teles[n] || []).forEach(function (q) { VISTO.pideSaltar = 1; if ((animT >> 3) & 1) { c.fillStyle = '#F0C860'; c.fillRect(q[0] * 8 + 7, q[1] * 8 - 5, 2, 3); c.fillRect(q[0] * 8 + 6, q[1] * 8 - 5, 4, 1); } });
+    });
+  }
+  // (28-sep, D7) PARAR A LOS BICHOS: sonidos y carteles; dibujos del que está parado, de los frenos y de la recarga
+  // (28-sep, D6) LOS QUE NO MATAN: sonidos, carteles, bocadillos de `voz`, sellos, el cono de luz y la concha
+  function sucesoD6(e) {
+    if (!J || typeof e !== 'string') return false;
+    var w = J.w, ax = w.x * 8 + w.f * 2 + 5;
+    if (e.indexOf('voz:') === 0) { var cl = e.slice(4); tono(660, 0.06, 'triangle', 0.04); tono(520, 0.08, 'triangle', 0.04, luego(0.08)); VISTO['voz_' + cl] = 1; return true; }
+    if (e === 'reverencia') { tono(784, 0.1, 'sine', 0.05); tono(1047, 0.2, 'sine', 0.05, luego(0.12)); popup(t('dReverencia'), ax, w.y - 10, '#dfe6ee'); VISTO.reverencia = 1; return true; }
+    if (e === 'mansoPremio') { tono(880, 0.15, 'sine', 0.05); popup(t('dMansoPremio'), ax, w.y - 10, '#F0C860'); VISTO.mansoPremio = 1; return true; }
+    if (e === 'concha') { tono(300, 0.1, 'square', 0.04, 0, 200); popup(t('dConcha'), ax, w.y - 10, '#ffb38a'); VISTO.conchaFx = 1; return true; }
+    if (e === 'conchaSale') { tono(200, 0.08, 'square', 0.03, 0, 320); return true; }
+    if (e === 'sellaD6') { tono(120, 0.05, 'square', 0.03); VISTO.sellaD6 = 1; return true; }
+    if (e === 'sello') { tono(160, 0.25, 'sawtooth', 0.04); popup(t('dSello'), ax, w.y - 10, '#9b7fd0'); VISTO.selloFx = 1; return true; }
+    if (e === 'pillado') { tono(2093, 0.12, 'square', 0.05); tono(2093, 0.25, 'square', 0.05, luego(0.16)); anuncio = { txt: t('dPillado'), t: 50 }; VISTO.pillado = 1; return true; }
+    return false;
+  }
+  /* ══ (28-sep, D10 · filas 69-78 de PLAN-FASE-D) CARTELES, CONTADORES, DECORADOS Y EFECTOS ═════════════════════════════════
+     Todo es decorado: NADA de esto toca el motor salvo `j.av.ultimaVenta` (el quiosco). Cada cosa usa su dibujo de
+     `borradores/sprites-d10.js` si la junta ya lo ha traído; si no, un recuadro de su color (nunca revienta).
+     · carteles: [[x, y, 'clave']] en la casa o la calle: el cartel (tablón, cartel de madera) y, cerca, su texto t(clave) (69)
+     · contadores (70): el número de cada puerta de jefe (vendidas del mundo / lo que pide), el panel de salidas de la Parada,
+       los buzones del Portal, el pasaporte del Cohete de Regreso, el mayordomo de la verja, el edificio que crece, los 20
+       ganchos de r05 (el 13 vacío y parpadeando), la galería de la Gran Villa, la júa de Carabeo (arde con balcon y sanjuan
+       vendidas), el cohete del Museo y la placa de la Cámara Acorazada (M.porcentaje)
+     · el quiosco del Paseo (71: lo último vendido y su tiempo) · los prismáticos del Balcón (72: la primera calle de Nerja con
+       «?» en el mapa de la pausa; si no queda ninguna, lo dice) · el trofeo VENDIDA IMPOSIBLE en las puertas extra (73)
+     · clientes que aplauden en la barandilla (74: villa-camino al abrirse la verja, jefe-final al vencer)
+     · decorado propio (76: moqueta y neones de los Recreativos, el trono, la cúpula, la cartela de la Vitrina; el resto, con
+       `adornos` de D9 en los borradores) · entradas con gracia (77: chimenea en el Edificio, lancha, helicóptero; el @ no se
+       mueve) · avisos y efectos (78)
+     Sin aventura (casa suelta, clásicos, 2 jugadores) no sale ningún número: solo el decorado. ══ */
+  function hayD10(n) { return !!(n && M.SPR[n]); }
+  function dibD10(c, n, fr, x, y, flip) {
+    if (!hayD10(n)) return false;
+    var L = M.SPR[n].length, f = fr == null ? (animT >> 3) : fr;
+    dib(c, sprite(n, ((f % L) + L) % L, !!flip), x, y);
+    VISTO['d10_' + n] = (VISTO['d10_' + n] || 0) + 1;
+    return true;
+  }
+  // el dibujo, o su recuadro de color del mismo tamaño si aún no está
+  function piezaD10(c, n, fr, x, y, an, al, col, flip) {
+    if (dibD10(c, n, fr, x, y, flip)) return;
+    c.fillStyle = col; c.fillRect(x, y, an, al); c.fillStyle = 'rgba(0,0,0,.3)'; c.fillRect(x, y + al - 1, an, 1);
+    VISTO['d10caja_' + n] = (VISTO['d10caja_' + n] || 0) + 1;
+  }
+  function tamD10(n, an, al) { return hayD10(n) ? { an: M.SPR[n][0][0].length, al: M.SPR[n][0].length } : { an: an, al: al }; }
+  function textoD10(c, clave, tx, cx0, y) {
+    if (!tx) return;
+    c.font = '6px Montserrat, sans-serif';
+    var m = c.measureText ? c.measureText(tx) : null, tw = Math.ceil((m && m.width) || tx.length * 3.3) + 4, W = J && J.s ? J.s.ancho * 8 : 256;
+    var bx = Math.max(1, Math.min(W - tw - 1, cx0 - tw / 2)), by = Math.max(1, y - 9);
+    c.fillStyle = '#fbf6ea'; c.fillRect(bx, by, tw, 8); c.fillStyle = '#2b2d33'; c.fillText(tx, bx + 2, by + 6);
+    (VISTO.d10txt = VISTO.d10txt || {})[clave] = tx;
+  }
+  function numeroD10(c, txt, x, y, col) {     // un número pequeño en su plaquita (las cifras no se traducen)
+    c.font = 'bold 6px Montserrat, sans-serif'; var tw = txt.length * 4 + 3;
+    c.fillStyle = 'rgba(20,20,28,.85)'; c.fillRect(x - tw / 2, y, tw, 8); c.fillStyle = col || '#ffd166'; c.fillText(txt, x - tw / 2 + 2, y + 6);
+    (VISTO.d10num = VISTO.d10num || []).push(txt);
+  }
+  function agenteD10() { var w = J && J.w; if (!w) return null; return { x: (w.x * 8 + (w.f || 0) * 2 + 5) / 8, y: (w.y + 8) / 8 }; }
+  function cercaD10(tx, ty, r, ry) { var a = agenteD10(); return !!a && Math.abs(a.x - tx) <= r && Math.abs(a.y - ty) <= (ry || 3); }
+  function avD10() { return J && J.av && !J.dos ? J.av : null; }
+  // un sitio libre del plano (todo hueco; `apoyado`: con suelo justo debajo), lo más cerca de la pista; se guarda en la sala
+  function sitioD10(s, clave, an, al, px, py, apoyado) {
+    var ca = s.d10sitios = s.d10sitios || {}; if (clave in ca) return ca[clave];
+    if (s.def && s.def.espejo) px = s.ancho - an - px;
+    var mejor = null, md = 1e9, x, y, i, k, ok, pu = s.puerta, cosas = (s.llaves || []).concat(s.bonus || []);
+    for (y = 1; y + al <= s.alto - (apoyado ? 1 : 0); y++) for (x = 1; x + an <= s.ancho - 1; x++) {
+      ok = true;
+      for (k = 0; k < al && ok; k++) for (i = 0; i < an && ok; i++) if (s.mapa[y + k][x + i] !== ' ') ok = false;
+      if (ok && apoyado) for (i = 0; i < an && ok; i++) if (s.mapa[y + al][x + i] === ' ') ok = false;
+      if (ok && pu && pu.x + 2 >= x && pu.x - 1 <= x + an - 1 && pu.y + 1 >= y && pu.y - 2 <= y + al - 1) ok = false;
+      for (k = 0; k < cosas.length && ok; k++) if (cosas[k].x >= x && cosas[k].x < x + an && cosas[k].y >= y && cosas[k].y < y + al) ok = false;
+      if (!ok) continue;
+      var d = Math.abs(x - px) + Math.abs(y - py) * 2; if (d < md) { md = d; mejor = { x: x, y: y, an: an, al: al }; }
+    }
+    return (ca[clave] = mejor);
+  }
+  var D10_SALA = {
+    paseo: [['quiosco', 16, 11]], 'balcon-europa': [['prismaticos', 20, 13]], carabeo: [['jua', 28, 12]], 'barrio-nuevo': [['crece', 22, 5]],
+    'museo-salida': [['cohete', 27, 10]], 'villa-camino': [['aplauso', 12, 13], ['mayordomo', 20, 13]], 'jefe-final': [['aplauso', 8, 13]],
+    estacion: [['panel', 6, 10]], 'edificio-portal': [['buzones', 12, 9]], 'galaxia-regreso': [['pasaporte', 26, 10]],
+    'edificio-p13': [['pisadas'], ['vozVecino', 29, 4]],
+    r05: [['ganchos', 11, 1]], r20: [['claraboya', 16, 0], ['tarjeta']], granvilla: [['galeria', 24, 1]], 'camara-acorazada': [['placa', 2, 11]],
+    'superficie-lunar': [['telescopio', 12, 13], ['fugaz']], 'mus-esfinge': [['rugido'], ['basilisco']], 'mus-desierto': [['oasis']],
+    'estacion-orbital': [['puntitos']], 'rey-meteoritos': [['rey'], ['trono', 26, 1]], observatorio: [['constelacion', 14, 1]],
+    portales: [['plano'], ['ventanitas']], spa: [['termometro']], 'rec-extra': [['glitch']],
+    marina: [['entrada', 'lancha']], helipuerto: [['entrada', 'heli']]
+  };
+  function idD10(s) { return String((s && s.def && s.def.id) || '').replace(/-espejo$/, ''); }
+  function queD10(s) {
+    var id = idD10(s), l = (D10_SALA[id] || []).slice();
+    if (/^r\d\d$/.test(id)) l.push(['entrada', 'chimenea']);                 // 212: al Edificio se entra por la chimenea
+    if (/^rec-/.test(id)) l.push(['recreativos']);                            // 216: moqueta y neones
+    return l;
+  }
+  function nombreCasaD10(id) { var d = M.casaPorId && M.casaPorId(id); return d ? nombreDe(d.def) : id; }
+  function pideJefeD10(mundo) {                                               // lo que pide la puerta del jefe de ese mundo
+    var r = 0; (M.CALLES || []).forEach(function (cl) { (cl.puertas || []).forEach(function (p) { if (p.pideVendidas && (cl.mundo || '') === mundo) r = p.pideVendidas; }); });
+    return r;
+  }
+  function cuentaD10(av, mundo) { var r = M.cuentaAv ? M.cuentaAv(av, mundo) : null; return r || { vendidas: 0, total: 0 }; }
+
+  /* (28-sep, D14) NERJA DE VERDAD (filas 110-112): SOLO adorno y sonido, nunca cambia el juego.
+     · 180 campanas a la hora en punto (reloj del aparato) en las calles de Nerja; gaviotas y olas en las de la costa
+     · 181 el tiempo de verdad de Nerja (open-meteo, sin clave, 4 s de espera): si llueve, lluvia en sus calles; si falla, nada.
+       En la vuelta de noche manda la noche (sin lluvia). En el Paseo, nada hasta acabar los dibujos del primer minuto (P8).
+     · 184 la casa del mes: aquí, UNA de muestra (leer las fichas de la web queda para cuando se publique) */
+  var D14 = { lluvia: null, pedido: 0, campana: '', olas: 0, gaviotas: 0, toques: 0, hora: null };
+  var D14_COSTA = { paseo: 1, 'balcon-europa': 1, puerto: 1, burriana: 1, carabeo: 1, 'nerja-noche': 1 };
+  var D14_URL = 'https://api.open-meteo.com/v1/forecast?latitude=36.7453&longitude=-3.8761&current=precipitation,weather_code';
+  function ahoraD14() { return D14.hora ? new Date(D14.hora) : new Date(); }
+  function nerjaD14(s) { return !!(s && s.calle && s.def && (s.def.mundo || '') === 'nerja'); }
+  function tutorialD14(s) { return !!(s && s.def && s.def.id === 'paseo' && J && J.av && !J.dos && P.vistos && !P.vistos.paseoMeta); }
+  function llueveD14(s) { return D14.lluvia === true && nerjaD14(s) && !(J && J.av && M.nocheVuelta && M.nocheVuelta(J.av)) && !tutorialD14(s); }
+  function tiempoD14(forzar) {                       // una vez cada 30 min como mucho; cualquier fallo = sin lluvia
+    var ya = Date.now(); if (!forzar && D14.pedido && ya - D14.pedido < 1800000) return;
+    D14.pedido = ya;
+    if (typeof fetch !== 'function') { D14.lluvia = false; return; }
+    var hecho = false, fin = function (v) { if (!hecho) { hecho = true; D14.lluvia = v; } };
+    var tope = setTimeout(function () { fin(false); }, 4000);
+    try {
+      return fetch(D14_URL, { credentials: 'omit' }).then(function (r) { return r && r.ok ? r.json() : null; }).then(function (d) {
+        clearTimeout(tope); var c = d && d.current, cod = c ? +c.weather_code : -1;
+        fin(!!c && ((+c.precipitation || 0) > 0 || (cod >= 51 && cod <= 67) || (cod >= 80 && cod <= 82) || cod >= 95));
+      }).catch(function () { clearTimeout(tope); fin(false); });
+    } catch (e) { clearTimeout(tope); fin(false); }
+  }
+  function campanasD14(n) {                          // n campanadas graves, una cada 0,9 s
+    for (var i = 0; i < n; i++) { tono(392, 1.6, 'sine', 0.07, luego(i * 0.9), 386); tono(784, 0.9, 'sine', 0.025, luego(i * 0.9)); tono(988, 0.5, 'triangle', 0.012, luego(i * 0.9)); }
+    D14.toques += n;
+  }
+  function pasoD14() {
+    var s = J && J.s; if (!nerjaD14(s)) return;
+    if (D14.lluvia === null && !D14.pedido) tiempoD14();
+    var h = ahoraD14(), k = h.getFullYear() + '-' + h.getMonth() + '-' + h.getDate() + ' ' + h.getHours();
+    if (h.getMinutes() === 0 && D14.campana !== k) { D14.campana = k; campanasD14(h.getHours() % 12 || 12); }
+    if (!D14_COSTA[String(s.def.id).replace(/-espejo$/, '')]) return;
+    if (animT % 420 === 0) { tono(150, 1.8, 'sine', 0.03, 0, 70, true); tono(300, 1.4, 'triangle', 0.012, luego(0.2), 120, true); D14.olas++; }
+    if (animT % 660 === 330) { tono(1500, 0.18, 'triangle', 0.03, 0, 1100); tono(1650, 0.22, 'triangle', 0.03, luego(0.24), 1150); D14.gaviotas++; }
+  }
+  function lluviaD14(c, s) {
+    if (!llueveD14(s)) return;
+    var W = s.ancho * 8, H = s.alto * 8, i, x, y;
+    c.fillStyle = 'rgba(40,52,70,.18)'; c.fillRect(0, 0, W, H);
+    c.fillStyle = 'rgba(190,210,235,.55)';
+    for (i = 0; i < 70; i++) { x = (i * 37 + animT * 2) % W; y = (i * 53 + animT * 5) % H; c.fillRect(x, y, 1, 4); }
+    VISTO.d14lluvia = (VISTO.d14lluvia || 0) + 1;
+  }
+  function casaMesD14() { return { titulo: t('casaMesMuestra'), ref: 'MUESTRA' }; }   // 184: de muestra (sin leer la web)
+  function casaMesPintaD14(c, s) {
+    if (!s || !s.def || String(s.def.id).replace(/-espejo$/, '') !== 'paseo' || tutorialD14(s)) return;
+    var si = sitioD10(s, 'casaMesD14', 2, 2, 29, 12, false); if (!si) return;          // a la derecha de la puerta de la azotea
+    var x = si.x * 8, y = si.y * 8;
+    c.fillStyle = '#6b4a2b'; c.fillRect(x + 7, y + 8, 2, 8);                           // el palo
+    c.fillStyle = '#d4af37'; c.fillRect(x, y, 16, 10); c.fillStyle = '#fbf6ea'; c.fillRect(x + 1, y + 1, 14, 8);
+    c.fillStyle = '#f4efe4'; c.fillRect(x + 4, y + 4, 8, 4); c.fillStyle = '#c0392b'; c.fillRect(x + 3, y + 2, 10, 2);   // la casita
+    c.fillStyle = '#6FA8D8'; c.fillRect(x + 6, y + 5, 2, 2);
+    VISTO.d14casaMes = 1;
+    if (cercaD10(si.x + 1, si.y + 1, 3)) textoD10(c, 'dCasaMes', t('dCasaMes', { casa: casaMesD14().titulo }), x + 8, y);
+  }
+
+  // ── lo que va DETRÁS del agente (tras los adornos de D9) ──
+  function fondoD10(c, s) {
+    if (!s || !s.def) return;
+    var av = avD10(), id = idD10(s);
+    (s.def.carteles || []).forEach(function (q, n) {                           // 69 · carteles con texto
+      var nom = /^dTablon/.test(q[2]) ? 'tablon' : 'cartelJardin', tm = tamD10(nom, nom === 'tablon' ? 24 : 16, 16);
+      var x = q[0] * 8 + 4 - (tm.an >> 1), y = (q[1] + 1) * 8 - tm.al;
+      piezaD10(c, nom, 0, x, y, tm.an, tm.al, nom === 'tablon' ? '#a0703c' : '#8b5a2b');
+      VISTO.d10carteles = (VISTO.d10carteles || 0) + 1;
+    });
+    if (s.calle || s.def.calle) puertasD10(c, s, av);
+    oficinaD12(c, s, av);                                                     // (28-sep, D12) (164) la agencia crece
+    queD10(s).forEach(function (q) {
+      var k = q[0], si;
+      if (k === 'quiosco' && (si = sitioD10(s, k, 4, 4, q[1], q[2], true))) piezaD10(c, 'quiosco', 0, si.x * 8, si.y * 8, 32, 32, '#2f6f5e');
+      else if (k === 'prismaticos' && (si = sitioD10(s, k, 2, 2, q[1], q[2], true))) piezaD10(c, 'prismaticos', pistaD10(av) ? (animT >> 4) & 1 : 0, si.x * 8, si.y * 8, 16, 16, '#6b7a8f');
+      else if (k === 'jua' && (si = sitioD10(s, k, 2, 3, q[1], q[2], true))) juaD10(c, s, av, si);
+      else if (k === 'crece') creceD10(c, s, av, q);
+      else if (k === 'cohete' && (si = sitioD10(s, k, 2, 4, q[1], q[2], true))) coheteD10(c, s, av, si);
+      else if (k === 'panel' && (si = sitioD10(s, k, 4, 2, q[1], q[2], false))) panelD10(c, s, av, si);
+      else if (k === 'buzones') buzonesD10(c, s, av, q);
+      else if (k === 'pasaporte' && (si = sitioD10(s, k, 7, 2, q[1], q[2], false))) pasaporteD10(c, s, av, si);
+      else if (k === 'ganchos') ganchosD10(c, s, av, q);
+      else if (k === 'galeria') galeriaD10(c, s, av, q);
+      else if (k === 'placa' && (si = sitioD10(s, k, 3, 2, q[1], q[2], false))) placaD10(c, s, av, si);
+      else if (k === 'telescopio' && (si = sitioD10(s, k, 2, 2, q[1], q[2], true))) piezaD10(c, 'telescopio', 0, si.x * 8, si.y * 8, 16, 16, '#8a8f98', !!s.def.espejo);
+      else if (k === 'fugaz') fugazD10(c, s);
+      else if (k === 'oasis') oasisD10(c, s);
+      else if (k === 'trono' && (si = sitioD10(s, k, 2, 3, q[1], q[2], true))) piezaD10(c, 'trono', 0, si.x * 8, si.y * 8, 16, 24, '#6b4fb0');
+      else if (k === 'constelacion') constelacionD10(c, s, q);
+      else if (k === 'claraboya') claraboyaD10(c, s, q);
+      else if (k === 'termometro') termometroD10(c, s);
+      else if (k === 'recreativos') recreativosD10(c, s);
+      else if (k === 'aplauso') aplausoD10(c, s, av, q);
+      else if (k === 'mayordomo' && (si = sitioD10(s, k, 2, 2, q[1], q[2], true))) mayordomoD10(c, s, av, si);
+    });
+  }
+  // ── lo que va DELANTE (tras los bichos de D6): textos, efectos, entradas ──
+  function frenteD10(c, s) {
+    if (!s || !s.def) return;
+    var av = avD10();
+    (s.def.carteles || []).forEach(function (q) { if (cercaD10(q[0], q[1], 2)) textoD10(c, q[2], t(q[2]), q[0] * 8 + 4, (q[1] - 1) * 8); });
+    queD10(s).forEach(function (q) {
+      var k = q[0], si = s.d10sitios && s.d10sitios[k];
+      if (k === 'quiosco' && si && cercaD10(si.x + 2, si.y + 3, 4)) textoD10(c, 'dQuiosco', quioscoTxtD10(av), si.x * 8 + 16, si.y * 8);
+      else if (k === 'prismaticos' && si && cercaD10(si.x + 1, si.y + 1, 2)) prismaticosTxtD10(c, av, si);
+      else if (k === 'cohete' && si && av && cercaD10(si.x + 1, si.y + 3, 5)) { var fc = Math.max(0, pideJefeD10('museo') - cuentaD10(av, 'museo').vendidas); textoD10(c, fc ? 'dCohete' : 'dCoheteListo', fc ? t('dCohete', { n: fc }) : t('dCoheteListo'), si.x * 8 + 8, si.y * 8); }
+      else if (k === 'placa' && si && av && cercaD10(si.x + 1, si.y + 1, 3)) textoD10(c, 'dPlaca', t('dPlaca', { pct: placaPctD10(av), casas: cuentaD10(av).vendidas }), si.x * 8 + 12, si.y * 8);
+      else if (k === 'mayordomo' && si && av && !s.vallaAbierta && cercaD10(si.x + 1, si.y + 1, 4)) textoD10(c, 'dMayordomo', t('dMayordomo', { n: faltaVillaD10(s, av) }), si.x * 8 + 8, si.y * 8);
+      else if (k === 'pisadas') pisadasVozD10(c, s);
+      else if (k === 'vozVecino' && cercaD10(q[1], q[2], 2)) textoD10(c, 'dVozVecino', t('dVozVecino'), q[1] * 8 + 4, (q[2] - 1) * 8);
+      else if (k === 'rugido') rugidoD10(c, s);
+      else if (k === 'basilisco') basiliscoD10(c, s);
+      else if (k === 'puntitos') puntitosD10(c, s);
+      else if (k === 'rey') reyD10(c, s);
+      else if (k === 'tarjeta') tarjetaD10(c, s);
+      else if (k === 'plano') planoD10(c, s);
+      else if (k === 'ventanitas') ventanitasD10(c, s);
+      else if (k === 'glitch') glitchD10(c, s);
+      else if (k === 'entrada') entradaD10(c, s, q[1]);
+    });
+  }
+
+  // 218 · cada PUERTA DE JEFE dice cuántas lleva el mundo (vendidas / las que pide) · 219 · el TROFEO de las casas extra
+  function puertasD10(c, s, av) {
+    (s.def.puertas || []).forEach(function (p) {
+      if (!p.casa) return;
+      if (p.pideVendidas && av && !av.vendidas[p.casa]) {
+        var v = Math.min(p.pideVendidas, cuentaD10(av, s.def.mundo || '').vendidas);
+        numeroD10(c, v + '/' + p.pideVendidas, p.x * 8 + 8, p.y * 8 - 10, v >= p.pideVendidas ? '#7ee2a8' : '#ffd166');
+      }
+      if (p.extra && av && av.vendidas[p.casa] && !/^jefe-/.test(p.casa)) {
+        piezaD10(c, 'trofeo', (animT >> 4) & 1, p.x * 8, p.y * 8 - 18, 16, 16, '#d4af37');
+        VISTO.d10trofeo = (VISTO.d10trofeo || 0) + 1;
+        if (cercaD10(p.x + 1, p.y, 3)) textoD10(c, 'dImposible', t('dImposible'), p.x * 8 + 8, p.y * 8 - 18);
+      }
+    });
+  }
+  // 246 · el titular del quiosco: lo último vendido y en cuánto
+  function quioscoTxtD10(av) {
+    var u = av && av.ultimaVenta;
+    VISTO.d10quiosco = u ? u.id : '';
+    return u && u.id ? t('dQuiosco', { casa: nombreCasaD10(u.id), seg: Math.max(1, Math.round((u.pasos || 0) / 15)) }) : t('dQuiosco0');
+  }
+  // 249 · la calle de Nerja con algo pendiente (el «?» del mapa de la pausa, que nunca dice qué)
+  function pistaD10(av) {
+    if (!av || !M.mapaPausa) return null;
+    var mp = M.mapaPausa(av), r = null;
+    (mp.mundos || []).forEach(function (m) { if (m.id === 'nerja') (m.calles || []).forEach(function (cl) { if (!r && cl.falta && cl.pisada !== false) r = cl; }); });
+    return r;
+  }
+  function prismaticosTxtD10(c, av, si) {
+    if (!av) return;                                                          // sin aventura no hay pista que dar
+    var p = pistaD10(av); VISTO.d10prismaticos = p ? p.id : '-';
+    textoD10(c, p ? 'dPrismaticos' : 'dPrismaticosNada', p ? t('dPrismaticos', { calle: p.nombre }) : t('dPrismaticosNada'), si.x * 8 + 8, si.y * 8);
+  }
+  // 252 · la júa: arde SOLO con el Balcón y San Juan vendidas
+  function juaD10(c, s, av, si) {
+    var arde = !!(av && av.vendidas.balcon && av.vendidas.sanjuan), x = si.x * 8, y = si.y * 8;
+    VISTO.d10jua = arde ? 'arde' : 'entera';
+    if (!dibD10(c, 'jua', arde ? 1 + ((animT >> 2) % 3) : 0, x, y)) {
+      c.fillStyle = '#6b4226'; c.fillRect(x + 7, y + 8, 2, 16); c.fillRect(x + 2, y + 20, 12, 4);
+      c.fillStyle = '#6b4fb0'; c.fillRect(x + 4, y + 2, 8, 10); c.fillStyle = '#e8d4ff'; c.fillRect(x + 6, y, 4, 4);
+      if (arde) { c.fillStyle = (animT >> 1) & 1 ? '#ff9c4a' : '#ffd166'; c.fillRect(x + 3, y + 10 - ((animT >> 2) & 3), 10, 12); }
+    }
+    if (arde) {                                                                // fuegos artificiales encima
+      var f = animT % 48; c.fillStyle = ['#ffd166', '#E0708A', '#7ee2a8'][(animT >> 4) % 3];
+      for (var i = 0; i < 6; i++) c.fillRect(x + 8 + Math.round(Math.cos(i) * f / 3), y - 10 - Math.round(Math.sin(i) * f / 4), 1, 1);
+      if (!s.d10juaSono) { s.d10juaSono = 1; tono(660, 0.1, 'triangle', 0.04); tono(880, 0.15, 'triangle', 0.04, luego(0.12)); }
+    }
+  }
+  // 257 · el edificio que crece: una planta por cada casa de Nerja vendida, hasta lo que pide la puerta del jefe
+  function creceD10(c, s, av, q) {
+    var pide = pideJefeD10('nerja') || 9, v = av ? Math.min(pide, cuentaD10(av, 'nerja').vendidas) : 0, si = null, al;
+    for (al = pide + 1; al >= 3 && !si; al--) si = sitioD10(s, 'crece' + al, 3, al, q[1], q[2], true);
+    if (!si) return;
+    var cabe = si.al - 1, n = Math.min(v, cabe), base = (si.y + si.al) * 8, x = si.x * 8, i;
+    for (i = 0; i < n; i++) piezaD10(c, 'edificioPlanta', i & 1, x, base - 8 * (i + 1), 24, 8, '#c9b48a');
+    if (v >= pide) piezaD10(c, 'edificioAzotea', 0, x, base - 8 * (n + 1), 24, 8, '#d4af37');
+    else piezaD10(c, 'edificioAndamio', 0, x, base - 8 * (n + 1), 24, 8, '#8a8f98');
+    VISTO.d10plantas = n;
+    if (av) numeroD10(c, v + '/' + pide, x + 12, base - 8 * (n + 1) - 10, v >= pide ? '#7ee2a8' : '#ffd166');
+  }
+  // 343 · el cohete del Museo: echa vapor y despega cuando la puerta del jefe ya se abre
+  function coheteD10(c, s, av, si) {
+    var listo = av && cuentaD10(av, 'museo').vendidas >= (pideJefeD10('museo') || 5), x = si.x * 8, y = si.y * 8;
+    piezaD10(c, 'coheteMuseo', listo ? 1 : 0, x, y, 16, 32, '#c0c6cf');
+    if ((animT >> 2) & 1) { c.fillStyle = 'rgba(240,240,240,.6)'; c.fillRect(x + 4 + ((animT >> 3) & 3), y + 28, 3, 3); }
+    VISTO.d10cohete = listo ? 'despega' : 'quieto';
+  }
+  // 218 · el panel de salidas de la Parada (cuántas casas faltan para la puerta del jefe)
+  function panelD10(c, s, av, si) {
+    var pide = pideJefeD10(s.def.mundo || '') || 9, v = av ? Math.min(pide, cuentaD10(av, s.def.mundo || '').vendidas) : 0;
+    piezaD10(c, 'panelSalidas', v >= pide ? (animT >> 4) & 1 : 0, si.x * 8, si.y * 8, 32, 16, '#1f2430');
+    if (av) numeroD10(c, v + '/' + pide, si.x * 8 + 16, si.y * 8 + 4, v >= pide ? '#7ee2a8' : '#ffb347');
+  }
+  // 218 · los buzones del Portal: uno por casa del Edificio, con carta los vendidos
+  function buzonesD10(c, s, av, q) {
+    var cu = av ? cuentaD10(av, 'edificio') : { vendidas: 0, total: 20 }, n = Math.max(1, Math.min(20, cu.total || 20)), fil = n > 10 ? 2 : 1, col = Math.ceil(n / fil);
+    var si = sitioD10(s, 'buzones', col, fil, q[1], q[2], false); if (!si) return;
+    for (var i = 0; i < n; i++) piezaD10(c, 'buzon', i < cu.vendidas ? 1 : 0, (si.x + i % col) * 8, (si.y + Math.floor(i / col)) * 8, 8, 8, i < cu.vendidas ? '#d4af37' : '#6b7a8f');
+    VISTO.d10buzones = Math.min(n, cu.vendidas);
+  }
+  // 218 · el pasaporte del Cohete de Regreso: un sello por casa de la Galaxia vendida
+  function pasaporteD10(c, s, av, si) {
+    var pide = pideJefeD10('galaxia') || 5, v = av ? Math.min(pide, cuentaD10(av, 'galaxia').vendidas) : 0;
+    piezaD10(c, 'pasaporte', v ? 1 : 0, si.x * 8, si.y * 8, 16, 16, '#23447e');
+    for (var i = 0; i < pide; i++) {
+      if (i < v) piezaD10(c, 'selloPasaporte', 0, (si.x + 2 + i) * 8, si.y * 8 + 4, 8, 8, '#c0504a');
+      else { c.fillStyle = 'rgba(255,255,255,.25)'; c.fillRect((si.x + 2 + i) * 8 + 1, si.y * 8 + 5, 6, 6); }
+    }
+    VISTO.d10sellos = v;
+  }
+  // 266 · los 20 ganchos del portero: la llave de cada casa del Edificio vendida; el 13, vacío y parpadeando
+  function ganchosD10(c, s, av, q) {
+    var si = sitioD10(s, 'ganchos', 10, 2, q[1], q[2], false) || sitioD10(s, 'ganchos5', 5, 4, q[1], q[2], false); if (!si) return;
+    var col = si.an, llenos = 0;
+    for (var i = 1; i <= 20; i++) {
+      var id = 'r' + (i < 10 ? '0' : '') + i, lleno = i !== 13 && !!(av && av.vendidas[id]), x = (si.x + (i - 1) % col) * 8, y = (si.y + Math.floor((i - 1) / col)) * 8;
+      if (i === 13 && (animT >> 4) & 1) { c.globalAlpha = 0.35; }
+      piezaD10(c, 'gancho', lleno ? 0 : 1, x, y, 8, 8, lleno ? '#d4af37' : '#5b5f66');
+      c.globalAlpha = 1; if (lleno) llenos++;
+    }
+    VISTO.d10ganchos = llenos;
+  }
+  // 245 · la galería de la Gran Villa: un marco por casa de la costa; con cuadro, las vendidas
+  function galeriaD10(c, s, av, q) {
+    var ids = [];
+    (M.CALLES || []).forEach(function (cl) { if ((cl.mundo || '') === 'nerja' && !cl.secreta) (cl.puertas || []).forEach(function (p) { if (p.casa && !p.extra && !p.pide && !p.pideEstatuillas && !p.soloNoche && p.truco == null && !/^jefe-/.test(p.casa) && p.casa !== 'granvilla' && ids.indexOf(p.casa) < 0) ids.push(p.casa); }); });
+    if (!ids.length) return;
+    var fil = 2, col = Math.ceil(ids.length / fil), si = sitioD10(s, 'galeria', Math.ceil(col * 14 / 8), 4, q[1], q[2], false);
+    if (!si) return;
+    var llenos = 0;
+    ids.forEach(function (id, i) {
+      var x = si.x * 8 + (i % col) * 14, y = si.y * 8 + Math.floor(i / col) * 15, v = !!(av && av.vendidas[id]);
+      piezaD10(c, 'marcoGaleria', v ? 1 : 0, x, y, 12, 12, v ? '#d4af37' : '#6b4226');
+      if (v) { llenos++; c.fillStyle = 'hsl(' + ((id.charCodeAt(0) * 47 + id.length * 31) % 360) + ',55%,60%)'; c.fillRect(x + 4, y + 4, 4, 3); }
+    });
+    VISTO.d10galeria = llenos;
+  }
+  // 364 · la placa de la Cámara Acorazada: el % de la partida
+  function placaPctD10(av) { var p = M.porcentaje ? M.porcentaje(av) : null; return p && p.pct != null ? p.pct : 0; }
+  function placaD10(c, s, av, si) {
+    piezaD10(c, 'placa', 0, si.x * 8, si.y * 8, 24, 16, '#d4af37');
+    if (av) numeroD10(c, placaPctD10(av) + '%', si.x * 8 + 12, si.y * 8 + 4, '#3a2a08');
+  }
+  // 351 · la estrella fugaz, cada medio minuto (450 pasos), cruza toda la pantalla
+  function fugazD10(c, s) {
+    var f = (s.t || 0) % 450; if (f >= 40) return;
+    var x = f * s.ancho * 8 / 40, y = 6 + f;
+    if (!dibD10(c, 'estrellaFugaz', f >> 3, x, y)) { c.fillStyle = '#fff6d0'; c.fillRect(x, y, 2, 1); c.fillStyle = 'rgba(255,246,208,.4)'; c.fillRect(x - 8, y - 1, 8, 1); }
+    VISTO.d10fugaz = 1;
+  }
+  // 336 · el oasis del Desierto bajo la llave falsa, con el temblor del calor; cogida, se deshace en ondas
+  function oasisD10(c, s) {
+    (s.falsas || []).forEach(function (k) {
+      var x = k.x * 8 + 4 - 16, y = (k.y + 1) * 8 - 16 + 8;
+      if (k.cogida) {
+        k.d10onda = (k.d10onda || 0) + 1; if (k.d10onda > 40) return;
+        c.strokeStyle = 'rgba(190,235,255,.6)'; c.fillStyle = 'rgba(190,235,255,.35)'; c.fillRect(x + 16 - k.d10onda / 2, y + 12, k.d10onda, 1);
+        VISTO.d10oasisOnda = 1; return;
+      }
+      piezaD10(c, 'oasis', 0, x, y, 32, 16, 'rgba(94,160,120,.55)');
+      c.fillStyle = 'rgba(255,240,200,.35)'; for (var i = 0; i < 3; i++) c.fillRect(k.x * 8 + i * 3 + ((animT >> 2) + i) % 2, k.y * 8 - 3 - ((animT >> 3) + i) % 3, 1, 2);
+      VISTO.d10oasis = 1;
+    });
+  }
+  // 349 · la cúpula del Observatorio: cada llave cogida enciende su estrella y la une a la anterior; con todas, una estrella de mar
+  function constelacionD10(c, s, q) {
+    var si = sitioD10(s, 'cupula', 4, 2, q[1], q[2], false), o = s.d10orden = s.d10orden || [];
+    (s.llaves || []).forEach(function (k, i) { if (k.cogida && o.indexOf(i) < 0) o.push(i); });
+    if (!si) return;
+    var x0 = si.x * 8, y0 = si.y * 8;
+    piezaD10(c, 'cupula', 0, x0, y0, 32, 16, 'rgba(40,50,90,.8)');
+    var pto = function (i) { var k = s.llaves[i]; return { x: x0 + 3 + Math.round(k.x / s.ancho * 26), y: y0 + 3 + Math.round(k.y / s.alto * 10) }; };
+    c.fillStyle = 'rgba(255,246,208,.5)';
+    for (var n = 1; n < o.length; n++) { var a = pto(o[n - 1]), b = pto(o[n]); for (var u = 0; u <= 6; u++) c.fillRect(Math.round(a.x + (b.x - a.x) * u / 6), Math.round(a.y + (b.y - a.y) * u / 6), 1, 1); }
+    o.forEach(function (i) { var p = pto(i); c.fillStyle = '#fff6d0'; c.fillRect(p.x - 1, p.y, 3, 1); c.fillRect(p.x, p.y - 1, 1, 3); });
+    if (s.llaves.length && o.length === s.llaves.length) { c.fillStyle = '#ff9c4a'; c.fillRect(x0 + 14, y0 + 5, 4, 4); c.fillRect(x0 + 15, y0 + 3, 2, 8); c.fillRect(x0 + 12, y0 + 6, 8, 2); VISTO.d10estrellaMar = 1; }
+    VISTO.d10constelacion = o.length;
+  }
+  // 288 · r20: el Tasador se asoma por la claraboya a ratos
+  function claraboyaD10(c, s, q) {
+    var x = (s.def.espejo ? s.ancho - 2 - q[1] : q[1]) * 8, mira = ((s.t || 0) % 300) < 60;
+    piezaD10(c, 'tasadorClaraboya', mira ? 1 : 0, x, 0, 16, 16, mira ? '#6b4fb0' : 'rgba(190,235,255,.5)');
+    if (mira) VISTO.d10claraboya = 1;
+    s.d10clara = x;
+  }
+  function tarjetaD10(c, s) {
+    if (s.quedan !== 0 || s.d10clara == null) return;
+    var f = s.d10tarj = Math.min(60, (s.d10tarj || 0) + 1), x = s.d10clara + 4, y = 12 + f * ((s.alto - 3) * 8 - 12) / 60;
+    piezaD10(c, 'tarjetaVisita', 0, x, y, 8, 8, '#f4efe4');
+    if (f >= 60 && cercaD10(x / 8, y / 8, 3)) textoD10(c, 'dTarjeta', t('dTarjeta'), x + 4, y);
+    VISTO.d10tarjeta = 1;
+  }
+  // 300 · el termómetro de la sauna: sube mientras estás dentro (el `haz` quema el aire) y baja fuera
+  function termometroD10(c, s) {
+    var z = (s.haz || [])[0]; if (!z) return;
+    var a = agenteD10(), dentro = a && a.x >= z[0] && a.x <= z[2] + 1 && a.y >= z[1] && a.y <= z[3] + 1;
+    s.d10calor = Math.max(0, Math.min(48, (s.d10calor || 0) + (dentro ? 1 : -0.25)));
+    var fr = Math.min(3, Math.floor(s.d10calor / 12)), x = (z[0] > 1 ? z[0] - 1 : z[2] + 1) * 8, y = z[1] * 8;
+    if (!dibD10(c, 'termometro', fr, x, y)) { c.fillStyle = '#9aa3ad'; c.fillRect(x + 3, y, 2, 16); c.fillStyle = '#c0504a'; c.fillRect(x + 3, y + 14 - fr * 4, 2, 2 + fr * 4); }
+    VISTO.d10termometro = fr;
+  }
+  // 216 · los Recreativos: moqueta en el suelo de abajo y dos neones
+  function recreativosD10(c, s) {
+    var y = s.alto - 1, x;
+    if (hayD10('moqueta')) for (x = 1; x < s.ancho - 1; x++) if (s.mapa[y][x] !== ' ' && s.mapa[y - 1][x] === ' ') dibD10(c, 'moqueta', 0, x * 8, y * 8);
+    var si = sitioD10(s, 'neon', 2, 1, 3, 1, false);
+    if (si) piezaD10(c, 'neonDeco', (animT >> 4) & 1, si.x * 8, si.y * 8, 16, 8, (animT >> 4) & 1 ? '#ff4fd8' : '#4a2a5a');
+    VISTO.d10recreativos = 1;
+  }
+  // 362 · los clientes en la barandilla: aplauden al abrirse la verja (villa-camino) o al vencer al Gran Tasador
+  function aplausoD10(c, s, av, q) {
+    var si = sitioD10(s, 'barandilla', 6, 2, q[1], q[2], true); if (!si) return;
+    var fiesta = s.jefe ? !!s.jefe.vencido : !!s.vallaAbierta, x = si.x * 8, y = si.y * 8, i;
+    for (i = 0; i < 3; i++) piezaD10(c, 'aplaude', fiesta ? (animT >> 3) + i : 0, x + i * 16 + 2, y, 12, 16, ['#E0708A', '#7ec8e3', '#d4af37'][i]);
+    for (i = 0; i < 3; i++) piezaD10(c, 'barandilla', 0, x + i * 16, y + 8, 16, 8, '#c9b48a');
+    if (fiesta) { for (i = 0; i < 8; i++) { c.fillStyle = ['#ffd166', '#E0708A', '#7ee2a8', '#7ec8e3'][i % 4]; c.fillRect(x + (i * 13 + animT) % 48, y - 8 + ((animT + i * 7) % 24), 1, 2); } VISTO.d10aplauden = 1; }
+    VISTO.d10barandilla = 1;
+  }
+  function faltaVillaD10(s, av) { var p = s.def.valla && s.def.valla.pideVendidas || 60; return Math.max(0, p - cuentaD10(av).vendidas); }
+  function mayordomoD10(c, s, av, si) { piezaD10(c, 'mayordomo', s.vallaAbierta ? 1 : 0, si.x * 8 + 2, si.y * 8, 12, 16, '#2b2d33'); VISTO.d10mayordomo = 1; }
+  // 293 · las pisadas de la planta 13 aparecen UNA A UNA (las pinta pintaSecretos; aquí, cuántas se ven)
+  function pisadasVistasD10(s, n) { return idD10(s) !== 'edificio-p13' || n <= Math.floor(((s.t || 0) % 240) / 24); }
+  function pisadasVozD10(c, s) { VISTO.d10pisadas = Math.min((s.def.huellasPista || []).length, Math.floor(((s.t || 0) % 240) / 24) + 1); }
+  // 340 · la Esfinge ruge en cada punta de su paseo · 341 · el basilisco abre los ojos con su rayo
+  function rugidoD10(c, s) {
+    s.enemigos.forEach(function (e) {
+      if (e.spr !== 'esfinge' || e.fuera) return;
+      var punta = e.x === e.min || e.x === e.max; if (!punta) { e.d10rug = 0; return; }
+      var p = M.posEnemigo(e), an = M.SPR[e.spr] ? M.SPR[e.spr][0][0].length : 16, d = e.x === e.min ? -1 : 1;
+      if (!dibD10(c, 'ondaRugido', (animT >> 3) & 1, d < 0 ? p.x - 14 : p.x + an - 2, p.y - 4, d < 0)) { c.fillStyle = 'rgba(255,236,150,.5)'; c.fillRect(d < 0 ? p.x - 6 : p.x + an + 2, p.y + 2, 2, 8); }
+      if (!e.d10rug) { e.d10rug = 1; tono(110, 0.3, 'sawtooth', 0.05, 0, 70); }
+      VISTO.d10rugido = (VISTO.d10rugido || 0) + 1;
+    });
+  }
+  function basiliscoD10(c, s) {
+    var on = (s.rayos || []).some(function (r) { return M.rayoEncendido(r, s.t); });
+    s.enemigos.forEach(function (e) {
+      if (e.spr !== 'basilisco' || e.fuera) return;
+      var p = M.posEnemigo(e);
+      if (!dibD10(c, 'ojosBasilisco', on ? 1 : 0, p.x, p.y)) { c.fillStyle = on ? '#ffd166' : '#3a2a08'; c.fillRect(p.x + 4, p.y + 3, 2, on ? 2 : 1); c.fillRect(p.x + 10, p.y + 3, 2, on ? 2 : 1); }
+      VISTO.d10ojos = on ? 'abiertos' : 'cerrados';
+    });
+  }
+  // 207 · la Estación Orbital: la curva de puntitos del salto largo, hasta el primer salto
+  function puntitosD10(c, s) {
+    var w = J && J.w; if (!w) return;
+    if (w.salto > 0) s.d10salto = 1;
+    if (s.d10salto) return;
+    var x = w.x * 8 + (w.f || 0) * 2 + 5, y = w.y + 8, d = w.dir || 1, CURVA = s.luna ? [-4, -4, -4, -4, -4, -3, -3, -2, -2, -2, -1, -1, -1, -1, 0, 0, 4, 1, 1, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4] : [-4, -4, -3, -3, -2, -2, -1, -1, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4];
+    c.fillStyle = (animT >> 3) & 1 ? 'rgba(255,246,208,.8)' : 'rgba(255,246,208,.45)';
+    for (var i = 0; i < CURVA.length; i++) { x += 2 * d; y += CURVA[i]; if (i % 2) c.fillRect(Math.round(x), Math.round(y), 1, 1); }
+    VISTO.d10puntitos = 1;
+  }
+  // 208 · el Rey de los Meteoritos dormido: ronca, y se revuelve más cuantas menos llaves quedan
+  function reyD10(c, s) {
+    s.enemigos.forEach(function (e) {
+      if (e.tipo !== 'c' || e.activo || e.fuera) return;
+      var p = M.posEnemigo(e), q = s.quedan, tot = (s.llaves || []).length || 1, inquieto = q <= Math.max(1, Math.floor(tot / 2));
+      c.fillStyle = '#FBEFC9'; c.font = '6px Montserrat, sans-serif';
+      if (q > 1 && (animT >> 4) & 1) c.fillText('z', p.x + 12 + ((animT >> 4) & 1) * 2, p.y - 3);
+      if (inquieto && (animT & 4)) { c.fillStyle = '#ffd166'; c.fillRect(p.x - 1, p.y + 4, 1, 3); c.fillRect(p.x + 17, p.y + 4, 1, 3); }
+      if (q === 1) { c.fillStyle = '#fff'; c.fillRect(p.x + 5, p.y + 4, 2, 2); }       // abre un ojo
+      VISTO.d10rey = q === 1 ? 'ojo' : inquieto ? 'inquieto' : 'ronca';
+    });
+  }
+  // 359 · el plano de los 6 cuartos del Laberinto de Portales · 360 · la ventanita de cada portal
+  function cuartoD10(s, a) { return (a.x < 10.5 ? 0 : a.x < 21.5 ? 1 : 2) + (a.y < 7.5 ? 0 : 3); }
+  function planoD10(c, s) {
+    var a = agenteD10(), v = s.d10cuartos = s.d10cuartos || {}; if (a) v[cuartoD10(s, a)] = 1;
+    var x0 = s.ancho * 8 - 26, y0 = 1;
+    if (!dibD10(c, 'planoPortales', 0, x0, y0)) { c.fillStyle = 'rgba(244,239,228,.85)'; c.fillRect(x0, y0, 24, 16); }
+    for (var i = 0; i < 6; i++) { c.fillStyle = v[i] ? 'rgba(212,175,55,.85)' : 'rgba(60,60,70,.5)'; c.fillRect(x0 + 2 + (i % 3) * 7, y0 + 2 + Math.floor(i / 3) * 6, 6, 5); }
+    VISTO.d10plano = Object.keys(v).length;
+  }
+  function ventanitasD10(c, s) {
+    var col = ['#E0708A', '#7ec8e3', '#7ee2a8', '#d4af37', '#c9a0ff', '#ff9c4a'];
+    Object.keys(s.teles || {}).forEach(function (k) {
+      var par = s.teles[k]; if (!par || par.length < 2) return;
+      par.forEach(function (q, i) {
+        var otro = par[1 - i], dest = cuartoD10(s, { x: otro[0], y: otro[1] });
+        if (!dibD10(c, 'ventanita', (animT >> 4) & 1, q[0] * 8 - 4, q[1] * 8 - 16)) { c.fillStyle = 'rgba(255,255,255,.3)'; c.fillRect(q[0] * 8, q[1] * 8 - 12, 8, 8); }
+        c.fillStyle = col[dest]; c.fillRect(q[0] * 8 + 2, q[1] * 8 - 10, 4, 4);
+      });
+    });
+    VISTO.d10ventanitas = 1;
+  }
+  // 210 · la Máquina Prohibida: el techo tiembla y se agrieta donde va a salir el Glitch
+  function glitchD10(c, s) {
+    s.enemigos.forEach(function (e) {
+      if (!/glitch/i.test(e.spr || '') || e.fuera) return;
+      var p = M.posEnemigo(e); if (p.y > 10) return;
+      var x = p.x + ((animT & 2) ? 1 : -1);
+      if (!dibD10(c, 'grietaSuelo', (animT >> 3) & 3, x, 8)) { c.fillStyle = '#2b2d33'; c.fillRect(x + 4, 8, 8, 1); c.fillRect(x + 7, 9, 2, 2); }
+      VISTO.d10glitch = (VISTO.d10glitch || 0) + 1;
+    });
+  }
+  // 212 · entradas con gracia (solo se ven los primeros pasos; el @ no se mueve): chimenea, lancha, helicóptero
+  function entradaD10(c, s, cual) {
+    var w = J && J.w; if (!w || (s.t || 0) > 45) return;
+    if (!s.d10ini) s.d10ini = { x: w.x * 8 + (w.f || 0) * 2, y: w.y };
+    var f = s.t || 0, x = s.d10ini.x, y = s.d10ini.y, esp = !!s.def.espejo;
+    if (cual === 'chimenea') {
+      for (var i = 0; i < 4; i++) { c.fillStyle = 'rgba(60,60,60,' + (0.5 - f / 100).toFixed(2) + ')'; c.fillRect(x + 2 + i * 2, y - 4 - ((f * 2 + i * 5) % 20), 2, 2); }
+      if (f < 30) dibD10(c, 'humito', f >> 3, x, y - 10);
+    } else if (cual === 'lancha') {
+      var lx = esp ? x - 24 + Math.max(0, 30 - f) * 3 : x - 8 - Math.max(0, 30 - f) * 3;
+      piezaD10(c, 'lanchaEntrada', (animT >> 3) & 1, lx, y + 4 + ((animT >> 3) & 1), 32, 16, '#f4efe4', esp);
+    } else if (cual === 'heli') {
+      var hy = y - 8 - Math.max(0, 30 - f) * 3;
+      piezaD10(c, 'heliEntrada', animT >> 1, x - 12, hy, 32, 16, '#c0504a', esp);
+    }
+    VISTO.d10entrada = cual;
+  }
+  function pintaD6(c, s) {
+    (s.sellos || []).forEach(function (q) {                 // los sellos de tinta del notario (se aclaran al secarse)
+      VISTO.sellos = (VISTO.sellos || 0) + 1; c.globalAlpha = Math.min(1, 0.35 + q.seca / 120);
+      if (M.SPR.sello) dib(c, sprite('sello', 0, false), q.x * 8, q.y * 8);
+      else { c.fillStyle = '#6b4fb0'; c.fillRect(q.x * 8 + 1, q.y * 8 + 5, 6, 3); c.fillStyle = '#9b7fd0'; c.fillRect(q.x * 8 + 2, q.y * 8 + 6, 4, 1); }
+      c.globalAlpha = 1;
+    });
+    s.enemigos.forEach(function (e, i) {
+      if (e.fuera || e.dormido) return;
+      var p = M.posEnemigo(e), an = M.SPR[e.spr] ? M.SPR[e.spr][0][0].length : 16;
+      if (e.tipo === 'manso' && e.hace === 'vigila') {      // el cono de la linterna (apagado mientras se da la vuelta)
+        VISTO.conoLuz = (VISTO.conoLuz || 0) + 1;
+        if (!(e.gira > 0)) { var d = e.dir || 1, x0 = d > 0 ? e.x + an : e.x, L = (e.luz || 5) * 8;
+          c.fillStyle = 'rgba(255,236,150,.22)'; c.beginPath(); c.moveTo(x0, e.y + 4); c.lineTo(x0 + d * L, e.y + 4 - 6 - L / 3); c.lineTo(x0 + d * L, e.y + 4 + 6 + L / 3); c.closePath(); c.fill(); }
+      }
+      if (e.tipo === 'manso' && e.hace === 'concha' && e.escondido > 0) { VISTO.conchaEsc = 1; c.fillStyle = 'rgba(255,255,255,.35)'; c.fillRect(p.x + 1, p.y + (M.SPR[e.spr] ? M.SPR[e.spr][0].length : 16) - 9, an - 2, 1); }
+      if (e.tipo === 'manso' && e.hace === 'timido' && e.quieto && e.reverencia) { VISTO.estatuaQuieta = 1; }
+      if (e.presi != null && e.presiOn && e.y0 != null && (animT >> 2) & 1) { VISTO.hojitas = 1; c.fillStyle = '#6fbf5a'; c.fillRect(e.x + 3, e.y0 - 3, 2, 2); c.fillRect(e.x + 7, e.y0 - 2, 2, 1); }   // hojitas: ¡que cae!
+      if (s.vozD6 && s.vozD6.i === i) {                     // el bocadillo de su voz
+        var tx = t('dVoz' + s.vozD6.clave.charAt(0).toUpperCase() + s.vozD6.clave.slice(1)); c.font = '6px Montserrat, sans-serif';
+        var tw = Math.ceil(c.measureText ? c.measureText(tx).width : tx.length * 4) + 4, bx = Math.max(1, Math.min(252 - tw, p.x + an / 2 - tw / 2)), by = Math.max(1, p.y - 11);
+        c.fillStyle = '#fbf6ea'; c.fillRect(bx, by, tw, 8); c.fillRect(p.x + an / 2 - 1, by + 8, 2, 2);
+        c.fillStyle = '#2b2d33'; c.fillText(tx, bx + 2, by + 6); VISTO.bocadilloVoz = (VISTO.bocadilloVoz || 0) + 1;
+      }
+    });
+  }
+  function sucesoD7(e) {
+    if (!J || typeof e !== 'string') return false;
+    var w = J.w, ax = w.x * 8 + w.f * 2 + 5;
+    if (e === 'para') { tono(523, 0.12, 'square', 0.05); tono(392, 0.2, 'square', 0.05, luego(0.12)); popup(t('dPara'), ax, w.y - 10, '#7ee2a8'); VISTO.paraFx = (VISTO.paraFx || 0) + 1; return true; }
+    if (e === 'paraNada') { tono(220, 0.1, 'square', 0.04); VISTO.paraNada = 1; return true; }
+    if (e === 'recarga') { tono(180, 0.15, 'square', 0.04); popup(t('dRecarga'), ax, w.y - 10, '#E0708A'); VISTO.recargaFx = 1; return true; }
+    if (e === 'recargada') { tono(880, 0.08, 'sine', 0.04); VISTO.recargada = 1; return true; }
+    if (e === 'cebo') { popup(t('dCebo'), ax, w.y - 10, '#6FD3E0'); return true; }
+    if (e === 'come') { tono(660, 0.08, 'triangle', 0.05); tono(660, 0.08, 'triangle', 0.05, luego(0.15)); popup(t('dCome'), ax, w.y - 10, '#6FD3E0'); VISTO.come = 1; return true; }
+    if (e === 'frena') { tono(330, 0.4, 'sine', 0.05, 0, 165); popup(t('dFrena'), ax, w.y - 10, '#b98ce0'); VISTO.frenaFx = 1; return true; }
+    if (e === 'duerme') { tono(392, 0.3, 'sine', 0.05, 0, 196); anuncio = { txt: t('dDuerme'), t: 50 }; VISTO.duermeFx = 1; return true; }
+    if (e === 'balanzaMal') { tono(150, 0.3, 'sawtooth', 0.05); popup(t('dBalanzaMal'), ax, w.y - 10, '#E0708A'); VISTO.balanzaMal = 1; return true; }
+    if (e === 'sigueD7') { VISTO.sigueD7 = 1; return true; }
+    return false;
+  }
+  function pintaParadoD7(c, e, p) {
+    var an = M.SPR[e.spr] ? M.SPR[e.spr][0][0].length : 16;
+    if (e.duermeD7) { VISTO.duermeD7 = (VISTO.duermeD7 || 0) + 1; if ((animT >> 3) % 2) { c.fillStyle = '#cdb8e6'; c.font = '6px Montserrat, sans-serif'; c.fillText('z', p.x + an - 3, p.y - 1 - ((animT >> 4) & 1)); } return; }
+    if (e.parado > 0) {
+      VISTO.paradosD7 = (VISTO.paradosD7 || 0) + 1;
+      if (e.parado < 20 && (animT & 2)) return;             // se acaba: parpadea
+      c.fillStyle = '#fff1a8'; var a = animT / 4;
+      for (var k = 0; k < 3; k++) c.fillRect(Math.round(p.x + an / 2 + Math.cos(a + k * 2.1) * 6), Math.round(p.y - 3 + Math.sin(a + k * 2.1) * 2), 1, 1);   // estrellitas de atontado
+    } else if (e.frena) { VISTO.frenadosD7 = (VISTO.frenadosD7 || 0) + 1; c.fillStyle = 'rgba(185,140,224,.7)'; c.fillRect(p.x + an / 2 - 1, p.y - 3, 2, 2); }
+  }
+  function pintaD7(c, s) {
+    (s.frenos || []).forEach(function (f) {
+      var fx = f.x * 8, fy = f.y * 8, nom = f.dibujo || 'freno';
+      VISTO['freno_' + nom] = 1;
+      if (M.SPR[nom]) { dib(c, sprite(nom, f.carga > 0 ? 1 : 0, false), fx, fy - 8); }
+      else if (nom === 'balanza') {
+        var eq = f.hecho && !(s.muertes > 0), d = eq ? 0 : 2;
+        c.fillStyle = '#b8912a'; c.fillRect(fx + 3, fy - 6, 2, 14); c.fillRect(fx, fy + 6, 8, 2);
+        c.fillStyle = '#F0C860'; c.fillRect(fx - 3, fy - 5 + d, 14, 1); c.fillRect(fx - 4, fy - 4 + d, 4, 2); c.fillRect(fx + 8, fy - 4 - d, 4, 2);
+        c.fillStyle = '#ffffff'; c.fillRect(fx + 9, fy - 6 - d, 2, 1);
+      } else {
+        c.fillStyle = '#6b6f78'; c.fillRect(fx, fy - 4, 8, 12); c.fillStyle = '#2b2d33'; c.fillRect(fx + 1, fy - 3, 6, 2);
+        c.fillStyle = f.carga > 0 ? '#E0708A' : '#7ee2a8'; c.fillRect(fx + 6, fy + 2, 1, 1);
+        c.fillStyle = '#f4efe4'; c.fillRect(fx + 2, fy - 6 - ((animT >> 2) & 1), 4, 2);
+      }
+      if (f.carga > 0 && f.recarga) { c.fillStyle = 'rgba(224,112,138,.8)'; c.fillRect(fx, fy - 10, Math.round(8 * f.carga / f.recarga), 1); }
+    });
+    (s.palancas || []).forEach(function (p) {
+      if (p.hace !== 'para') return;
+      VISTO.palancaPara = (VISTO.palancaPara || 0) + 1;
+      if (p.dibujo === 'lampara' && !p.hecha) {            // la lámpara de araña colgada encima de su sitio (cae al tirar)
+        var a = p.a || {}, lx = a.cols ? (a.cols[0] + a.cols[1] + 1) * 4 : p.x * 8, ly = a.bajoDe != null ? a.bajoDe * 8 - 8 : p.y * 8 - 16;
+        if (M.SPR.lampara) dib(c, sprite('lampara', (animT >> 3) & 1, false), lx - 8, ly);
+        else { c.fillStyle = '#F0C860'; c.fillRect(lx - 6, ly + 2, 12, 2); c.fillRect(lx - 1, ly - 2, 2, 4); c.fillStyle = '#fff6c8'; c.fillRect(lx - 6, ly + 4, 1, 2); c.fillRect(lx + 5, ly + 4, 1, 2); c.fillRect(lx - 1, ly + 4, 2, 2); }
+        VISTO.lampara = 1;
+      }
+      if (p.carga > 0 && p.recarga) { c.fillStyle = 'rgba(224,112,138,.8)'; c.fillRect(p.x * 8, p.y * 8 - 3, Math.round(8 * p.carga / p.recarga), 1); VISTO.recargaBarra = 1; }
+    });
+    if (s.cebo && J && J.w) { var w = J.w; c.fillStyle = '#6FD3E0'; c.fillRect(w.x * 8 + w.f * 2 + 3, w.y - 4, 4, 2); c.fillRect(w.x * 8 + w.f * 2 + 7, w.y - 5, 1, 4); VISTO.ceboLleva = 1; }
+  }
+  function sucesoD4(e) {
+    if (!J || typeof e !== 'string') return false;
+    if (e === 'despierta') { tono(330, 0.25, 'square', 0.05, 0, 660); VISTO.despierta = (VISTO.despierta || 0) + 1; return true; }
+    if (e === 'avisaSale') { tono(1175, 0.12, 'sine', 0.05); tono(1175, 0.12, 'sine', 0.05, luego(0.18)); VISTO.avisaSale = (VISTO.avisaSale || 0) + 1; return true; }
+    if (e === 'pajaroAvisa') { tono(1568, 0.1, 'triangle', 0.05, 0, 1976); VISTO.pajaroAvisaFx = 1; return true; }
+    return false;
+  }
+  function sucesoD1(e) {
+    if (!J || typeof e !== 'string') return false;
+    var w = J.w, ax = w.x * 8 + w.f * 2 + 5;
+    if (e.indexOf('nota:') === 0) { var n = e.slice(5); tocaNotaD1(/^-?\d+$/.test(n) ? +n : n); nube(ax, w.y - 2, 5, '#cfe3ff'); return true; }
+    if (e === 'ordenMal') { tono(150, 0.2, 'sawtooth', 0.05); popup(t('dOrdenMal'), ax, w.y - 10, '#E0708A'); return true; }
+    if (e === 'baldosa') { tono(988, 0.08, 'square', 0.05); tono(1319, 0.1, 'square', 0.04, luego(0.07)); VISTO.baldosaFx = 1; return true; }
+    if (e.indexOf('encima:') === 0) { tono(660 + 60 * (+e.slice(7) || 0), 0.1, 'triangle', 0.06); popup(t('dEncima', { n: e.slice(7) }), ax, w.y - 8, '#F0C860'); return true; }
+    if (e === 'encimaMal') { tono(140, 0.15, 'square', 0.05); return true; }
+    if (e === 'campana') { [88, 84, 88].forEach(function (m, i) { tono(midi(m), 0.4, 'sine', 0.07, luego(i * 0.12)); }); J.campanaD1 = 60; anuncio = { txt: t('dCampana'), t: 60 }; lluviaConfeti(30); VISTO.campana = 1; return true; }
+    if (e === 'vuelta') { popup(t('dVuelta'), ax, w.y - 10, '#FBEFC9'); tono(784, 0.2, 'triangle', 0.06); return true; }
+    if (e === 'globoSube') { VISTO.globoSube = (VISTO.globoSube || 0) + 1; return true; }
+    if (e === 'hoyoEnUno') { anuncio = { txt: t('dHoyo'), t: 70 }; fanfarria(); lluviaConfeti(60); VISTO.hoyo = 1; return true; }
+    if (e === 'caidaLarga') { popup(t('dCaida'), ax, w.y - 10, '#F0C860'); tono(90, 0.3, 'triangle', 0.09); sacude(false); VISTO.caida = 1; return true; }
+    if (e === 'paga') { SND.moneda(); popup(t('dPaga'), ax, w.y - 10, '#7ee2a8'); return true; }
+    if (e === 'sinAire') { tono(200, 0.2, 'square', 0.05); popup(t('dSinAire'), ax, w.y - 10, '#E0708A'); J.bocadillo = { t: 60 }; return true; }
+    if (e === 'cuenta' || e.indexOf('cuenta:') === 0) {
+      var q = e === 'cuenta' ? 3 : +e.slice(7) || 0; J.cuentaD1 = { n: q, t: 15 };
+      tono(q === 1 ? 1047 : 784, 0.12, 'square', 0.06); anuncio = { txt: String(q) + '…', t: 14 }; VISTO.cuenta = q; return true;
+    }
+    if (e === 'bum') { J.cuentaD1 = null; tono(60, 0.6, 'sawtooth', 0.12, 0, 30, true); nube(ax, w.y, 20, '#9aa3ad'); anuncio = { txt: t('dBum'), t: 40 }; sacude(true); VISTO.bum = 1; return true; }
+    return false;
+  }
+  // (27-sep, D1) la melodía al entrar en una sala con truco «orden» (una vez por sala), y lo que se va apagando
+  function pasoD1() {
+    if (J) J.monedasCafe = +P.monedas || 0;            // (28-sep, D12) (171) el café de la compañera: ¿hay 🪙?
+    var s = J.s; if (!s) return;
+    if (J.melodiaD1 !== s) {
+      J.melodiaD1 = s;
+      var mel = M.melodiaTruco ? M.melodiaTruco(s) : [];
+      if (mel.length) { mel.forEach(function (n, i) { tocaNotaD1(n, luego(0.6 + i * 0.3)); }); VISTO.melodia = mel.slice(); }
+    }
+    if (J.campanaD1 > 0) J.campanaD1--;
+    if (J.cuentaD1 && --J.cuentaD1.t <= 0) J.cuentaD1 = null;
+  }
+  // (27-sep, D1) dibujos: estalactitas/válvulas/cristales con nota, baldosas encendidas, caja FRÁGIL, bandera del hoyo,
+  // el globo que sube, el detonador y el vendedor que te habla («te lo dejo en 10 segundos»)
+  var COLOR_NOTA_D1 = ['#ff5c6c', '#ff9a4a', '#F0C860', '#7ee2a8', '#6FD3E0', '#6FA8FF', '#b98ce0'];
+  function pintaD1(c, s, w) {
+    trucosDe(s).forEach(function (tr) {
+      if (tr.tipo === 'orden') (tr.celdas || []).forEach(function (q, k) {
+        var col = COLOR_NOTA_D1[(semitonoD1(q[2] != null ? q[2] : k) % 12 + 12) % 12 % 7], nom = tr.dibujo || 'estalactitaNota';
+        var brilla = tr.toques && tr.toques[k];
+        if (M.SPR[nom]) dib(c, sprite(nom, 0, false), q[0] * 8, q[1] * 8);
+        else { c.fillStyle = col; c.fillRect(q[0] * 8 + 2, q[1] * 8 + 1, 4, 5); }
+        if (brilla || tr.hecho) { c.fillStyle = '#ffffff'; c.fillRect(q[0] * 8 + 3, q[1] * 8 + 2, 2, 2); }
+        VISTO.notas = (VISTO.notas || 0) + 1;
+      });
+      else if (tr.tipo === 'todas') (tr.celdas || []).forEach(function (q, k) {
+        var on = tr.encendidas && tr.encendidas[k];
+        c.fillStyle = on ? COLOR_NOTA_D1[k % 7] : 'rgba(255,255,255,.18)'; c.fillRect(q[0] * 8 + 1, q[1] * 8, 6, 2);
+        if (on) VISTO.baldosasOn = (VISTO.baldosasOn || 0) + 1;
+      });
+      else if (tr.tipo === 'caida' && !tr.hecho) {
+        if (M.SPR.cajaFragil) dib(c, sprite('cajaFragil', 0, false), tr.x * 8, (tr.y - 1) * 8);
+        else { c.fillStyle = '#b8864b'; c.fillRect(tr.x * 8, tr.y * 8 - 7, 8, 7); c.fillStyle = '#ff5c6c'; c.fillRect(tr.x * 8 + 1, tr.y * 8 - 5, 6, 1); }
+        VISTO.caja = 1;
+      }
+      else if (tr.tipo === 'encima' && !String(M.celda(s, tr.x, tr.y) || '').trim()) {   // la hoguera pequeña (si en su casilla no hay nada)
+        if (M.SPR.hogueraPeq) dib(c, sprite('hogueraPeq', (animT >> 3) & 1, false), tr.x * 8, tr.y * 8);
+        else { c.fillStyle = '#8b5a2b'; c.fillRect(tr.x * 8 + 1, tr.y * 8 + 6, 6, 2); c.fillStyle = (animT >> 3) & 1 ? '#ff9a4a' : '#F0C860'; c.fillRect(tr.x * 8 + 2, tr.y * 8 + 2, 4, 4); }
+        VISTO.hoguera = 1;
+      }
+      else if (tr.tipo === 'hoyo') { c.fillStyle = '#e8e8e8'; c.fillRect(tr.x * 8 + 3, tr.y * 8 - 10, 1, 10); c.fillStyle = tr.hecho ? '#F0C860' : '#ff5c6c'; c.fillRect(tr.x * 8 + 4, tr.y * 8 - 10, 4, 3); VISTO.banderaHoyo = 1; }
+    });
+    (s.bonus || []).forEach(function (b) {
+      if (b.subeA == null || b.cogido) return;
+      var gx = b.x * 8 + 1, gy = b.y * 8 - 9;
+      c.fillStyle = '#ff5c6c'; c.fillRect(gx + 1, gy, 4, 5); c.fillRect(gx, gy + 1, 6, 3); c.fillStyle = '#ffffff'; c.fillRect(gx + 1, gy + 1, 1, 1);
+      c.fillStyle = '#cccccc'; c.fillRect(gx + 3, gy + 5, 1, 4);
+      VISTO.globo = b.y;
+    });
+    (s.palancas || []).forEach(function (p) {
+      if (p.retardo) {
+        if (M.SPR.detonador) dib(c, sprite('detonador', p.cuenta > 0 ? 1 : 0, false), p.x * 8, p.y * 8);
+        else { c.fillStyle = '#c0392b'; c.fillRect(p.x * 8 + 1, p.y * 8 + 3, 6, 5); c.fillStyle = '#3b3f45'; c.fillRect(p.x * 8 + 3, p.y * 8, 2, 3); }
+        if (p.cuenta > 0) { c.fillStyle = '#ffffff'; c.font = 'bold 8px Montserrat, sans-serif'; c.fillText(String(Math.ceil(p.cuenta / 15)), p.x * 8 + 2, p.y * 8 - 3); VISTO.cuentaDibujada = Math.ceil(p.cuenta / 15); }
+        VISTO.detonador = 1;
+      }
+      if (p.paga && !p.movida && M.SPR.vendedor) { dib(c, sprite('vendedor', 0, true), p.x * 8 + 8, p.y * 8 - 8); VISTO.vendedorDib = 1; }   // el vendedor, quieto junto a su palanca
+      if (p.paga && !p.movida && w && Math.abs(w.x - p.x) <= 5 && Math.abs((w.y >> 3) - p.y) <= 3) {
+        var ag = J && J.bocadillo && J.bocadillo.t > 0 ? Math.round(Math.sin(animT * 1.3)) : 0, bx = p.x * 8 - 30 + ag, by = p.y * 8 - 22, txv = t('dVendedor');
+        c.fillStyle = '#ffffff'; c.fillRect(bx, by, 68, 10); c.fillRect(bx + 30, by + 10, 2, 3);
+        c.fillStyle = '#1b1b1b'; c.font = '5px Montserrat, sans-serif'; c.fillText(txv, bx + 2, by + 7);
+        VISTO.vendedor = txv;
+      }
+    });
+    if (J && J.campanaD1 > 0 && w) {                         // la campana y el peluche, encima del agente
+      var cx = w.x * 8 + w.f * 2 + 1, cy = w.y - 16 - ((60 - J.campanaD1) >> 3);
+      c.fillStyle = '#F0C860'; c.fillRect(cx, cy, 6, 5); c.fillRect(cx + 2, cy - 1, 2, 1); c.fillStyle = '#8a6a1a'; c.fillRect(cx + 2, cy + 5, 2, 1);
+      c.fillStyle = '#b8864b'; c.fillRect(cx + 8, cy + 1, 5, 5); c.fillRect(cx + 8, cy, 1, 1); c.fillRect(cx + 12, cy, 1, 1);
+      VISTO.peluche = 1;
+    }
+  }
   function sucesoSecreto(e) {
     if (!J || typeof e !== 'string') return false;
     var w = J.w, ax = w.x * 8 + w.f * 2 + 5;
@@ -4120,6 +5292,12 @@
     if (sucesoModos(e)) return;                    // (25-sep) modos y enganche: fuego, sin morir, peques, penalización…
     if (sucesoClasicos(e)) return;                 // (25-sep, 2b) atajos, salida secreta, monedas, muelle, medallas, poderes
     if (sucesoTunel(e)) return;                    // (26-sep) los túneles secretos y el Generoso
+    if (sucesoD2(e)) return;                       // (28-sep, D2) retos y premios (y la fuente cobra su 🪙)
+    if (sucesoD8(e)) return;                       // (28-sep, D8) delfín, garra, cristal, la plataforma que arranca
+    if (sucesoD6(e)) return;                       // (28-sep, D6) los que no matan: voces, reverencia, concha, sellos, pillado
+    if (sucesoD7(e)) return;                       // (28-sep, D7) parar a los bichos
+    if (sucesoD4(e)) return;                       // (27-sep, D4) despierta, avisa antes de salir, el pájaro avisa
+    if (sucesoD1(e)) return;                       // (27-sep, D1) notas, baldosas, campana, hoyo en uno, caja frágil, pagar, cuenta atrás
     if (sucesoSecreto(e)) return;
     if (sucesoJefe(e)) return;                     // (25-sep) jefes, monstruos nuevos y combo
     if (sucesoPendientes(e)) return;
@@ -4577,9 +5755,24 @@
   // el número de cada casa en la aventura entera: 1, 2, 3… siguiendo las calles en su orden
   var NUM_PUERTA = null;
   // (24-sep) BANDERAS de control: en una de cada 3 calles (la 3.ª, 6.ª, 9.ª…), junto a su sitio de salida (@)
+  /* (27-sep, D0) AL LADO de la puerta, no encima: en La Parada del Autobús la salida está junto a la puerta del Pulpo y la bandera
+     (2 casillas a la derecha de la salida) caía justo encima de ella. Ahora va al sitio más cercano a la salida (2, −2, 3, −3… hasta 6
+     casillas) donde no pisa ninguna puerta (con su marco y su farolillo) ni la tienda y se puede estar de pie. Se calcula una vez por calle. */
+  var BANDERA_SITIO = {};
   function banderaDe(c) {
     var i = M.CALLES.indexOf(c); if (i < 0 || i % 3 !== 2) return null;
-    var a = M.nuevoAgente(c); return { x: a.x + 2, y: a.y >> 3 };
+    if (BANDERA_SITIO[c.id]) return BANDERA_SITIO[c.id];
+    var a = M.nuevoAgente(c), y = a.y >> 3, s = M.nuevaSala(c), W = s.ancho || 32;
+    var libre = function (x, yy) { var ch = M.celda(s, x, yy); return !ch || !String(ch).trim(); };
+    var tapa = function (x) {                  // el mástil y la tela van de x·8+3 a x·8+14
+      var b0 = x * 8 + 3, b1 = x * 8 + 14;
+      return (c.puertas || []).some(function (p) { return Math.abs(p.y - y) <= 2 && b0 <= p.x * 8 + 18 && p.x * 8 - 2 <= b1; }) ||   // la puerta: de x·8−2 a x·8+18
+        !!(c.tienda && Math.abs(c.tienda.y - y) <= 2 && b0 <= c.tienda.x * 8 + 19 && c.tienda.x * 8 - 4 <= b1);                    // la tienda: de x·8−4 a x·8+19
+    };
+    var cabe = function (x) { return x >= 0 && x <= W - 2 && libre(x, y) && libre(x + 1, y) && libre(x, y + 1) && libre(x + 1, y + 1) && !!(M.PISABLE[M.celda(s, x, y + 2)] || M.PISABLE[M.celda(s, x + 1, y + 2)]); };
+    var r = { x: a.x + 2, y: y };
+    [2, -2, 3, -3, 4, -4, 5, -5, 6, -6].some(function (dx) { var x = a.x + dx; if (!cabe(x) || tapa(x)) return false; r.x = x; return true; });
+    return (BANDERA_SITIO[c.id] = r);
   }
   function miraBandera() {
     var b = banderaDe(J.s.def); if (!b) return;
@@ -4769,6 +5962,7 @@
   }
   function palanca(c, p, s) {
     var px = p.x * 8, py = p.y * 8;
+    if (p.dibujo && p.hace !== 'para' && dibD9(c, p.dibujo, p.movida ? 1 : 0, px, py, false)) return;   // (28-sep, D9) la maceta dorada, el libro, el botón SOLTAR
     if (p.hace === 'monedas') {               // (25-sep, 2b) el INTERRUPTOR de ladrillos y monedas: un botón con una moneda y ↔
       var on = !!(s && s.monedasT > 0);
       c.fillStyle = '#3b3f45'; c.fillRect(px, py + 6, 8, 2);
@@ -5001,6 +6195,8 @@
   function nuevasCosas(c, s, w, tm) {
     var i;
     (s.vapor || []).forEach(function (z, n) {
+      var rtD3 = s.vaporRitmo && s.vaporRitmo[n];   // (27-sep, D3) con ritmo: apagado, solo se ve de dónde sale
+      if (rtD3 && !M.ritmoOn(rtD3, s.t)) { c.fillStyle = 'rgba(160,170,180,.8)'; c.fillRect(z[0] * 8 + (z[2] - z[0] + 1) * 4 - 3, (z[3] + 1) * 8 - 1, 6, 1); VISTO.vaporApagado = (VISTO.vaporApagado || 0) + 1; return; }
       var zx = z[0] * 8, zy = z[1] * 8, an = (z[2] - z[0] + 1) * 8, al = (z[3] - z[1] + 1) * 8;
       c.fillStyle = 'rgba(235,245,255,.10)'; c.fillRect(zx, zy, an, al);
       for (i = 0; i < an / 3; i++) {                  // bocanadas que suben y se abren
@@ -5079,6 +6275,7 @@
     (s.rayos || []).forEach(function (p, n) {
       var x1 = p.x1 * 8, x2 = (p.x2 + 1) * 8, y1 = p.y1 * 8, y2 = (p.y2 + 1) * 8, on = M.rayoEncendido(p, s.t), aviso = !on && M.rayoEncendido(p, s.t + 12);
       c.fillStyle = '#6b6f78'; c.fillRect(x1, y1 - 2, x2 - x1, 2); c.fillRect(x1, y2, x2 - x1, 2);   // los postes
+      if (rayoD9(c, p, x1, y1, x2, y2, on, aviso)) return;          // (28-sep, D9) fuego, vapor o rojo con alarma
       if (!on && !(aviso && (animT & 2))) return;
       c.strokeStyle = on ? 'rgba(170,200,255,.95)' : 'rgba(170,200,255,.35)'; c.lineWidth = on ? 1.2 : 0.6;
       for (var k = 0; k < (on ? 3 : 1); k++) {
@@ -5090,6 +6287,7 @@
     });
     (s.barras || []).forEach(function (b) {
       var cerrada = M.barraCierra(s, b.x, b.y1), bx = b.x * 8;
+      if (b.neon && dibD9(c, 'neon' + b.neon, cerrada ? 1 : 0, bx, b.y1 * 8)) return;   // (28-sep, D9, 330) las letras de neón
       c.fillStyle = '#4b525e'; c.fillRect(bx - 1, b.y1 * 8 - 3, 10, 3);
       if (cerrada) { c.fillStyle = '#9aa3ad'; for (var yy = b.y1 * 8; yy < (b.y2 + 1) * 8; yy += 4) { c.fillRect(bx + 1, yy, 6, 3); c.fillStyle = '#c9ced6'; c.fillRect(bx + 1, yy, 6, 1); c.fillStyle = '#9aa3ad'; } }
       else { c.fillStyle = 'rgba(154,163,173,.35)'; c.fillRect(bx + 1, b.y1 * 8, 6, 3); }
@@ -5212,7 +6410,7 @@
       c.fillStyle = '#E0708A'; c.fillRect(bx + 4, by + 5, 2, 1);
       if ((animT >> 2) % 4 === 0) { c.fillStyle = '#fff'; c.fillRect(bx + 6, by + 3, 1, 1); }
     } else { c.fillStyle = 'rgba(255,255,255,.35)'; c.fillRect(bx + 3, by + 9, 4, 1); }                  // la marca donde iba
-    c.fillStyle = '#f4efe4'; c.fillRect(bx + 2, by + 11, 6, 2);                                           // la cartelita
+    if (!dibD10(c, 'cartela', 0, bx - 3, by + 10)) { c.fillStyle = '#f4efe4'; c.fillRect(bx + 2, by + 11, 6, 2); }   // la cartelita · (28-sep, D10, 216) con su dibujo
     VISTO.vitrina = hecha ? 'llena' : 'vacia';
   }
   // (idea 23) LA ESFINGE: tumbada, con su tocado a rayas; mientras no aciertas, una interrogación encima
@@ -5271,6 +6469,8 @@
   // los OBJETOS que se cogen (8×8, por capas de color, como los poderes): flotan un poco y destellan
   var OBJETO_ICONO = {
     estatuilla: [['#8a6a20', [[1, 6, 6, 2]]], ['#d4af37', [[3, 0, 2, 2], [2, 2, 4, 3], [3, 5, 2, 1]]], ['#fff6c8', [[3, 2, 1, 1]]]],
+    postal: [['#fff6e0', [[0, 1, 8, 6]]], ['#2e86c1', [[1, 2, 3, 3]]], ['#c0392b', [[5, 2, 2, 2]]], ['#8a7a5a', [[5, 5, 2, 1]]]],   // (28-sep, D12)
+    llaveRara: [['#7d3cff', [[0, 1, 3, 3], [3, 2, 5, 1], [6, 3, 1, 2], [4, 3, 1, 1]]], ['#e0c8ff', [[1, 2, 1, 1]]]],
     carta: [['#f4efe4', [[0, 2, 8, 5]]], ['#c9bfae', [[1, 3, 2, 1], [5, 3, 2, 1], [0, 6, 8, 1]]], ['#c0392b', [[3, 4, 2, 2]]]],
     gafas: [['#1b1b1b', [[0, 3, 3, 2], [5, 3, 3, 2], [3, 3, 2, 1], [0, 2, 1, 1], [7, 2, 1, 1]]], ['#6FD3E0', [[1, 3, 1, 1], [6, 3, 1, 1]]]],
     reliquia: [['#d4af37', [[1, 1, 6, 3], [3, 4, 2, 2], [2, 6, 4, 1]]], ['#E0708A', [[3, 2, 2, 1]]], ['#fff6c8', [[2, 1, 1, 1]]]],
@@ -5280,10 +6480,18 @@
     // debajo, el mismo verde del muelle que bota sobre las puertas (antes salía el icono genérico, la mochila)
     muelle: [['#6b3a28', [[2, 0, 3, 3], [2, 3, 5, 2]]], ['#a8604e', [[3, 0, 1, 3], [5, 3, 1, 1]]], ['#2b2b2b', [[2, 5, 5, 1]]],
       ['#7ee2a8', [[2, 6, 1, 1], [4, 6, 1, 1], [6, 6, 1, 1], [3, 7, 1, 1], [5, 7, 1, 1]]]],
+    pescado: [['#6FD3E0', [[1, 3, 5, 3], [6, 2, 2, 5]]], ['#cfe3ff', [[2, 3, 3, 1]]], ['#1b1b1b', [[2, 4, 1, 1]]]],   // (28-sep, D7)
+    mando: [['#2b2b2b', [[2, 1, 4, 6]]], ['#c0392b', [[3, 2, 2, 1]]], ['#9aa3ad', [[3, 4, 1, 1], [4, 5, 1, 1]]], ['#F0C860', [[3, 7, 2, 1]]]],   // (28-sep, D2) el mando del coche
+    huevo: [['#e8dcf5', [[2, 1, 4, 6], [1, 2, 6, 4]]], ['#b98ce0', [[3, 3, 1, 1], [5, 5, 1, 1]]]],                 // (28-sep, D7)
+    regadera: [['#3f6e6a', [[2, 1, 2, 1], [1, 2, 1, 2], [4, 2, 1, 1]]], ['#5e9a8e', [[1, 4, 5, 3], [3, 3, 3, 1], [5, 2, 1, 1], [6, 0, 2, 2], [2, 7, 3, 1]]], ['#b8e0d8', [[2, 5, 1, 1]]]],   // (28-sep, D9, 192)
+    azulejo: [['#3d5f9e', [[0, 0, 8, 8]]], ['#f4efe4', [[1, 1, 2, 1], [5, 1, 2, 1], [1, 2, 1, 1], [3, 2, 2, 1], [6, 2, 1, 1], [2, 3, 1, 2], [5, 3, 1, 2], [1, 5, 1, 1], [3, 5, 2, 1], [6, 5, 1, 1], [1, 6, 2, 1], [5, 6, 2, 1]]], ['#d4af37', [[3, 3, 2, 2]]]],   // (28-sep, D9, 228)
+    pieza: [['#2f5fb3', [[1, 2, 6, 5]]], ['#d4af37', [[2, 3, 4, 1], [3, 1, 2, 1]]], ['#c0392b', [[0, 0, 3, 2]]], ['#1b1b1b', [[2, 4, 4, 1]]]],   // (28-sep, caballero)
     otro: [['#c0392b', [[1, 3, 6, 5]]], ['#F0C860', [[3, 3, 2, 5], [1, 4, 6, 1]]], ['#F0C860', [[2, 1, 2, 2], [4, 1, 2, 2]]]]
   };
   function objetoDibujo(c, o, n) {
     var ox = o.x * 8, oy = o.y * 8 + Math.round(Math.sin((animT + n * 9) / 5)), ic = OBJETO_ICONO[o.tipo] || OBJETO_ICONO.otro;
+    var nPz = o.tipo === 'pieza' && o.id ? 'pieza' + String(o.id).charAt(0).toUpperCase() + String(o.id).slice(1) : '';   // (28-sep, caballero)
+    if (nPz && M.SPR[nPz]) { dib(c, sprite(nPz, (animT >> 3) & 1, false), ox, oy); VISTO['obj_pieza'] = 1; return; }
     ic.forEach(function (capa) { c.fillStyle = capa[0]; capa[1].forEach(function (r) { c.fillRect(ox + r[0], oy + r[1], r[2], r[3]); }); });
     if ((animT + n * 13) % 30 < 3) { c.fillStyle = '#fff'; c.fillRect(ox + 6, oy, 1, 1); c.fillRect(ox + 7, oy + 1, 1, 1); c.fillRect(ox + 5, oy + 1, 1, 1); }
     VISTO['obj_' + o.tipo] = 1;
@@ -5292,6 +6500,7 @@
   function pintaSecretos(c, s, w) {
     var d = s.def || {};
     (d.huellasPista || []).forEach(function (h, n) {       // (idea 116) pisadas en el polvo, pegadas al suelo de su casilla, alternando pie
+      if (!pisadasVistasD10(s, n)) return;                  // (28-sep, D10, 293) en la planta 13 salen una a una
       var hx = h[0] * 8 + (n % 2 ? 1 : 4), hy = h[1] * 8 + 4;
       c.fillStyle = 'rgba(232,214,176,.42)'; c.fillRect(hx, hy, 2, 2); c.fillRect(hx, hy + 3, 2, 1);   // (polvo claro: se ve en casas oscuras y claras)
       VISTO.huellas = 1;
@@ -5300,7 +6509,8 @@
     (d.chimeneas || []).forEach(function (ch) { chimenea(c, ch); });
     trucosDe(s).forEach(function (tr, n) {
       var tx = (tr.x || 0) * 8, ty = (tr.y || 0) * 8;
-      if (tr.tipo === 'cuadro') cuadro(c, tx, ty, !!tr.hecho);
+      if (trucoD9(c, s, tr, n, tx, ty)) { /* (28-sep, D9) su sitio pintado */ }
+      else if (tr.tipo === 'cuadro') cuadro(c, tx, ty, !!tr.hecho);
       else if (tr.tipo === 'baldosa') baldosa(c, tx, ty, !!tr.hecho);
       else if (tr.tipo === 'golpes') maquina(c, tx, ty, !!tr.hecho, n);
       else if (tr.tipo === 'objeto') vitrina(c, tx, ty, !!tr.hecho);
@@ -5320,6 +6530,8 @@
     metaDibujo(c, s);
     (d.zonas || []).forEach(function (z, n) { estrellaFugaz(c, z, n); });
     objetosDe(s).forEach(function (o, n) { if (!o.cogido) objetoDibujo(c, o, n); });
+    pintaD1(c, s, w);                                // (27-sep, D1)
+    pintaD3(c, s, w);                                // (27-sep, D3)
   }
   // una flecha de puntos que sale de (ox, oy) hacia (tx, ty), a `radio` de distancia
   function flechaHacia(c, ox, oy, tx, ty, col, radio) {
@@ -5529,6 +6741,8 @@
           // la calle en la aventura) · con trucos, practicando o en el modo peques, la memoria del jefe no se toca
           if (!J.trucos && !noCuenta()) { var m = memJefe(Jf.tipo); m.vencido = (m.vencido || 0) + 1; if (J.muertes === (J.muertesCasa0 || 0) && !hoyJefe()[Jf.tipo]) m.primera = 1; guardar(); }
           jefeDice(tx.vencido || '', 180, tx.nombre, true);
+          if (Jf.tipo === 'momia') { Jf.escena = 150; Jf.adios = 0; }            // (28-sep, D11, 345) la momia quiere casa
+          if (Jf.tipo === 'granTasador') Jf.fuegos = 240;                        // (28-sep, D11, 363) fuegos sobre el Balcón
         }
         anuncio = { txt: t('jefeVencido', { n: (tx.nombre || '').replace(/^\S+\s/, '') }), t: 70 };
         return true;
@@ -5536,6 +6750,11 @@
       case 'jefeTele': SND.tele(); if (Jf) nube(jx, Jf.y + 8, 14, '#d4c9a8'); popup(t('jefeTele'), camX() + 128, camY() + 30, '#d4c9a8'); return true;
       case 'jefeLlama': [67, 67, 72].forEach(function (n, i) { tono(midi(n), 0.14, 'square', 0.06, luego(i * 0.14)); }); anuncio = { txt: t('jefeLlama'), t: 45 }; return true;
       case 'jefeGrua': tono(90, 0.3, 'square', 0.07); tono(1200, 0.08, 'square', 0.04, luego(0.3)); tono(1200, 0.08, 'square', 0.04, luego(0.45)); anuncio = { txt: t('jefeGrua'), t: 45 }; return true;
+      // (28-sep, D11) la venda, la garra, las fichas del suelo y los escarabajos
+      case 'jefeVenda': tono(300, 0.2, 'sine', 0.06, 0, 120); tono(midi(76), 0.08, 'square', 0.04, luego(0.15)); popup(t('dVenda'), jx, jy - 6, '#e8dcc0'); VISTO.vendaFx = 1; return true;
+      case 'garra': tono(midi(79), 0.08, 'square', 0.05); tono(midi(72), 0.1, 'square', 0.05, luego(0.1)); tono(midi(67), 0.2, 'square', 0.05, luego(0.2)); popup(t('dGarra'), camX() + 128, camY() + 30, '#9fdcff'); VISTO.garraFx = 1; return true;
+      case 'fichaSuelo': SND.moneda(); popup('+' + num(50), ax, w.y - 8, '#F0C860'); VISTO.fichaFx = 1; return true;
+      case 'escarabajos': tono(180, 0.1, 'square', 0.05); tono(150, 0.1, 'square', 0.05, luego(0.1)); popup(t('dEscarabajos'), camX() + 128, camY() + 30, '#7ee2a8'); VISTO.escarabajosFx = 1; return true;
       case 'combo':
         var n = (J.comboPisa && J.comboPisa.n) || 2; popup(t('comboPisa', { n: n }), ax, w.y - 14, '#ff9c4a'); tono(midi(72 + n * 2), 0.1, 'square', 0.06, luego(0.05)); if (n >= 3) sacude(false);
         return true;
@@ -5548,7 +6767,7 @@
       case 'escupe': SND.moneda(); popup(t('escupe'), ax, w.y - 12, '#F0C860'); return true;
       case 'termita': tono(120 + (animT % 5) * 8, 0.06, 'square', 0.04); if (!J.s.avisoTermita) { J.s.avisoTermita = 1; popup(t('termita'), camX() + 128, camY() + 30, '#c8955a'); } return true;
       case 'ladra': tono(420, 0.08, 'square', 0.07); tono(330, 0.1, 'square', 0.07, luego(0.12)); popup(t('ladra'), camX() + 128, camY() + 30, '#E0708A'); return true;
-      case 'dueno': tono(440, 0.6, 'sine', 0.05, 0, 880); var hs = t('duenoHist') || []; jefeDice(hs[(J.dueno || 0) % Math.max(1, hs.length)] || '', 240, t('duenoNombre'), false); popup('+500', ax, w.y - 8, '#cfeaf5'); return true;
+      case 'dueno': tono(440, 0.6, 'sine', 0.05, 0, 880); var hs = (J && J.s && /^camara-acorazada/.test(J.s.def.id || '') ? [t('duenoCamara')] : null) || t('duenoHist') || [];   /* (28-sep, D10, 215) */ jefeDice(hs[(J.dueno || 0) % Math.max(1, hs.length)] || '', 240, t('duenoNombre'), false); popup('+500', ax, w.y - 8, '#cfeaf5'); return true;
       case 'cofreMuerde': tono(200, 0.06, 'square', 0.08); tono(140, 0.1, 'square', 0.08, luego(0.06)); popup(t('cofreMuerde'), ax, w.y - 12, '#E0708A'); return true;
       case 'cofreVence': SND.piedra(); popup(t('cofreVence'), ax, w.y - 12, '#bfefff'); destello = { t: 8, c: '#bfefff' }; return true;
       // los de siempre, con algo más (y siguen su camino: devuelven false)
@@ -5584,8 +6803,88 @@
     } else if (p.tipo === 'fuego') {
       var fu = (animT + x) & 1;
       c.fillStyle = '#e0533d'; c.fillRect(x + 1, y + 2, 6, 6); c.fillStyle = '#ff9c4a'; c.fillRect(x + 2, y + 1 + fu, 4, 6 - fu); c.fillStyle = '#fff3a0'; c.fillRect(x + 3, y + 4, 2, 2);
+    } else if (p.tipo === 'onda') {                                             // (28-sep, D11, 355) la onda del cometa por el suelo
+      var on = (animT >> 1) & 1;
+      c.fillStyle = 'rgba(255,156,74,.55)'; c.fillRect(x, y + 2, 8, 4); c.fillStyle = '#fff3a0'; c.fillRect(x + 1, y + 1 + on, 6, 2); c.fillStyle = '#e0533d'; c.fillRect(x, y + 5, 8, 1);
     } else return;
     VISTO.peligros = (VISTO.peligros || 0) + 1; VISTO['p_' + p.tipo] = 1;
+  }
+  /* (28-sep, D11 · filas 79-90) LO NUEVO DE LOS JEFES EN PANTALLA: el ladrillo que se queda de escalón (199), el charco de tinta
+     (258), las fichas del suelo (331), la garra de feria (332), la venda suelta de la momia (209), la escena «la momia quiere
+     casa» (345), las grúas que caen y sus carteles (200, 322, en pintaJefe y pintaFxJefes) y el atardecer por fases con fuegos
+     sobre el Balcón al vencer al Tasador (363, pintaFxJefes). */
+  function pintaD11(c, s, Jf, suelo) {
+    var i;
+    if (Jf.vencido) return;
+    (Jf.escalones || []).forEach(function (e) { peligroDibujo(c, { tipo: 'ladrillo', x: e[0] * 8, y: e[1] * 8 }); c.fillStyle = 'rgba(0,0,0,.3)'; c.fillRect(e[0] * 8, e[1] * 8 + 7, 8, 1); VISTO.escalonD11 = (VISTO.escalonD11 || 0) + 1; });
+    if (Jf.charco && Jf.charcoOn) {
+      var x1 = Jf.charco[0] * 8, an = (Jf.charco[1] - Jf.charco[0] + 1) * 8;
+      c.fillStyle = 'rgba(40,14,60,.85)'; c.fillRect(x1 + 2, suelo - 2, an - 4, 2); c.fillRect(x1, suelo - 1, an, 1);
+      c.fillStyle = 'rgba(200,160,255,.6)'; for (i = x1 + 4 + (animT >> 3) % 6; i < x1 + an - 4; i += 9) c.fillRect(i, suelo - 2, 2, 1);
+      VISTO.charcoTinta = 1;
+    }
+    (Jf.fichas || []).forEach(function (f) {
+      c.fillStyle = '#b8860b'; c.fillRect(f.x, f.y + 1, 6, 5); c.fillStyle = '#F0C860'; c.fillRect(f.x + 1, f.y, 4, 6);
+      if ((animT >> 3) & 1) { c.fillStyle = '#fff6d0'; c.fillRect(f.x + 2, f.y + 1, 1, 2); }
+      VISTO.fichaSuelo = (VISTO.fichaSuelo || 0) + 1;
+    });
+    if (Jf.garra && Jf.garraX != null) {
+      var gx = Jf.garraX, gy = Jf.garraY != null ? Jf.garraY : 8, ab = !!Jf.garraR;
+      c.fillStyle = '#6b6f78'; c.fillRect(8, 6, (s.ancho || 32) * 8 - 16, 2);
+      c.fillStyle = '#c9ced6'; c.fillRect(gx + 3, 8, 2, Math.max(0, gy - 8));
+      c.fillStyle = ab ? '#e0533d' : '#d4af37'; c.fillRect(gx + 1, gy, 6, 3);
+      c.fillStyle = '#9aa3ad'; c.fillRect(gx, gy + 3, 1, 4); c.fillRect(gx + 7, gy + 3, 1, 4); c.fillRect(gx + 1, gy + 7, 1, 1); c.fillRect(gx + 6, gy + 7, 1, 1);
+      VISTO.garra = ab ? 'baja' : 'arriba';
+    }
+    if (Jf.vendaT > 0) {
+      var vx = Jf.vendaX + 2, vy = Jf.vendaFila * 8 - 2, va = Jf.an - 4;
+      c.globalAlpha = Jf.vendaT < 20 && (animT & 2) ? 0.5 : 1;
+      c.fillStyle = '#e8dcc0'; c.fillRect(vx, vy, va, 2); c.fillStyle = '#b5a37a'; for (i = vx + 1; i < vx + va; i += 3) c.fillRect(i, vy, 1, 2);
+      c.fillStyle = '#e8dcc0'; c.fillRect(vx + va - 2, vy - 2, 3, 2);
+      c.globalAlpha = 1; VISTO.venda = 1;
+    }
+  }
+  function escenaMomia(c, Jf) {
+    Jf.escena--;
+    var nom = SPR_JEFE.momia;
+    if (nom && M.SPR[nom]) dib(c, sprite(nom, 0, !!Jf.flip), Jf.x, Jf.y);
+    var hx = Jf.x + Jf.an / 2 - 5, hy = Jf.y - 14 - ((animT >> 3) & 1);   // la casita que sueña, con su corazón
+    c.fillStyle = '#f4efe4'; c.fillRect(hx + 1, hy + 4, 8, 6); c.fillStyle = '#c0392b'; c.fillRect(hx, hy + 3, 10, 1); c.fillRect(hx + 2, hy + 2, 6, 1); c.fillRect(hx + 4, hy + 1, 2, 1);
+    c.fillStyle = '#5a3a1e'; c.fillRect(hx + 4, hy + 7, 2, 3); c.fillStyle = '#9fdcff'; c.fillRect(hx + 2, hy + 5, 1, 1); c.fillRect(hx + 7, hy + 5, 1, 1);
+    c.fillStyle = '#E0708A'; c.fillRect(hx + 11, hy, 1, 1); c.fillRect(hx + 13, hy, 1, 1); c.fillRect(hx + 11, hy + 1, 3, 1); c.fillRect(hx + 12, hy + 2, 1, 1);
+    if (Jf.escena === 100) jefeDice(t('dMomiaCasa'), 170, textosJefe('momia').nombre, true);
+    if (Jf.escena <= 0) Jf.adios = 45;
+    VISTO.momiaCasa = 1;
+  }
+  // (363) el cielo de la azotea según la fase (tarde → atardecer → anochecer) y, al vencerle, los fuegos sobre el Balcón
+  var fuegosD11 = [];
+  function atardecerD11(W, H, k, Jf, jugando) {
+    if (!Jf || Jf.tipo !== 'granTasador' || !jugando) { fuegosD11 = []; return; }
+    var col = Jf.vencido ? 'rgba(20,20,70,.20)' : ['rgba(255,190,110,.07)', 'rgba(245,120,70,.12)', 'rgba(110,50,120,.17)'][Math.min(2, (Jf.fase || 1) - 1)];
+    fc.fillStyle = col; fc.fillRect(0, 0, W, H * 0.6); VISTO.atardecer = Jf.vencido ? 'noche' : Jf.fase;
+    if (!Jf.vencido || !(Jf.fuegos > 0)) return;
+    Jf.fuegos--;
+    if (Jf.fuegos % 20 === 0 && !(P.opc && P.opc.calma)) {
+      var fx0 = W * (0.15 + 0.7 * Math.random()), fy0 = H * (0.1 + 0.25 * Math.random()), cs = ['#F0C860', '#E0708A', '#9fdcff', '#7ee2a8'];
+      fuegosD11.push({ x: fx0, y: fy0, t: 0, c: cs[(Jf.fuegos / 20) % cs.length] });
+      tono(midi(84 + (Jf.fuegos / 20) % 5), 0.06, 'square', 0.03); tono(90, 0.25, 'triangle', 0.05, luego(0.1), 50, true);
+    }
+    fuegosD11 = fuegosD11.filter(function (f) { return f.t < 30; });
+    fuegosD11.forEach(function (f) {
+      f.t++; fc.fillStyle = f.c; fc.globalAlpha = Math.max(0, 1 - f.t / 30);
+      for (var n = 0; n < 12; n++) { var a = n * Math.PI / 6, r = f.t * 1.3 * k; fc.fillRect(f.x + Math.cos(a) * r, f.y + Math.sin(a) * r + f.t * f.t * 0.02 * k, 1.5 * k, 1.5 * k); }
+      fc.globalAlpha = 1; VISTO.fuegos = (VISTO.fuegos || 0) + 1;
+    });
+  }
+  // (322) el texto de los carteles de las grúas, en la capa fina
+  function cartelesD11(k, Jf, s, jugando) {
+    if (!Jf || Jf.tipo !== 'promotor' || !jugando) return;
+    fc.font = '800 ' + Math.max(7, Math.round(2.4 * k)) + 'px Montserrat, sans-serif'; fc.textAlign = 'center';
+    s.palancas.forEach(function (p) {
+      if (p.hace !== 'jefe') return;
+      var q = enPantalla(p.x * 8 + 16, p.y * 8 - 9.5); fc.fillStyle = '#ffffff'; fc.fillText(t(p.movida ? 'dVendido' : 'dSeVende'), q.x, q.y);
+      VISTO.cartelTxt = t(p.movida ? 'dVendido' : 'dSeVende');
+    });
   }
   function pintaJefe(c, s) {
     var Jf = s.jefe, i; if (!Jf) return;
@@ -5613,9 +6912,24 @@
       var gx = p.x * 8 + 3, gy = p.y * 8, rota = p.movida;
       c.fillStyle = rota ? '#6b6f78' : '#e0b44e';
       if (!rota) { c.fillRect(gx, gy - 72, 2, 72); for (i = gy - 70; i < gy; i += 6) c.fillRect(gx - 1, i, 4, 1); c.fillRect(gx - 10, gy - 74, 22, 2); c.fillStyle = '#9aa3ad'; c.fillRect(gx + 9, gy - 72, 1, 14); c.fillRect(gx + 8, gy - 58, 3, 2); }
-      else { c.fillRect(gx, gy - 30, 2, 30); c.fillRect(gx - 8, gy - 4, 16, 2); c.fillStyle = '#E0708A'; c.fillRect(gx - 2, gy - 32, 6, 2); }
+      else {
+        // (28-sep, D11, 200) al cortarla, la grúa CAE con su cable: la torre se tumba hacia fuera en 24 cuadros y luego queda el trozo
+        if (p.caeD11 == null) p.caeD11 = animT;
+        var fa = Math.min(1, (animT - p.caeD11) / 24), lado = gx < 128 ? -1 : 1, an3 = fa * fa * Math.PI / 2;
+        if (fa < 1) {
+          for (i = 0; i < 12; i++) c.fillRect(Math.round(gx + lado * Math.sin(an3) * i * 6), Math.round(gy - Math.cos(an3) * i * 6) - 6, 2, 6);
+          c.fillStyle = '#9aa3ad'; c.fillRect(Math.round(gx + lado * Math.sin(an3) * 70), Math.round(gy - Math.cos(an3) * 70), 1, 10);
+          VISTO.gruaCae = 1;
+        } else { c.fillRect(gx, gy - 30, 2, 30); c.fillRect(gx - 8, gy - 4, 16, 2); c.fillStyle = '#E0708A'; c.fillRect(gx - 2, gy - 32, 6, 2); }
+      }
+      // (28-sep, D11, 322) su cartel: SE VENDE (verde) → VENDIDO (rojo) al cortarla; el texto, en la capa fina
+      c.fillStyle = '#5a3a1e'; c.fillRect(gx + 12, gy - 8, 1, 8); c.fillStyle = rota ? '#c0392b' : '#2e8b57'; c.fillRect(gx + 5, gy - 14, 16, 7);
+      c.fillStyle = '#f4efe4'; c.fillRect(gx + 5, gy - 14, 16, 1);
+      VISTO.cartelD11 = (VISTO.cartelD11 || 0) + 1;
       VISTO.grua = (VISTO.grua || 0) + 1;
     });
+    pintaD11(c, s, Jf, suelo);                                                // (28-sep, D11) escalones, charco, fichas, garra, venda
+    if (Jf.vencido && Jf.tipo === 'momia' && Jf.escena > 0) { escenaMomia(c, Jf); return; }   // (28-sep, D11, 345) la momia quiere casa
     if (Jf.vencido) { if (!(Jf.adios > 0)) return; Jf.adios--; c.globalAlpha = Math.max(0, Jf.adios / 45); }
     else if (Jf.inv > 0 && (animT & 2)) c.globalAlpha = 0.45;                 // recién golpeado: parpadea
     // la grúa del Gran Tasador (fase 3): la pluma arriba, el cable y el gancho que le sube y le baja
@@ -5634,7 +6948,7 @@
     c.globalAlpha = 1;
     VISTO.jefe = Jf.tipo;
     if (Jf.vencido) return;
-    if (Jf.pausa > 0 || Jf.aturdido > 0) {                                     // mareado tras el golpe: estrellitas
+    if (Jf.pausa > 0 || Jf.aturdido > 0 || Jf.mareo > 0) {                     // mareado tras el golpe (o por la venda, D11): estrellitas
       for (i = 0; i < 3; i++) { var an2 = animT / 4 + i * 2.1; c.fillStyle = i % 2 ? '#F0C860' : '#ffffff'; c.fillRect(Math.round(Jf.x + Jf.an / 2 + Math.cos(an2) * 7), Math.round(Jf.y - 3 + Math.sin(an2) * 2), 1, 1); }
       VISTO.mareado = 1;
     }
@@ -5663,6 +6977,7 @@
       for (var bi = 0; bi < 9; bi++) { var bx = (bi * 97 + 31) % 256, by = (bi * 53 + 17) % 128, br = (6 + bi % 4 * 3) * k; fc.fillRect(bx * k - br / 2, by * k - br / 2, br, br); }
       VISTO.tinta = 1;
     }
+    atardecerD11(W, H, k, Jf, jugando); cartelesD11(k, Jf, J && J.s, jugando);    // (28-sep, D11, 363 y 322)
     if (Jf && !Jf.vencido && jugando) {                                         // la barra de vida, arriba
       var tx = textosJefe(Jf.tipo), nb = Jf.vidaMax || Jf.vida, seg = Math.min(16, 90 / nb) * k, gap = 2 * k, tot = nb * seg + (nb - 1) * gap, x0 = (W - tot) / 2, y0 = 3 * k;
       fc.font = '800 ' + Math.max(10, Math.round(4 * k)) + 'px Montserrat, sans-serif'; fc.textAlign = 'center';
@@ -5699,6 +7014,32 @@
       destello.t -= 1; VISTO.destello = 1;
     }
   }
+  /* (28-sep, D13) las PUERTAS ESPECIALES de la calle (def.especiales): sin número ni candado; con su dibujo encima si ya está
+     (calabaza, árbol de Navidad, casa de muñecas…) y, si no, un farolillo morado. La de fecha, solo si M.puertaExiste. */
+  function puertasD13(c, s) {
+    (s.def.especiales || []).forEach(function (p) {
+      if (!p.casa || (M.puertaExiste && !M.puertaExiste(s, p))) return;
+      var px = p.x * 8, py = p.y * 8, vendida = !!(J && J.av && J.av.vendidas[p.casa]);
+      c.fillStyle = '#2a1a3a'; c.fillRect(px - 2, py - 3, 20, 19);
+      c.fillStyle = '#b89ad8'; c.fillRect(px - 2, py - 3, 20, 2);
+      c.fillStyle = vendida ? '#4a3a5a' : '#6b4a8b'; c.fillRect(px, py, 16, 16);
+      c.fillStyle = '#d4af37'; c.fillRect(px + 10, py + 8, 1, 2);
+      if (!(p.dibujo && hayD9(p.dibujo) && dibD9(c, p.dibujo, null, px, py - 16))) {
+        c.fillStyle = (animT >> 3) % 5 ? '#c9a8f0' : '#f0e0ff'; c.fillRect(px + 6, py - 8, 4, 4);
+      }
+      if (vendida) { c.fillStyle = '#c0392b'; c.fillRect(px - 1, py + 3, 18, 2); }
+      VISTO.d13Puerta = (VISTO.d13Puerta || 0) + 1;
+    });
+  }
+  // (28-sep, D13) el GEMELO de la casa espejo total (s.gemelo; antes del 1.er paso, tu reflejo) y la raya del espejo en el centro
+  function gemeloPinta(c, s, w, av) {
+    if (!s || !s.def || !s.def.espejoTotal || s.calle || !w || !M.espejaAgenteD13) return;
+    var g = s.gemelo || M.espejaAgenteD13(s, w);
+    if (!hayD9('lineaEspejo') || !dibD9(c, 'lineaEspejo', null, s.ancho * 4 - 4, 8)) { c.fillStyle = 'rgba(200,230,255,.18)'; c.fillRect(s.ancho * 4 - 1, 8, 2, s.alto * 8 - 16); }
+    c.globalAlpha = 0.8; dib(c, sprite(av, g.f, g.dir < 0), g.x * 8 + g.f * 2, g.y); c.globalAlpha = 1;
+    c.fillStyle = '#9fd8ff'; c.fillRect(g.x * 8 + g.f * 2 + 4, g.y - 3, 2, 2);
+    VISTO.gemelo = 1;
+  }
   function pintaSala(c, s, w, conAgente, x0, y0) {
     var tm = tema(s), x, y;
     x0 = x0 || 0; y0 = y0 || 0;
@@ -5709,14 +7050,17 @@
     pintaFondoPendientes(c, s, tm);                                // (26-sep, ideas 73/74) ventanas con vistas y detalles de lujo
     var cx0 = Math.max(0, (x0 >> 3) - 1), cy0 = Math.max(0, (y0 >> 3) - 1), cx1 = Math.min(s.ancho, cx0 + 35), cy1 = Math.min(s.alto, cy0 + 19);
     var fino = c === cx && ESCALA >= 2;           // 16 bits: el detalle de medio punto, solo en el lienzo del juego
-    for (y = cy0; y < cy1; y++) for (x = cx0; x < cx1; x++) { var ch = s.mapa[y][x]; if (ch !== ' ') { casilla(c, ch, x, y, tm, s); if (fino) detalle16(c, ch, x, y, tm, s); } }
+    for (y = cy0; y < cy1; y++) for (x = cx0; x < cx1; x++) { var ch = s.mapa[y][x]; if (ch !== ' ' && !casillaD9(c, ch, x, y, s)) { casilla(c, ch, x, y, tm, s); if (fino) detalle16(c, ch, x, y, tm, s); }   /* (28-sep, D9) */ }
     nuevasCosas(c, s, w, tm);
     trampasRitmo(c, s);
+    adornosD9(c, s);                                                 // (28-sep, D9) casillas pintadas y adornos
+    fondoD10(c, s);                                                  // (28-sep, D10) carteles, contadores y decorado
     pintaSueloPendientes(c, s, w);                                   // (26-sep, ideas 15, 29 y 12) pista de baile, lianas y burbujas
     fauna(c, s);
     // rayo de luz del generador (casas retro): quema el aire mientras estás dentro
     (s.haz || []).forEach(function (h) {
       var an = (h[2] - h[0] + 1) * 8, al = (h[3] - h[1] + 1) * 8, hx = h[0] * 8, hy = h[1] * 8, i;
+      if (hazD9(c, s, hx, hy, an, al)) return;                   // (28-sep, D9, idea 361) el láser rojo de la alarma
       c.fillStyle = 'rgba(255,230,120,.22)'; c.fillRect(hx, hy, an, al);
       c.fillStyle = 'rgba(255,255,210,.55)';
       for (i = (animT * 2) % 8; i < al; i += 8) c.fillRect(hx, hy + i, an, 1);
@@ -5726,6 +7070,7 @@
     Object.keys(s.teles || {}).forEach(function (k) {
       var col = { 1: '#6FD3E0', 2: '#e59ad9', 3: '#7ee2a8', 4: '#F0A860' }[k];
       s.teles[k].forEach(function (q) {
+        if (teleD9(c, s, q, col)) return;                         // (28-sep, D9) el tronco hueco, las ranuras de monedas
         var tx = q[0] * 8 + 8, ty = q[1] * 8 + 8;
         c.fillStyle = 'rgba(0,0,0,.35)'; c.fillRect(tx - 7, ty - 8, 14, 16);
         for (var a = 0; a < 6; a++) {
@@ -5763,6 +7108,7 @@
     // (idea 59) LLAVES FALSAS: casi iguales que las buenas (un pelín más pálidas)
     (s.falsas || []).forEach(function (k) { if (!k.cogida) llave(c, k.x, k.y, mezcla((tm.llaves || COLORES_LLAVE)[(animT >> 1) % 4], '#c8c8c8', 0.35)); });
     if (s.calle) (s.def.puertas || []).forEach(function (p) { puertaCasa(c, p, numeroPuerta(p.casa) - 1, !!(p.casa && J && J.av && J.av.vendidas[p.casa]), s); });
+    if (s.calle) puertasD13(c, s);                                   // (28-sep, D13) las puertas especiales
     if (s.calle) { var bd = banderaDe(s.def); if (bd) {
       var arriba = J && J.av && J.av.bandera && J.av.bandera.pantalla === s.def.id, bx = bd.x * 8 + 4, by = (bd.y + 2) * 8;
       var colB = { nerja: '#1f3b6e', edificio: '#b5643c', urba: '#2f7d4a', recreativos: '#e59ad9', museo: '#d4af37', galaxia: '#6FD3E0' }[s.def.mundo] || '#1f3b6e';
@@ -5796,7 +7142,7 @@
     s.bonus.forEach(function (b, i) {
       if (b.cogido || b.comida || (b.alFinal && s.quedan > 0)) return;   // (comida: se la tragó la aspiradora)
       if (b.alFinal) { c.fillStyle = 'rgba(255,230,140,' + (0.25 + 0.2 * Math.sin(animT / 4)).toFixed(2) + ')'; c.fillRect(b.x * 8 - 3, b.y * 8 - 3, 14, 14); }   // brilla: ¡premio!
-      bonus(c, b, i);
+      if (!monedaD9(c, s, b, i)) bonus(c, b, i);                 // (28-sep, D9) dátiles y pelotas de golf
     });
     // nubes y cristales que se mueven
     (s.plataformas || []).forEach(function (p) {
@@ -5817,6 +7163,11 @@
         c.fillStyle = (animT >> 3) & 1 ? '#ffd166' : '#fff6d0'; c.fillRect(q.x, q.y, 1, 1); c.fillRect(q.x + an - 1, q.y, 1, 1);
       } else if (p.tipo === 'ascensorCristal') {     // (26-sep, idea 39) el ascensor de CRISTAL: cabina de vidrio con vistas y su planta
         ascensorCristal(c, p, q, an, s);
+      } else if (p.tipo === 'cajaPescado') {   // (28-sep, D11, 259) caja de pescado del puerto (jefe-nerja), colgada de su cabo
+        c.fillStyle = 'rgba(60,40,20,.6)'; c.fillRect(q.x + an / 2, 0, 0.5, q.y);
+        c.fillStyle = '#a0703c'; c.fillRect(q.x, q.y, an, 5); c.fillStyle = '#6b4423'; c.fillRect(q.x, q.y + 2, an, 1); c.fillRect(q.x, q.y + 5, an, 1);
+        c.fillStyle = '#c9ced6'; c.fillRect(q.x + 3, q.y - 2, 5, 2); c.fillRect(q.x + an - 8, q.y - 2, 4, 2); c.fillStyle = '#3b3f45'; c.fillRect(q.x + 4, q.y - 2, 1, 1);
+        VISTO.cajaPescado = (VISTO.cajaPescado || 0) + 1;
       } else if (p.tipo === 'ascensor') {    // ascensor: plataforma de acero con sus cables y una luz que avisa al pararse
         var parado = M.posPlat(p, s.t - 1).y === q.y && M.posPlat(p, s.t - 1).x === q.x;
         c.fillStyle = 'rgba(40,40,40,.55)'; c.fillRect(q.x + 2, 0, 0.5, q.y); c.fillRect(q.x + an - 2.5, 0, 0.5, q.y);
@@ -5825,6 +7176,8 @@
         c.fillStyle = '#3b3f45'; c.fillRect(q.x, q.y + 3, an, 2);
         c.fillStyle = '#e0b44e'; for (i = 1; i < an - 1; i += 4) c.fillRect(q.x + i, q.y + 3, 2, 2);
         c.fillStyle = parado ? '#7ee2a8' : '#ff9c4a'; c.fillRect(q.x + an / 2 - 1, q.y + 1, 2, 1);
+      } else if (pintaPlatD9(c, p, q, an, s)) {     // (28-sep, D9) vagoneta, burbuja, burrito y sofá
+      } else if (pintaPlatD8(c, p, q, an, s)) {     // (28-sep, D8) roca, coche azul, patito, luna, caja, delfín y helicóptero
       } else if (p.tipo === 'nube') {
         c.fillStyle = 'rgba(255,255,255,.92)'; c.fillRect(q.x + 1, q.y, an - 2, 5); c.fillRect(q.x, q.y + 1, an, 3);
         for (i = 3; i < an - 3; i += 6) c.fillRect(q.x + i, q.y - 2, 4, 2);
@@ -5847,9 +7200,20 @@
       }
     }
     var helado = s.congelado > 0 && (s.congelado > 20 || (animT & 2));
+    pintaD5(c, s);                                       // (27-sep, D5) agujeros de la rata y del topo, rastro de la chispa
+    pintaD7(c, s);                                       // (28-sep, D7) trituradora, balanza, lámpara, recargas y el pescado que llevas
+    pintaD8(c, s);                                       // (28-sep, D8) tobogán, garra, grietas del cristal y teletransportes que piden saltar
+    pintaD2(c, s);                                       // (28-sep, D2) teléfono, cuenta atrás, rodillos, fuente, coche del mando
+    pintaD6(c, s);                                       // (28-sep, D6) sellos, cono de la linterna, concha, hojitas y bocadillos
+    frenteD10(c, s);                                     // (28-sep, D10) textos de carteles y contadores, efectos y entradas
+    casaMesPintaD14(c, s); lluviaD14(c, s);             // (28-sep, D14) la casa del mes y la lluvia de verdad
     s.enemigos.forEach(function (e) {
       if (e.fuera) return;
+      if (e.dormido) { VISTO.dormidos = (VISTO.dormidos || 0) + 1; return; }   // (27-sep, D4) aún no ha despertado
+      if (e.oculta) { VISTO.macetaOculta = 1; return; }   // (28-sep, D6) la maceta, sin el Presidente arriba
       var p = M.posEnemigo(e);
+      if (e.avisa) pintaAvisoD4(c, e, p);                // (27-sep, D4) luces de marcha atrás, campanita o el pájaro que aletea
+      if (e.parado > 0 || e.frena) pintaParadoD7(c, e, p);   // (28-sep, D7) atontado o frenado
       if (e.tipo === 'dueno') {              // (25-sep, idea 151) el fantasma del antiguo dueño: solo con la linterna
         if (!s.linterna) return;
         c.globalAlpha = 0.55 + 0.2 * Math.sin(animT / 6); dib(c, sprite(e.spr, e.fr || 0, w && e.x > w.x * 8), p.x, p.y + Math.round(Math.sin(animT / 5) * 2)); c.globalAlpha = 1;
@@ -5916,6 +7280,7 @@
         var r0 = J.rastro[0];
         dib(c, sprite(P.mascota, (animT >> 2) & 1, r0.d < 0), r0.x - r0.d * 4, r0.y + 8);
       }
+      gemeloPinta(c, s, w, av);                                     // (28-sep, D13) el gemelo al revés
       if (J && J.dos && J.w2 && !J.w2.espera) {
         var av2 = M.AVATARES.filter(function (a) { return a !== av; })[av === 'turista' ? 0 : 2] || 'turista';
         dib(c, sprite(av2, J.w2.f, J.w2.dir < 0), J.w2.x * 8 + J.w2.f * 2, J.w2.y);
@@ -6169,6 +7534,7 @@
         mueveCamara(J.s, J.visita ? visitaComoAgente() : J.w, modo === 'listo' && !J.visita);   // (26-sep, 45) la cámara sigue a la visita
         cx.save();
         var gy = giroY(); if (gy !== 1) { cx.translate(0, 64); cx.scale(1, gy); cx.translate(0, -64); VISTO.bocaAbajo = gy; }   // (26-sep, 60) la casa, boca abajo
+        if (J.s && J.s.def && J.s.def.mini && !J.s.calle) { cam.x = 0; cam.y = 0; cx.scale(2, 2); VISTO.mini = 1; }   // (28-sep, D13) la casa en miniatura, en grande
         cx.translate(-cam.x, -cam.y);
         pintaSala(cx, J.s, J.w, modo !== 'muerte', cam.x, cam.y);
         if (modo === 'muerte') muerteGraciosa(cx, J);            // (26-sep, idea 86) cada muerte, con su gracia
@@ -6383,7 +7749,7 @@
      nada. Antes de enseñarla se juega a escondidas: si la casa ha cambiado y ya no se gana, esa no sale. ── */
   var DEMOS = [
     { id: 'jardin', t: 'c22f1a17c13f1a19b2f1a15f1a12e1a12f1a17b21d1a15b8e1a12b1e1a15f1a12c62f1a4c31a6c4a3e1a17b3a6b10d1a18b2d1a15b9a2b12a4c2a6c14f1a17c18f1a17c6f1a17c8' },
-    { id: 'azotea', t: 'c2f1a17c25a23c16f1a15d1a12e1a12f1a15f1a10b1a2b5e1a12e1a58c5e1a17e1a18b7e1a17b4a10c2a2c20a4c12a8b1a3b1f1a17b2' },   // (26-sep) · (19:00, tras P6: --solucion 3 otra vez)
+    { id: 'azotea', t: 'c2f1a17c25a23c16f1a15d1a12e1a12f1a15f1a10b1a2b5e1a12e1a77b7e1a18b2a2b6e1a17b4a4c2a2c20a4c12a8b1a3b1f1a17b2' },   // (26-sep) · (19:00, tras P6) · (28-sep, D10) --solucion 3 otra vez: las macetas `presi` de D6, 387 pasos
     { id: 'r02', t: 'e1a16b5a2b24f1a20e1a17b3e1a17b23a39c46f1a17c4f1a17e1a15d1a12e1a17d1a21f1a18b8e1a12b1a3b1a3b1a3b1a1e1a17e1a17c1a2c1a3c1f1a15e1a12e1a17' }   // (27-sep, P7) una planta del Edificio (retro): --solucion del robot, 470 pasos
   ];
   var DEMO_ESPERA = 303, DEMO_LETRA = { a: {}, b: { izq: true }, c: { der: true }, d: { saltar: true }, e: { saltar: true, izq: true }, f: { saltar: true, der: true } };
@@ -6554,6 +7920,8 @@
     if (e === 'ladrilloPlof') { q = s.plof || { x: ax, y: w.y }; nube(q.x, q.y, 5, '#b5643c'); tono(110, 0.07, 'square', 0.05); return true; }
     if (e === 'ladrilloJefe') { q = s.plof || { x: ax, y: w.y }; nube(q.x, q.y, 5, '#b5643c'); jefeDice(azarDe(t('ladrilloJefe')), 80, '', true); return true; }
     if (e === 'genteAyuda') { popup('💬 ' + azarDe(tg.ayuda), camX() + 128, camY() + 22, '#FBEFC9'); var rg = (tg.regalo || {})[J.genteRegalo || 'monedas']; if (rg) popup(rg, ax, w.y - 10, '#7ee2a8'); SND.moneda(); return true; }
+    if (e === 'gentePista' && J && J.genteCafe) { J.genteCafe = false; P.monedas = Math.max(0, (+P.monedas || 0) - 1); anuncio = { txt: t('dCafe', { p: pistaCafeD12() }), t: 110 }; VISTO.d12cafe = (VISTO.d12cafe || 0) + 1; guardaAventura(); return true; }   // (28-sep, D12)
+    if (e === 'genteCafeNo') { anuncio = { txt: t('dCafeNo'), t: 70 }; VISTO.d12cafeNo = (VISTO.d12cafeNo || 0) + 1; return true; }
     if (e === 'gentePista') { anuncio = { txt: '💡 ' + azarDe(tg.pista), t: 90 }; return true; }
     if (e === 'genteMolesta') { popup('💬 ' + azarDe(tg.molesta), camX() + 128, camY() + 22, '#E0708A'); tono(220, 0.08, 'square', 0.05); nube(ax, w.y + 14, 5, '#c9bfae'); return true; }
     if (e === 'ding') { var pa = s.plataformas[w.plat]; tono(midi(88), 0.25, 'sine', 0.06); tono(midi(84), 0.35, 'sine', 0.05, luego(0.18)); popup(t('ding', { n: pa ? plantaAscensor(pa, M.posPlat(pa, s.t)) : 1 }), ax, w.y - 10, '#bfefff'); return true; }
@@ -7552,6 +8920,47 @@
   }
   ['Armario', 'Vitrina', 'Taller', 'Mansion'].forEach(function (k) { var b = $('col' + k); if (b) { b.textContent = t('col' + k); b.onclick = function () { abreColeccion(k); }; } });
   function filaV(a, b, hecha, dato) { return '<div class="fila' + (hecha ? ' hecha' : '') + '"' + (dato ? ' data-v="' + dato + '"' : '') + '><span>' + esc(a) + '</span><span class="d">' + esc(b) + '</span></div>'; }
+  /* ══ (28-sep, D12) HISTORIA Y COLECCIONABLES en la pantalla ══
+     · MUNDO SUPERADO: página del cuaderno (con su tiempo), postal del mundo, pegatinas nuevas · la venta: el deseo cumplido paga
+       M.DESEO_MONEDAS 🪙 y otra reseña · la compañera (gente `cafe: true`): 1 🪙 por la pista, sacada del «?» del mapa (P9) ·
+       la oficina de Stela Mare en la 1.ª calle de cada mundo con el jefe vencido · la herencia cambia el epílogo · la Vitrina:
+       llavero, postales, cuaderno, deseos, pegatinas y la herencia. ══ */
+  function pegatinasD12() { if (!J || !J.av || !M.apuntaPegatinas || J.peques) return []; var n = M.apuntaPegatinas(J.av, { estrellas: P.estrellas, cogidos: J.cogidos }); if (n.length) VISTO.d12pegatina = n.join(','); return n; }
+  function deseoTxtD12() {
+    var d = J && J.av && (J.deseoCumplido || (M.deseoD12 && M.deseoD12(J, J.enCasa))); if (!d) return '';
+    J.deseoCumplido = null; var m = M.DESEO_MONEDAS || 5; P.monedas = (+P.monedas || 0) + m; VISTO.d12deseo = d.id;
+    var on = (t('objetos') || {})[d.tipo] || d.tipo;
+    return ' · ' + t('dDeseo', { m: m }) + ' ' + t('resenaDeseo', { o: on });
+  }
+  function pistaCafeD12() {
+    var mu = J && J.s && J.s.def && J.s.def.mundo || '', mp = M.mapaPausa ? M.mapaPausa(J.av || {}, { estrellas: P.estrellas, cogidos: J.cogidos }) : null, c = null;
+    ((mp && mp.mundos) || []).forEach(function (o) { if (o.id === mu) o.calles.forEach(function (q) { if (!c && q.falta) c = q; }); });
+    return c ? t('dCafeFalta', { c: c.nombre }) : t('dCafeNada');
+  }
+  function oficinaD12(c, s, av) {
+    if (!av || !s.calle || !M.oficinasAv) return;
+    var id = String(s.def.id || '').replace(/-espejo$/, ''), si;
+    if (!M.oficinasAv(av).some(function (o) { return o.calle === id; })) return;
+    if (!(si = sitioD10(s, 'oficinaD12', 4, 3, 4, 11, true))) return;
+    piezaD10(c, 'oficina', 0, si.x * 8, si.y * 8, 32, 24, '#c9a96e');
+    c.fillStyle = '#1a2a3a'; c.fillRect(si.x * 8 + 2, si.y * 8 + 2, 28, 5);
+    VISTO.d12oficina = (VISTO.d12oficina || 0) + 1;
+  }
+  function htmlVitrinaD12(av) {
+    if (!av || !M.pegatinasAv) return '';
+    var n = function (o) { return o && typeof o === 'object' ? Object.keys(o).length : 0; }, pm = Object.keys(av.postales || {}).filter(function (k) { return /^mundo:/.test(k); }).length;
+    var tl = M.coleccionTotal('llaveRara'), tp = M.coleccionTotal('postal'), hl = M.escondidasAv(av, 'llaveRara'), hp = M.escondidasAv(av, 'postal');
+    var pg = M.pegatinasAv(av, { estrellas: P.estrellas }), np = pg.filter(function (p) { return p.tiene; }).length, mun = (M.cifrasJefes ? M.cifrasJefes(av) : []).length || 7;
+    var h = '<h4>🗝 ' + esc(t('vitLlavero')) + ' · ' + esc(t('vitPostales')) + '</h4>' +
+      filaV(t('vitLlavero'), hl + '/' + tl, tl > 0 && hl >= tl, 'llavero') + filaV(t('vitPostales'), hp + '/' + tp, tp > 0 && hp >= tp, 'postales') +
+      filaV(t('vitPostalesMundo'), pm + '/' + mun, pm >= mun, 'postalesMundo') + filaV(t('vitDeseos'), String(n(av.deseos)), false, 'deseos') +
+      filaV(t('vitHerencia'), M.herenciaAv(av) ? t('vitHerenciaSi') : n(av.estatuillas) + '/7 · ' + n(av.cartas) + '/12', M.herenciaAv(av), 'herencia') +
+      (M.piezasAv ? filaV(t('vitCaballero'), M.piezasAv(av) + '/' + M.PIEZAS_CABALLERO.length, M.caballeroAv(av), 'caballero') : '');   // (28-sep, caballero)
+    h += '<h4>🏷️ ' + esc(t('vitPegatinas')) + ' · ' + np + '/' + pg.length + '</h4><div class="caja9">' + pg.map(function (p) { return '<span class="' + (p.tiene ? 'si' : 'no') + '" data-pegatina="' + esc(p.id) + '"><b>' + (p.tiene ? '🏷️' : '·') + '</b>' + esc((t('pegatinas') || {})[p.id] || p.id) + '</span>'; }).join('') + '</div>';
+    var cu = av.cuaderno || {}, ks = (M.ordenMundos ? M.ordenMundos() : Object.keys(cu)).filter(function (m) { return cu[m]; });
+    h += '<h4>📓 ' + esc(t('vitCuaderno')) + ' · ' + ks.length + '</h4>' + ks.map(function (m) { var p = cu[m]; return filaV(t('vitCuadernoPag', { m: t('mundo_' + m) || m, v: +p.v || 0, s: +p.s || 0, c: +p.m || 0, t: p.t != null ? ' · ⏱ ' + reloj(p.t) : '' }), '', true, 'cuaderno'); }).join('');
+    return h;
+  }
   function htmlVitrina() {
     var av = (J && J.av) || P.aventura || null, pc = av && M.porcentaje ? M.porcentaje(av, { estrellas: P.estrellas, cogidos: J && J.av === av ? J.cogidos : null }) : null;
     var h = '<h4>🏆 ' + esc(t('vitrinaTit')) + (pc ? ' · ' + pc.pct + ' %' : '') + '</h4>';
@@ -7567,6 +8976,7 @@
     cartas.forEach(function (x, k) { if (col.cartas[k]) nc++; });
     h += '<h4>🗃 ' + esc(t('vitrinaAlbum')) + '</h4>' + filaV('🗿 ' + t('albumEstatuillas'), MUNDOS_EST.filter(function (m) { return col.estatuillas[m]; }).length + '/7') + filaV('✉️ ' + t('albumCartas'), nc + '/' + cartas.length) +
       filaV(t('albumSec'), String(secretosEncontrados())) + filaV(t('medallas'), Object.keys(P.medallas || {}).length + '/' + MEDALLAS_L.length);
+    h += htmlVitrinaD12(av);                                          // (28-sep, D12)
     return h;
   }
   function htmlSinMorir() {
@@ -7613,9 +9023,23 @@
       b.textContent = d ? nombreDe(d.def) : id; b.onclick = function () { empezarDos(id); }; box.appendChild(b);
     });
   }
+  /* (27-sep, D0 · VERIFICACION «descartado») 2 JUGADORES SIN CASAS-JEFE: con 2 jugadores no se le puede golpear. Sin casas vendidas,
+     las 5 primeras de la costa que no son de jefe (antes empezaba la casa 0 del paquete que estuviera puesto y seguía por orden: el de
+     las «nuevas» lleva 7 jefes); y empezarDos nunca deja empezar una casa-jefe. */
+  function casasDosCosta() {
+    M.cambiaPack('normal');
+    return M.SALAS.filter(function (d) { return d && d.id && !M.esJefe(d.id) && !d.superbonus && !d.tesoro; }).slice(0, 5).map(function (d) { return d.id; });
+  }
+  function empezarDosCosta() {
+    var l = casasDosCosta(), c = l.length ? M.casaPorId(l[0]) : null;
+    if (!c) { sonMenu('no'); return false; }
+    M.cambiaPack(c.pack); empezar(c.n, { dos: true });
+    J.dosCasas = l; J.dosI = 0;
+    return true;
+  }
   function empezarDos(id) {
     var l = casasDos(), i = l.indexOf(id), c = M.casaPorId(id);
-    if (i < 0 || !c || !leeJugador()) { sonMenu('no'); return false; }
+    if (i < 0 || !c || M.esJefe(id) || !leeJugador()) { sonMenu('no'); return false; }   // (27-sep, D0) + nunca una casa-jefe
     M.cambiaPack(c.pack); empezar(c.n, { dos: true });
     J.dosCasas = l.slice(i).concat(l.slice(0, i)).slice(0, 5); J.dosI = 0;
     return true;
@@ -7730,6 +9154,7 @@
     guardaAventura(); guardar();
     lluviaConfeti(220); fanfarria();
     var epi = typeof escenaTxt === 'function' ? escenaTxt(18) : String((t('historia') || [])[18] || '');
+    if (M.herenciaAv && M.herenciaAv(J.av)) { epi = epi + ' ' + t('epiHerencia'); VISTO.d12herencia = 1; }   // (28-sep, D12) (173) la herencia: el mismo epílogo, con su final (variante)
     J.p11Cola = [['📖 ' + t('historiaTit'), t('epiTit'), epi, 1], [t('oroTit'), nombreTraje(ORO), t('oroTxt'), 1]];
     sigueP11();
   }
@@ -7954,7 +9379,7 @@
   alMenu();
   cargaReales();
   requestAnimationFrame(bucle);
-  window.LLAVES = { get J() { return J; },
+  window.LLAVES = { get J() { return J; }, PAL: PAL /* (28-sep, caballero) para su prueba */,
     // (27-sep, P11 y P12) para su prueba: la caja fuerte, el % de la caja, el resumen del fin, los créditos, las opciones y las ayudas
     abreCaja: abreCaja, pruebaCaja: pruebaCaja, cierraCaja: cierraCaja, get CAJA() { return CAJA; }, pctCaja: pctCaja, resumenFinal: resumenFinal, lineasCreditos: lineasCreditos,
     pasoP11: pasoP11, sucesoP11: sucesoP11, conAyudas: conAyudas, claveFant: claveFant, marcasAyuda: marcasAyuda, opcDe: opcDe, volFx: volFx, aplicaOpc: aplicaOpc, borraTodo: borraTodo,
@@ -7985,7 +9410,13 @@
     // (27-sep, P9/P10) para su prueba: el mapa de la pausa, Rejugar, el autobús, el %, la Colección, el Diario, la Revancha y 2 jugadores
     htmlMapaMundos: htmlMapaMundos, abrePausaPanel: abrePausaPanel, cierraPausaPanel: cierraPausaPanel, rejugarCasa: rejugarCasa, terminaRejugar: terminaRejugar,
     viajarBus: viajarBus, pctDe: pctDe, nombreRango: nombreRango, marcaConTrucos: marcaConTrucos, htmlVitrina: htmlVitrina, abreColeccion: abreColeccion,
-    casaHoy: casaHoy, pintaRevancha: pintaRevancha, pintaDos: pintaDos, empezarDos: empezarDos, casasDos: casasDos, vendidasTodas: vendidasTodas };
+    casaHoy: casaHoy, pintaRevancha: pintaRevancha, pintaDos: pintaDos, empezarDos: empezarDos, casasDos: casasDos, vendidasTodas: vendidasTodas,
+    // (27-sep, D0) para su prueba: la bandera de la calle y 2 jugadores sin casas vendidas
+    banderaDe: banderaDe, casasDosCosta: casasDosCosta, empezarDosCosta: empezarDosCosta,
+    // (28-sep, D10) para su prueba: carteles, contadores, decorados y efectos
+    D14: D14, pasoD14: pasoD14, tiempoD14: tiempoD14, llueveD14: llueveD14, casaMesD14: casaMesD14, D14_COSTA: D14_COSTA, D14_URL: D14_URL,   // (28-sep, D14)
+    fondoD10: fondoD10, frenteD10: frenteD10, sitioD10: sitioD10, D10_SALA: D10_SALA, queD10: queD10, quioscoTxtD10: quioscoTxtD10, pistaD10: pistaD10, pisadasVistasD10: pisadasVistasD10,
+    superadoCartel: superadoCartel, premioOro: premioOro, resena: resena, deseoTxtD12: deseoTxtD12, pistaCafeD12: pistaCafeD12, htmlVitrinaD12: htmlVitrinaD12, pegatinasD12: pegatinasD12, oficinaD12: oficinaD12 };   // (28-sep, D12)
 })();
 </script>
 
