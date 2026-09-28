@@ -132,7 +132,7 @@ var LLAVES_CASAS = [
       {"tipo":"v","spr":"gaviota","x":96,"y":30,"min":20,"max":96,"dy":2},
       {"tipo":"v","spr":"gaviota","x":136,"y":80,"min":20,"max":96,"dy":-3},
       {"tipo":"v","spr":"presidente","x":118,"y":8,"min":8,"max":56,"dy":1,"vecino":true,"minFinal":40,"dyFinal":2},
-      {"tipo":"f","spr":"pelota","cols":[48,80],"y0":8,"yFin":40,"vel":2,"espera":32,"fase":0,"presi":2}
+      {"tipo":"f","spr":"maceta","cols":[48,80],"y0":8,"yFin":40,"vel":2,"espera":32,"fase":0,"presi":2}
     ]
   },
   {
@@ -184,7 +184,7 @@ var LLAVES_CASAS = [
       {"tipo":"h","spr":"cangrejo","x":6,"fila":13,"min":6,"max":13,"dir":1},
       {"tipo":"h","spr":"cangrejo","x":24,"fila":13,"min":16,"max":25,"dir":-1},
       {"tipo":"g","spr":"gigante","x":104,"y":16},
-      {"tipo":"manso","hace":"concha","spr":"cangrejo","x":208,"y":104,"min":200,"max":216}
+      {"tipo":"manso","hace":"concha","spr":"ermitano","x":208,"y":104,"min":200,"max":216}
     ]
   },
   {
@@ -466,7 +466,7 @@ var LLAVES_CASAS = [
       {"tipo":"cristal","x":176,"y":112,"ancho":2,"eje":"v","min":40,"max":112,"vel":2,"fase":0}
     ],
     enemigos: [
-      {"tipo":"h","spr":"cocheRojo","x":20,"fila":14,"min":15,"max":24,"dir":-1,"espera":24,"fase":0,"aviso":16},
+      {"tipo":"h","spr":"cocheAtras","x":20,"fila":14,"min":15,"max":24,"dir":-1,"espera":24,"fase":0,"aviso":16},
       {"tipo":"h","spr":"robot","x":19,"fila":8,"min":18,"max":20,"dir":1},
       {"tipo":"h","spr":"furgoneta","x":3,"fila":11,"min":2,"max":7,"dir":1,"lento":true}
     ]
@@ -670,8 +670,8 @@ var LLAVES_CASAS = [
       {"tipo":"h","spr":"rata","x":17,"fila":7,"min":15,"max":18,"dir":-1,"lento":true},
       {"tipo":"v","spr":"gaviota","x":224,"y":20,"min":8,"max":64,"dy":2},
       {"tipo":"v","spr":"medusa","x":8,"y":100,"min":64,"max":120,"dy":1},
-      {"tipo":"a","spr":"gaviota","x":8,"y":8,"min":8,"max":8,"baja":16,"aviso":12},
-      {"tipo":"a","spr":"gaviota","x":232,"y":8,"min":232,"max":232,"baja":16,"aviso":12,"unaVez":true},
+      {"tipo":"a","spr":"gaviotaPosada","x":8,"y":8,"min":8,"max":8,"baja":16,"aviso":12},
+      {"tipo":"a","spr":"gaviotaPosada","x":232,"y":8,"min":232,"max":232,"baja":16,"aviso":12,"unaVez":true},
       {"tipo":"cofre","spr":"cofreTrampa","x":160,"y":104,"min":160,"max":160}
     ]
   },
@@ -756,7 +756,7 @@ var LLAVES_CASAS = [
       "WFFFFFFFFFFFFFFFFFFF   FFFFFFFFW"
     ],
     enemigos: [
-      {"tipo":"v","spr":"gaviota","x":84,"y":30,"min":24,"max":72,"dy":2},
+      {"tipo":"v","spr":"aguila","x":84,"y":30,"min":24,"max":72,"dy":2},
       {"tipo":"v","spr":"murcielago","x":152,"y":50,"min":36,"max":84,"dy":1},
       {"tipo":"h","spr":"gato","x":14,"fila":5,"min":13,"max":19,"dir":1},
       {"tipo":"h","spr":"rata","x":27,"fila":13,"min":26,"max":29,"dir":-1,"lento":true}
@@ -906,12 +906,12 @@ var LLAVES_CASAS = [
     ],
     enemigos: [
       {"tipo":"h","spr":"cangrejo","x":14,"fila":13,"min":14,"max":17,"dir":1},
-      {"tipo":"v","spr":"gaviota","x":176,"y":30,"min":16,"max":80,"dy":2},
+      {"tipo":"v","spr":"sardina","x":176,"y":30,"min":16,"max":80,"dy":2},
       {"tipo":"v","spr":"murcielago","x":60,"y":40,"min":24,"max":64,"dy":1},
       {"tipo":"h","spr":"pato","x":19,"fila":5,"min":19,"max":21,"dir":1},
       {"tipo":"v","spr":"presidente","x":210,"y":16,"min":16,"max":80,"dy":1,"vecino":true,"minFinal":40,"dyFinal":2},
       {"tipo":"dueno","spr":"fantasmaDueno","x":232,"y":64,"k":3},
-      {"tipo":"manso","hace":"empuja","spr":"cocheRojo","x":176,"y":112,"min":176,"max":200,"dir":1,"fuerza":3}
+      {"tipo":"manso","hace":"empuja","spr":"ola","x":176,"y":112,"min":176,"max":200,"dir":1,"fuerza":3}
     ]
   },
   {
@@ -1413,8 +1413,8 @@ var LLAVES_RETRO = [
       "WIIIIFFFFFFFFFFFFFFFFFFFFFFFFFFW"
     ],
     enemigos: [
-      {"tipo":"h","spr":"pinguino","x":12,"fila":13,"min":8,"max":19,"dir":1},
-      {"tipo":"h","spr":"pinguino","x":18,"fila":7,"min":16,"max":21,"dir":-1,"lento":true},
+      {"tipo":"h","spr":"pinguinoPatina","x":12,"fila":13,"min":8,"max":19,"dir":1},
+      {"tipo":"h","spr":"pinguinoPatina","x":18,"fila":7,"min":16,"max":21,"dir":-1,"lento":true},
       {"tipo":"v","spr":"medusa","x":84,"y":88,"min":80,"max":104,"dy":2},
       {"tipo":"h","spr":"rata","x":8,"fila":4,"min":8,"max":13,"dir":1,"lento":true}
     ]
@@ -1450,7 +1450,7 @@ var LLAVES_RETRO = [
       "WFFFFFFFFFFFFFFFFFFFFFFFFFFFIIIW"
     ],
     enemigos: [
-      {"tipo":"v","spr":"gaviota","x":96,"y":24,"min":16,"max":104,"dy":4,"espera":26,"fase":0,"aviso":12},
+      {"tipo":"v","spr":"gaviotaPosada","x":96,"y":24,"min":16,"max":104,"dy":4,"espera":26,"fase":0,"aviso":12},
       {"tipo":"v","spr":"gaviota","x":104,"y":96,"min":24,"max":112,"dy":-2},
       {"tipo":"v","spr":"gaviota","x":192,"y":48,"min":16,"max":104,"dy":-2},
       {"tipo":"v","spr":"gaviota","x":200,"y":72,"min":24,"max":112,"dy":4}
@@ -1715,7 +1715,7 @@ var LLAVES_RETRO = [
       {"tipo":"v","spr":"ameba","x":80,"y":40,"min":32,"max":104,"dy":3},
       {"tipo":"v","spr":"ameba","x":152,"y":96,"min":32,"max":104,"dy":-3},
       {"tipo":"v","spr":"ameba","x":48,"y":64,"min":48,"max":96,"dy":2},
-      {"tipo":"v","spr":"ameba","x":120,"y":80,"min":40,"max":88,"dy":-1},
+      {"tipo":"v","spr":"amebaGrande","x":120,"y":80,"min":40,"max":88,"dy":-1},
       {"tipo":"v","spr":"ameba","x":200,"y":56,"min":40,"max":88,"dy":2}
     ]
   },
@@ -1834,7 +1834,7 @@ var LLAVES_RETRO = [
     ],
     enemigos: [
       {"tipo":"g","spr":"gigante","x":128,"y":32},
-      {"tipo":"r","spr":"barril","vel":2,"ciclo":192,"tramos":[[116,32,78,32],[78,32,78,48],[78,48,16,48],[16,48,16,80],[16,80,56,80],[56,80,56,104],[56,104,200,104]]},
+      {"tipo":"r","spr":"barrilRueda","vel":2,"ciclo":192,"tramos":[[116,32,78,32],[78,32,78,48],[78,48,16,48],[16,48,16,80],[16,80,56,80],[56,80,56,104],[56,104,200,104]]},
       {"tipo":"h","spr":"robot","x":4,"fila":6,"min":3,"max":8,"dir":1},
       {"tipo":"v","spr":"ameba","x":152,"y":56,"min":48,"max":96,"dy":4}
     ]
@@ -2003,7 +2003,7 @@ var LLAVES_RETRO = [
       {"tipo":"h","spr":"rata","x":8,"fila":13,"min":6,"max":11,"dir":1},
       {"tipo":"h","spr":"arañita","x":20,"fila":11,"min":17,"max":22,"dir":-1},
       {"tipo":"v","spr":"murcielago","x":96,"y":40,"min":24,"max":72,"dy":2},
-      {"tipo":"f","spr":"satelite","cols":[72,152,208],"y0":8,"yFin":104,"vel":4,"espera":8,"fase":0},
+      {"tipo":"f","spr":"estalactita","cols":[72,152,208],"y0":8,"yFin":104,"vel":4,"espera":8,"fase":0},
       {"tipo":"h","spr":"gato","x":27,"fila":4,"min":26,"max":28,"dir":-1,"lento":true}
     ]
   },
@@ -2103,7 +2103,7 @@ var LLAVES_RETRO = [
       {"tipo":"v","spr":"ameba","x":88,"y":16,"min":8,"max":32,"dy":4},
       {"tipo":"v","spr":"ameba","x":168,"y":24,"min":16,"max":40,"dy":-4},
       {"tipo":"v","spr":"ameba","x":176,"y":60,"min":48,"max":72,"dy":4},
-      {"tipo":"v","spr":"ameba","x":112,"y":72,"min":72,"max":88,"dy":2,"despierta":4},
+      {"tipo":"v","spr":"amebaPeq","x":112,"y":72,"min":72,"max":88,"dy":2,"despierta":4},
       {"tipo":"h","spr":"pinguino","x":10,"fila":13,"min":8,"max":19,"dir":1}
     ]
   },
@@ -2146,7 +2146,7 @@ var LLAVES_RETRO = [
     enemigos: [
       {"tipo":"h","spr":"robot","x":14,"fila":4,"min":13,"max":18,"dir":1},
       {"tipo":"h","spr":"rata","x":20,"fila":7,"min":19,"max":21,"dir":-1,"lento":true},
-      {"tipo":"r","spr":"pelota","rodea":[15,3,24,3],"ciclo":96},
+      {"tipo":"r","spr":"chispa","rodea":[15,3,24,3],"ciclo":96},
       {"tipo":"f","spr":"satelite","cols":[96,176],"y0":8,"yFin":104,"vel":2,"espera":16,"fase":0}
     ]
   },
@@ -2255,8 +2255,8 @@ var LLAVES_NUEVAS = [
       {"tipo":"h","spr":"pato","x":13,"fila":7,"min":9,"max":13,"dir":1},
       {"tipo":"v","spr":"murcielago","x":128,"y":50,"min":50,"max":90,"dy":2},
       {"tipo":"h","spr":"aspiradora","x":22,"fila":14,"min":22,"max":26,"dir":1,"lento":true,"come":"monedas"},
-      {"tipo":"manso","hace":"empuja","spr":"cocheRojo","x":112,"y":112,"min":112,"max":136,"dir":1,"fuerza":2},
-      {"tipo":"manso","hace":"empuja","spr":"cocheRojo","x":136,"y":112,"min":112,"max":136,"dir":-1,"fuerza":2}
+      {"tipo":"manso","hace":"empuja","spr":"cochecito","x":112,"y":112,"min":112,"max":136,"dir":1,"fuerza":2},
+      {"tipo":"manso","hace":"empuja","spr":"cochecito","x":136,"y":112,"min":112,"max":136,"dir":-1,"fuerza":2}
     ]
   },
   {
@@ -2433,7 +2433,7 @@ var LLAVES_NUEVAS = [
       {"tipo":"h","spr":"cangrejo","x":24,"fila":13,"min":24,"max":27,"dir":1},
       {"tipo":"v","spr":"gaviota","x":88,"y":50,"min":50,"max":106,"dy":1},
       {"tipo":"t","spr":"timido","x":240,"y":16,"vel":1},
-      {"tipo":"manso","hace":"vigila","spr":"turista","x":196,"y":32,"min":192,"max":206,"luz":5,"espera":32},
+      {"tipo":"manso","hace":"vigila","spr":"guarda","x":196,"y":32,"min":192,"max":206,"luz":5,"espera":32},
       {"tipo":"dueno","spr":"fantasmaDueno","x":16,"y":32,"k":1}
     ]
   },
@@ -2636,7 +2636,7 @@ var LLAVES_NUEVAS = [
     ],
     enemigos: [
       {"tipo":"h","spr":"robot","x":20,"fila":13,"min":20,"max":23,"dir":1},
-      {"tipo":"manso","hace":"timido","spr":"turista","x":32,"y":80,"min":24,"max":48,"premio":"rubi"},
+      {"tipo":"manso","hace":"timido","spr":"maniqui","x":32,"y":80,"min":24,"max":48,"premio":"rubi"},
       {"tipo":"h","spr":"gato","x":13,"fila":7,"min":13,"max":16,"dir":1},
       {"tipo":"h","spr":"rata","x":5,"fila":4,"min":5,"max":6,"dir":1,"lento":true},
       {"tipo":"v","spr":"murcielago","x":184,"y":8,"min":8,"max":24,"dy":1},
@@ -2812,7 +2812,7 @@ var LLAVES_NUEVAS = [
     enemigos: [
       {"tipo":"h","spr":"furgoneta","x":9,"fila":14,"min":8,"max":17,"dir":1},
       {"tipo":"h","spr":"moroso","x":6,"fila":4,"min":6,"max":11,"dir":1,"lento":true,"roba":150},
-      {"tipo":"r","spr":"cocheRojo","vel":2,"ciclo":320,"tramos":[[208,40,224,40],[224,40,224,64],[224,64,8,64],[8,64,8,88],[8,88,184,88],[184,88,184,112],[184,112,40,112]]}
+      {"tipo":"r","spr":"carrito","vel":2,"ciclo":320,"tramos":[[208,40,224,40],[224,40,224,64],[224,64,8,64],[8,64,8,88],[8,88,184,88],[184,88,184,112],[184,112,40,112]]}
     ]
   },
   {
@@ -2853,7 +2853,7 @@ var LLAVES_NUEVAS = [
     enemigos: [
       {"tipo":"h","spr":"kaboomKitty","x":12,"fila":13,"min":12,"max":21,"dir":1,"lento":true},
       {"tipo":"p","spr":"pelota","x":120,"y":88,"min":120,"max":160,"vel":2,"bote":20,"alto":8},
-      {"tipo":"p","spr":"pelota","x":96,"y":40,"min":96,"max":128,"vel":1,"bote":24,"alto":12,"despierta":"final"},
+      {"tipo":"p","spr":"bolaPinball","x":96,"y":40,"min":96,"max":128,"vel":1,"bote":24,"alto":12,"despierta":"final"},
       {"tipo":"v","spr":"pixelPhoenix","x":136,"y":36,"min":36,"max":76,"dy":2},
       {"tipo":"v","spr":"screenSpider","x":112,"y":8,"min":8,"max":48,"dy":2}
     ]
@@ -3036,7 +3036,7 @@ var LLAVES_NUEVAS = [
       {"tipo":"h","spr":"vectorViper","x":12,"fila":8,"min":12,"max":21,"dir":1},
       {"tipo":"v","spr":"controllerCrab","x":136,"y":16,"min":16,"max":56,"dy":1},
       {"tipo":"h","spr":"aspiradora","x":12,"fila":11,"min":12,"max":16,"dir":1,"lento":true,"come":"monedas","espera":48,"fase":0,"aviso":16},
-      {"tipo":"g","spr":"gigante","x":232,"y":80}
+      {"tipo":"g","spr":"ositoGancho","x":232,"y":80}
     ]
   },
   {
@@ -3242,7 +3242,7 @@ var LLAVES_NUEVAS = [
       "W                K             W",
       "WFFFFFFFFF   FFSSSSFFFFFF  WWWWW",
       "W@          F              Z  gW",
-      "W               Y  K       Z h W",
+      "W            Y     K       Z h W",
       "WFFFFFFFFFFFFFFFFFFFFFTTFFFFFFFW"
     ],
     sombras: [
@@ -3946,7 +3946,7 @@ var LLAVES_NUEVAS = [
       "W         BB           BB      W",
       "WFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFW"
     ],
-    jefe: {"tipo":"momia","vida":3,"fases":3,"an":16,"al":16,"x":144,"suelo":15,"min":96,"max":168,"venda":96,"vitrinas":[[104,15,96,168,[{"tipo":"h","spr":"hormigaCortadora","x":11,"fila":13,"min":9,"max":11,"dir":-1,"lento":true,"pisable":true},{"tipo":"h","spr":"hormigaCortadora","x":15,"fila":13,"min":15,"max":17,"dir":1,"lento":true,"pisable":true}]],[136,15,96,168,[{"tipo":"h","spr":"hormigaCortadora","x":15,"fila":13,"min":13,"max":15,"dir":-1,"lento":true,"pisable":true},{"tipo":"h","spr":"hormigaCortadora","x":19,"fila":13,"min":19,"max":21,"dir":1,"lento":true,"pisable":true}]],[8,12,8,48]]},
+    jefe: {"tipo":"momia","vida":3,"fases":3,"an":16,"al":16,"x":144,"suelo":15,"min":96,"max":168,"venda":96,"vitrinas":[[104,15,96,168,[{"tipo":"h","spr":"escarabajo","x":11,"fila":13,"min":9,"max":11,"dir":-1,"lento":true,"pisable":true},{"tipo":"h","spr":"escarabajo","x":15,"fila":13,"min":15,"max":17,"dir":1,"lento":true,"pisable":true}]],[136,15,96,168,[{"tipo":"h","spr":"escarabajo","x":15,"fila":13,"min":13,"max":15,"dir":-1,"lento":true,"pisable":true},{"tipo":"h","spr":"escarabajo","x":19,"fila":13,"min":19,"max":21,"dir":1,"lento":true,"pisable":true}]],[8,12,8,48]]},
     enemigos: [
       {"tipo":"dueno","spr":"fantasmaDueno","x":44,"y":76,"k":0},
       {"tipo":"perro","spr":"perroGuardian","x":216,"y":88,"min":200,"max":224}
@@ -5135,7 +5135,7 @@ var LLAVES_CALLES = [
     enemigos: [
       {"tipo":"h","spr":"gato","x":22,"fila":11,"min":21,"max":25,"dir":1,"lento":true},
       {"tipo":"v","spr":"gaviota","x":72,"y":16,"min":16,"max":48,"dy":1},
-      {"tipo":"manso","hace":"timido","spr":"turista","x":120,"y":88,"min":112,"max":136,"premio":"diamante","reverencia":true}
+      {"tipo":"manso","hace":"timido","spr":"estatua","x":120,"y":88,"min":112,"max":136,"premio":"diamante","reverencia":true}
     ]
   },
   {
@@ -5335,7 +5335,7 @@ var LLAVES_CALLES = [
       [15,13,20,14,1]
     ],
     enemigos: [
-      {"tipo":"v","spr":"gaviota","x":192,"y":8,"min":8,"max":40,"dy":1},
+      {"tipo":"v","spr":"aguila","x":192,"y":8,"min":8,"max":40,"dy":1},
       {"tipo":"p","spr":"cabra","x":64,"y":16,"min":64,"max":88,"vel":1,"bote":24,"alto":16}
     ]
   },
@@ -5872,7 +5872,7 @@ var LLAVES_CALLES = [
     ],
     enemigos: [
       {"tipo":"v","spr":"gaviota","x":160,"y":16,"min":16,"max":40,"dy":1},
-      {"tipo":"manso","hace":"empuja","spr":"pelota","x":16,"y":112,"min":16,"max":104,"vel":2,"dir":1,"fuerza":3,"voz":"fore","vozDist":64}
+      {"tipo":"manso","hace":"empuja","spr":"pelotaGolf","x":16,"y":112,"min":16,"max":104,"vel":2,"dir":1,"fuerza":3,"voz":"fore","vozDist":64}
     ]
   },
   {
@@ -6149,7 +6149,7 @@ var LLAVES_CALLES = [
     tienda: {"x":28,"y":13},
     enemigos: [
       {"tipo":"h","spr":"rata","x":13,"fila":13,"min":13,"max":16,"dir":1,"lento":true},
-      {"tipo":"manso","hace":"vigila","spr":"turista","x":80,"y":72,"min":56,"max":104,"luz":5,"espera":32}
+      {"tipo":"manso","hace":"vigila","spr":"guarda","x":80,"y":72,"min":56,"max":104,"luz":5,"espera":32}
     ]
   },
   {
@@ -6605,7 +6605,7 @@ var LLAVES_CALLES = [
     enemigos: [
       {"tipo":"v","spr":"murcielago","x":96,"y":56,"min":56,"max":80,"dy":1,"duerme":true},
       {"tipo":"h","spr":"rata","x":12,"fila":13,"min":12,"max":17,"dir":1,"lento":true},
-      {"tipo":"topo","spr":"rata","agujeros":[[40,80],[112,80],[160,80]],"asoma":24,"periodo":48}
+      {"tipo":"topo","spr":"topo","agujeros":[[40,80],[112,80],[160,80]],"asoma":24,"periodo":48}
     ]
   }
 ];
