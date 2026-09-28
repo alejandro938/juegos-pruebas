@@ -263,6 +263,10 @@ footer{flex-shrink:0;background:var(--soft);border-top:1px solid var(--line);pad
       <div class="wheel" id="wheel"></div>
       <button class="btn dark" id="spinBtn" style="padding:14px;font-size:15px"></button>
     </section>
+    <!-- El Seis de la Suerte: pantalla aparte -->
+    <a data-tabs="spin" href="seis.html" id="seisLink" style="display:flex;align-items:center;gap:12px;text-decoration:none;background:linear-gradient(135deg,#0b1a33,#1b3a6b);color:#fff;border-radius:14px;padding:14px 16px;border:1px solid #c9a45c">
+      <span style="font-size:34px">🎁</span><span style="flex:1"><b id="t_seisName" style="display:block;font-size:16px;color:#e8c26a"></b><small id="t_seisSub" style="color:#cbd5e1;font-size:12px"></small></span><span style="font-size:20px;color:#e8c26a">›</span>
+    </a>
     <!-- DADO: partida -->
     <section data-tabs="spin" id="gSetup" class="card" style="display:flex;flex-direction:column;gap:10px;border-top:3px solid var(--gold)">
       <span class="lbl" id="t_gameSetup" style="margin:0"></span>
@@ -374,7 +378,8 @@ function applyLang(){
   $('payer').placeholder=T('payerPh'); $('dDesc').placeholder=T('desc');
   $('dSave').textContent=T('save'); $('dShare').textContent=T('share'); $('dClear').textContent=T('clear');
   $('pName').placeholder=T('placeName'); $('pZone').placeholder=T('placeZone'); $('pUrl').placeholder=T('placeUrl'); $('pAdd').textContent=T('add');
-  $('newBill').textContent='↺ '+T('newBill');  $('spinBtn').textContent=T('spin'); $('dieBtn').textContent='🎲 '+T('dice'); $('noTipHint').textContent=T('noTipHint');
+  $('newBill').textContent='↺ '+T('newBill');
+  $('t_seisName').textContent=T('seisName'); $('t_seisSub').textContent=T('seisSub'); $('seisLink').href='seis.html?lang='+S.lang;  $('spinBtn').textContent=T('spin'); $('dieBtn').textContent='🎲 '+T('dice'); $('noTipHint').textContent=T('noTipHint');
   $('liveLink').textContent=T('liveLink')+' →'; $('liveLink').href=HOUSES_URL;
   sel.value=S.lang;
   renderAll();

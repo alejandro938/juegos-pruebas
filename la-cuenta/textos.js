@@ -253,5 +253,22 @@ cs:['Nová hra','Kdo hodí nejméně, platí','Vyhrává, kdo hodí nejvíc','Z�
 ro:['Joc nou','Cine dă cel mai puțin plătește','Câștigă cine dă cel mai mult','Cursă: primul la {x} puncte','Zaruri','Runde','Începe jocul','Runda','Runda {r} din {t}','Total','Plătește {n} 😅','Câștigă {n}! 🏆','{n} ajunge la {x}! 🏁','Lăsați acest joc neterminat și începeți altul?']
 };
 for(const l in EXTRA5) EXTRA5_KEYS.forEach((k,i)=>I18N[l][k]=EXTRA5[l][i]);
+// 28-sep (6): acceso a «El Seis de la Suerte» (pantalla aparte, seis.html)
+Object.entries({
+es:['El Seis de la Suerte','El juego de los regalos de Navidad y Nochevieja'],
+en:['Lucky Six','The Christmas and New Year’s Eve present game'],
+de:['Glückssechs','Das Geschenkespiel für Weihnachten und Silvester'],
+fr:['Le Six Porte-Bonheur','Le jeu des cadeaux de Noël et du Nouvel An'],
+it:['Il Sei Fortunato','Il gioco dei regali di Natale e Capodanno'],
+pt:['O Seis da Sorte','O jogo dos presentes de Natal e Passagem de Ano'],
+nl:['De Gelukszes','Het cadeauspel voor Kerst en Oudejaarsavond'],
+sv:['Lyckosexan','Presentspelet för jul och nyårsafton'],
+no:['Lykkeseksern','Gavespillet for jul og nyttårsaften'],
+da:['Lykkeseksen','Gavespillet til jul og nytårsaften'],
+fi:['Onnenkutonen','Joulun ja uudenvuodenaaton lahjapeli'],
+pl:['Szczęśliwa Szóstka','Gra w prezenty na Boże Narodzenie i Sylwestra'],
+cs:['Šťastná šestka','Hra o dárky na Vánoce a Silvestra'],
+ro:['Șase cu Noroc','Jocul cadourilor de Crăciun și Revelion']
+}).forEach(([l,[a,b]])=>{I18N[l].seisName=a;I18N[l].seisSub=b;});
 // «Tira Paula»: corto y directo (pedido de Alejandro)
 Object.entries({es:'Tira {n}',en:'{n} rolls',de:'{n} würfelt',fr:'{n} lance',it:'Tira {n}',pt:'Lança {n}',nl:'{n} gooit',sv:'{n} slår',no:'{n} kaster',da:'{n} slår',fi:'{n} heittää',pl:'Rzuca {n}',cs:'Hází {n}',ro:'Aruncă {n}'}).forEach(([l,v])=>I18N[l].diceTurn=v);
