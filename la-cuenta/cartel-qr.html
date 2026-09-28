@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cartel QR · La Cuenta</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,sans-serif;background:#e2e8f0;padding:20px;color:#0f172a}
+.ctl{max-width:720px;margin:0 auto 18px;background:#fff;border-radius:12px;padding:14px;display:grid;gap:8px;font-size:13px}
+.ctl input{width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:8px;font:inherit}
+.ctl button{padding:10px;border:0;border-radius:8px;background:#1e293b;color:#fff;font:700 14px Inter;cursor:pointer}
+.sheet{display:flex;gap:10mm;justify-content:center;flex-wrap:wrap}
+/* Tarjeta A6 (105 × 148 mm) para mesa */
+.card{width:105mm;height:148mm;background:#fff;border-radius:4mm;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 10px 30px rgba(0,0,0,.15)}
+.top{background:#1e293b;color:#fff;text-align:center;padding:7mm 5mm 5mm}
+.top small{display:block;color:#c9a45c;font-weight:700;letter-spacing:.3em;font-size:8pt}
+.top h1{font-size:22pt;font-weight:900;letter-spacing:.12em;margin-top:2mm}
+.mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3mm;padding:4mm}
+.q{font-family:'Playfair Display',serif;font-size:13pt;text-align:center;line-height:1.35}
+.q span{display:block;color:#64748b;font-size:10pt}
+.qr{padding:3mm;border:1.5px solid #e2e8f0;border-radius:3mm}
+.langs{font-size:7.5pt;color:#64748b;text-align:center}
+.bot{border-top:1px solid #e2e8f0;text-align:center;padding:3mm;font-size:8pt;color:#334155}
+.bot b{color:#1e293b;letter-spacing:.2em}
+.bot .rest{display:block;color:#c9a45c;font-weight:700;margin-bottom:1mm}
+@media print{body{background:#fff;padding:0}.ctl{display:none}.card{box-shadow:none;border:1px dashed #cbd5e1}@page{size:A4;margin:10mm}}
+</style>
+</head>
+<body>
+<div class="ctl">
+  <label>Dirección de La Cuenta (cuando esté publicada)<input id="url" value="https://www.stelamarerealestate.com/juegos/la-cuenta/"></label>
+  <label>Nombre del restaurante (opcional)<input id="rest" placeholder="Ej.: Chiringuito …"></label>
+  <button onclick="print()">Imprimir (salen 2 por hoja A4)</button>
+</div>
+<div class="sheet" id="sheet"></div>
+<script>
+function card(){return `<div class="card"><div class="top"><small>STELA MARE</small><h1>LA CUENTA</h1></div>
+<div class="mid"><p class="q">¿Dividís la cuenta?<span>Splitting the bill? · Rechnung teilen? · On partage ?</span></p>
+<div class="qr"></div><p class="langs">Escanea · Scan · Scannen · Scannez<br>14 idiomas · 14 languages · 14 Sprachen</p></div>
+<div class="bot"><span class="rest"></span><b>STELA MARE</b> REAL ESTATE · Nerja</div></div>`}
+function draw(){
+  const s=document.getElementById('sheet'); s.innerHTML=card()+card();
+  const u=document.getElementById('url').value, r=document.getElementById('rest').value;
+  s.querySelectorAll('.qr').forEach(el=>new QRCode(el,{text:u,width:150,height:150,colorDark:'#0f172a',correctLevel:QRCode.CorrectLevel.M}));
+  s.querySelectorAll('.rest').forEach(el=>{el.textContent=r?'♥ '+r:'';el.hidden=!r;});
+}
+document.getElementById('url').oninput=draw; document.getElementById('rest').oninput=draw; draw();
+</script>
+</body>
+</html>

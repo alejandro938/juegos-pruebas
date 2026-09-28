@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1e293b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icono.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icono.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>La Cuenta · Stela Mare</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0f172a;--dark:#1e293b;--mute:#64748b;--line:#cbd5e1;--soft:#e2e8f0;--bg:#f8fafc;--blue:#2563eb;--blue2:#1d4ed8;--sky:#eff6ff;--gold:#c9a45c;--red:#dc2626;--green:#16a34a}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Inter,system-ui,sans-serif;background:#cbd5e1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;color:var(--ink)}
+.phone{width:100%;max-width:390px;height:90vh;min-height:700px;max-height:860px;background:var(--bg);border-radius:2.5rem;border:12px solid var(--ink);box-shadow:0 25px 50px -12px rgba(0,0,0,.35);display:flex;flex-direction:column;overflow:hidden;position:relative}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:128px;height:22px;background:var(--ink);border-radius:0 0 16px 16px;z-index:5}
+@media (max-width:480px){body{padding:0;background:var(--bg)}.phone{max-width:none;height:100dvh;min-height:0;max-height:none;border:0;border-radius:0;box-shadow:none}.notch{display:none}}
+header{background:var(--dark);color:#fff;padding:28px 16px 8px;flex-shrink:0}
+.hrow{display:flex;align-items:center;gap:8px}
+header .brand{width:56px;font-size:9px;letter-spacing:.18em;color:var(--gold);font-weight:700;line-height:1.2}
+header h1{flex:1;text-align:center;font-size:15px;font-weight:800;letter-spacing:.2em;text-transform:uppercase}
+header select{width:56px;background:transparent;color:#cbd5e1;border:1px solid #475569;border-radius:6px;font:600 12px Inter;padding:3px 2px;cursor:pointer}
+header select option{color:#000}
+.prov{text-align:center;font-size:11px;font-style:italic;color:var(--gold);margin-top:6px;opacity:.9}
+nav{display:flex;background:var(--dark);border-top:1px solid #334155;flex-shrink:0}
+nav button{flex:1;background:none;border:0;color:#94a3b8;font:600 10px Inter;padding:7px 0 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;border-bottom:2px solid transparent}
+nav button b{font-size:16px;font-weight:400;line-height:1}
+nav button.on{color:#fff;border-bottom-color:var(--gold)}
+main{flex:1;overflow-y:auto;overflow-x:hidden;padding:16px 20px;display:flex;flex-direction:column;gap:18px}
+.lbl{display:block;color:var(--mute);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.money{position:relative;flex:1}
+.money span{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-weight:600;color:var(--blue);font-size:24px}
+.money input{width:100%;background:var(--sky);border:1px solid #bfdbfe;border-radius:12px;font:700 30px Inter;color:var(--ink);padding:12px 14px 12px 40px;outline:none}
+.money.sm span{font-size:18px}.money.sm input{font-size:20px;padding:8px 12px 8px 34px;border-radius:10px}
+.money input:focus,.txt:focus{box-shadow:0 0 0 2px var(--blue)}
+.txt{width:100%;border:1px solid var(--line);background:#fff;border-radius:10px;font:500 14px Inter;padding:9px 11px;outline:none;color:var(--ink)}
+input::-webkit-inner-spin-button,input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield}
+.cam{width:56px;align-self:stretch;border-radius:12px;border:1px solid #bfdbfe;background:#fff;color:var(--blue);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:600 9px Inter}
+.seg{display:flex;gap:8px}
+.seg button{flex:1;padding:9px 4px;border-radius:9px;font:600 13px Inter;background:#fff;color:#475569;border:1px solid #e2e8f0;cursor:pointer}
+.seg button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.hint{font-size:11px;color:var(--mute);margin-top:6px;line-height:1.4}
+.link{background:none;border:0;color:var(--blue);font:600 11px Inter;cursor:pointer;text-decoration:underline}
+.tog{background:var(--soft);padding:3px;border-radius:9px;display:flex;font:600 12px Inter}
+.tog button{border:0;background:transparent;color:var(--mute);padding:5px 11px;border-radius:7px;cursor:pointer;font:inherit}
+.tog button.on{background:#fff;color:var(--blue2);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.val{font-size:18px;font-weight:800;color:var(--blue2)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chips button{flex:1;min-width:44px;border:1px solid #e2e8f0;background:#fff;border-radius:20px;padding:5px 8px;font:600 12px Inter;color:#475569;cursor:pointer}
+.chips button.on{border-color:var(--blue);color:var(--blue2);background:var(--sky)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;background:transparent;margin:8px 0}
+input[type=range]:focus{outline:none}
+input[type=range]::-webkit-slider-runnable-track{height:6px;background:#94a3b8;border-radius:4px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;height:24px;width:24px;border-radius:50%;background:var(--blue);margin-top:-9px;box-shadow:0 2px 4px rgba(0,0,0,.25);cursor:pointer}
+input[type=range]::-moz-range-track{height:6px;background:#94a3b8;border-radius:4px}
+input[type=range]::-moz-range-thumb{height:24px;width:24px;border:0;border-radius:50%;background:var(--blue)}
+.stepper{display:flex;align-items:center;gap:10px}
+.stepper button{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:#fff;font:700 20px Inter;color:var(--dark);cursor:pointer}
+.stepper b{min-width:28px;text-align:center;font-size:20px;color:var(--blue2)}
+.check{display:flex;align-items:center;gap:8px;font-size:13px;color:#334155;cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--blue)}
+.add{display:flex;gap:6px}
+.add .txt{flex:1}
+.btn{border:0;border-radius:10px;background:var(--blue);color:#fff;font:700 13px Inter;padding:9px 14px;cursor:pointer;white-space:nowrap}
+.btn.dark{background:var(--dark)}.btn.ghost{background:#fff;color:var(--dark);border:1px solid var(--line)}
+.person{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:20px;padding:4px 6px 4px 11px;font:600 13px Inter;margin:0 6px 6px 0}
+.person label{display:flex;align-items:center;gap:3px;font:500 10px Inter;color:var(--mute);cursor:pointer}
+.person .x{border:0;background:var(--soft);width:20px;height:20px;border-radius:50%;cursor:pointer;color:var(--mute);font-size:13px;line-height:1}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:10px 12px}
+.item{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--soft);font-size:13px}
+.item:last-child{border:0}
+.item small{display:block;color:var(--mute);font-size:11px;margin-top:2px}
+.item .x{border:0;background:none;color:var(--mute);cursor:pointer;font-size:16px}
+.empty{color:var(--mute);font-size:12px;text-align:center;padding:8px}
+.owe{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--soft)}
+.owe:last-child{border:0}
+.neg{color:var(--red);font-weight:700}.pos{color:var(--green);font-weight:700}
+.wheel{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.wheel div{background:#fff;border:2px solid #e2e8f0;border-radius:12px;padding:14px 6px;text-align:center;font-weight:700;font-size:14px;transition:all .08s}
+.wheel div.hot{background:var(--blue);color:#fff;border-color:var(--blue);transform:scale(1.06)}
+.wheel div.win{background:var(--gold);color:#fff;border-color:var(--gold);transform:scale(1.1)}
+.bigmsg{text-align:center;font-size:22px;font-weight:900;color:var(--dark);min-height:30px}
+.place{display:flex;gap:10px;align-items:center}
+.place .ic{width:42px;height:42px;border-radius:10px;background:var(--sky);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.place h4{font-size:14px}.place p{font-size:11px;color:var(--mute);margin-top:2px}
+.tag{display:inline-block;background:var(--soft);color:#334155;font-size:10px;font-weight:600;border-radius:10px;padding:2px 7px;margin:4px 4px 0 0}
+/* dado 3D */
+.scene{width:110px;height:110px;perspective:600px;margin:14px 0}
+.cube{width:100%;height:100%;position:relative;transform-style:preserve-3d;transform:rotateX(-20deg) rotateY(25deg);transition:transform 1.6s cubic-bezier(.15,.7,.25,1)}
+.cube.bounce{animation:bounce 1.6s ease-out}
+@keyframes bounce{0%{translate:0 0}20%{translate:0 -38px}45%{translate:0 0}60%{translate:0 -12px}75%{translate:0 0}}
+.f{position:absolute;inset:0;background:linear-gradient(145deg,#fff,#e2e8f0);border:1px solid #cbd5e1;border-radius:18px;display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);padding:14px;box-shadow:inset 0 0 14px rgba(15,23,42,.12)}
+.f i{width:18px;height:18px;border-radius:50%;background:var(--dark);place-self:center;box-shadow:inset 0 2px 3px rgba(0,0,0,.5)}
+.f1 i{background:var(--red)}
+.f1{transform:translateZ(55px)}.f6{transform:rotateY(180deg) translateZ(55px)}
+.f2{transform:rotateY(90deg) translateZ(55px)}.f5{transform:rotateY(-90deg) translateZ(55px)}
+.f3{transform:rotateX(90deg) translateZ(55px)}.f4{transform:rotateX(-90deg) translateZ(55px)}
+.dl{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--soft);font-size:13px}
+.dl:last-child{border:0}
+.dl b{font-size:18px}
+.dl.hi b{color:var(--green)}.dl.lo b{color:var(--red)}
+.mv{display:flex;flex-direction:column;gap:2px}
+.mv button{border:0;background:var(--soft);color:var(--mute);width:22px;height:18px;border-radius:5px;font-size:9px;cursor:pointer}
+#placeFilter{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+#placeFilter button{flex:none;white-space:nowrap}
+.place a{margin-left:auto;font:600 12px Inter;color:var(--blue);text-decoration:none;white-space:nowrap}
+footer{flex-shrink:0;background:var(--soft);border-top:1px solid var(--line);padding:12px 20px 16px;display:flex;flex-direction:column;gap:9px}
+.lines{font-size:12px;color:#475569;display:flex;flex-direction:column;gap:5px}
+.lines .tot{color:var(--ink);font-weight:800;border-top:1px solid var(--line);padding-top:7px;margin-top:2px}
+.pp{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:11px 16px;display:flex;justify-content:space-between;align-items:center}
+.pp h3{font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}
+.pp small{display:block;font-size:10.5px;color:var(--mute);margin-top:3px;max-width:150px;line-height:1.3}
+.pp .big{font-size:36px;font-weight:900;color:var(--blue)}
+.pp .big i{font-style:normal;font-size:20px;margin-left:3px}
+.each{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:6px 14px;max-height:150px;overflow:auto}
+.each .owe b{color:var(--blue)}
+.btns{display:flex;gap:8px}
+.btns a,.btns button{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:11px 6px;border-radius:12px;font:600 13px Inter;text-decoration:none;cursor:pointer;border:0}
+.share{background:#fff;color:var(--dark);border:1px solid var(--line)!important}
+.arcade{background:var(--dark);color:#fff}
+.live{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fff;border:1px solid #f1e3c4;border-left:4px solid var(--gold);border-radius:10px;padding:8px 12px;font-size:12px;color:#334155}
+.live a{color:var(--dark);font-weight:700;white-space:nowrap}
+.toast{position:absolute;left:50%;bottom:130px;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:12px;padding:8px 14px;border-radius:20px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:9;max-width:85%;text-align:center}
+.toast.show{opacity:1}
+.sheet{position:absolute;inset:0;background:rgba(15,23,42,.5);display:flex;align-items:flex-end;z-index:8}
+.sheet>div{background:var(--bg);width:100%;max-height:80%;overflow:auto;border-radius:20px 20px 0 0;padding:18px 20px}
+.sheet h2{font-size:16px;margin-bottom:10px}
+.tiprow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--soft);font-size:13px}
+.tiprow small{color:var(--mute);font-size:10.5px;display:block}
+.tiprow.me{background:var(--sky);margin:0 -8px;padding:7px 8px;border-radius:8px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <header>
+    <div class="hrow">
+      <div class="brand">STELA<br>MARE</div>
+      <h1 id="t_title">LA CUENTA</h1>
+      <select id="lang" aria-label="Idioma"></select>
+    </div>
+    <p class="prov" id="prov"></p>
+  </header>
+  <nav id="tabs">
+    <button data-t="eq" class="on"><b>÷</b><span id="t_tabEq"></span></button>
+    <button data-t="items"><b>🍽</b><span id="t_tabItems"></span></button>
+    <button data-t="debts"><b>⇄</b><span id="t_tabDebts"></span></button>
+    <button data-t="spin"><b>🎲</b><span id="t_tabSpin"></span></button>
+    <button data-t="eat"><b>📍</b><span id="t_tabEat"></span></button>
+  </nav>
+
+  <main>
+    <div data-tabs="eq items" style="display:flex;justify-content:flex-end;margin-bottom:-10px"><button class="link" id="newBill"></button></div>
+    <!-- IGUAL: total + foto -->
+    <section data-tabs="eq">
+      <label class="lbl" id="t_total" for="total"></label>
+      <div class="row">
+        <div class="money"><span>€</span><input type="number" id="total" inputmode="decimal" placeholder="0,00" min="0" step="0.01"></div>
+        <button class="cam" id="camBtn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg><span id="t_scan"></span></button>
+        <input type="file" id="camFile" accept="image/*" capture="environment" hidden>
+      </div>
+    </section>
+
+    <!-- PERSONAS DE LA MESA (compartido) -->
+    <section data-tabs="items debts spin">
+      <span class="lbl" id="t_names"></span>
+      <div id="nameList"></div>
+      <div class="add"><input class="txt" id="nameIn" maxlength="20"><button class="btn" id="nameAdd"></button></div>
+      <p class="hint" id="noTipHint" data-tabs="items"></p>
+    </section>
+
+    <!-- POR PLATOS: lo de cada comensal -->
+    <section data-tabs="items">
+      <span class="lbl" id="t_perDiner"></span>
+      <div id="diners" style="display:flex;flex-direction:column;gap:8px"></div>
+    </section>
+
+    <!-- POR PLATOS: lo compartido -->
+    <section data-tabs="items">
+      <span class="lbl" id="t_shared"></span>
+      <div class="card" id="itemList"></div>
+      <div class="add" style="margin-top:8px"><input class="txt" id="itemName" maxlength="40"><div class="money sm" style="max-width:110px;flex:none"><span>€</span><input type="number" id="itemPrice" inputmode="decimal" placeholder="0" min="0" step="0.1"></div></div>
+      <div class="chips" id="itemWho"></div>
+      <button class="btn" id="itemAdd" style="width:100%;margin-top:8px"></button>
+    </section>
+
+    <!-- IVA y PROPINA (igual y por platos) -->
+    <section data-tabs="eq items">
+      <span class="lbl" id="t_vat"></span>
+      <div class="seg" id="vat">
+        <button data-v="0" class="on" id="t_vatIncl"></button>
+        <button data-v="10">+10%</button>
+        <button data-v="21">+21%</button>
+      </div>
+      <p class="hint" id="t_vatHint"></p>
+    </section>
+    <section data-tabs="eq items">
+      <div class="row" style="margin-bottom:8px">
+        <span class="lbl" id="t_tip" style="margin:0"></span>
+        <div class="tog"><button id="modePct" class="on">%</button><button id="modeMan">€</button></div>
+      </div>
+      <div id="pctBox">
+        <div class="row"><button class="link" id="t_tipsGuide"></button><span class="val" id="pctVal">5%</span></div>
+        <input type="range" id="pct" min="0" max="25" value="5" step="1">
+        <div class="chips" id="chips"><button data-p="0">0%</button><button data-p="5" class="on">5%</button><button data-p="10">10%</button><button data-p="15">15%</button></div>
+      </div>
+      <div id="manBox" hidden><div class="money sm"><span>€</span><input type="number" id="man" inputmode="decimal" placeholder="0,00" min="0" step="0.5"></div></div>
+    </section>
+
+    <!-- IGUAL: personas, redondeo -->
+    <section data-tabs="eq" class="row">
+      <span class="lbl" id="t_people" style="margin:0"></span>
+      <div class="stepper"><button id="minus" aria-label="-">−</button><b id="people">2</b><button id="plus" aria-label="+">+</button></div>
+    </section>
+    <label class="check" data-tabs="eq items"><input type="checkbox" id="round"><span id="t_round"></span></label>
+    <section data-tabs="eq items">
+      <label class="lbl" id="t_payer" for="payer"></label>
+      <input class="txt" id="payer" maxlength="30">
+    </section>
+
+    <!-- DEUDAS -->
+    <section data-tabs="debts">
+      <span class="lbl" id="t_newDebt"></span>
+      <div class="card" style="display:flex;flex-direction:column;gap:8px">
+        <div class="row"><span style="font-size:13px" id="t_paid"></span><select class="txt" id="dPayer" style="max-width:60%"></select></div>
+        <div class="row"><div class="money sm"><span>€</span><input type="number" id="dAmount" inputmode="decimal" placeholder="0,00" min="0" step="0.01"></div></div>
+        <input class="txt" id="dDesc" maxlength="40">
+        <span class="hint" id="t_among" style="margin:0"></span>
+        <div class="chips" id="dWho" style="margin:0"></div>
+        <button class="btn" id="dSave"></button>
+      </div>
+    </section>
+    <section data-tabs="debts">
+      <span class="lbl" id="t_balances"></span>
+      <div class="card" id="dBal"></div>
+      <div class="btns" style="margin-top:8px"><button class="btn ghost" id="dShare"></button><button class="btn ghost" id="dClear" style="color:var(--red)"></button></div>
+    </section>
+    <section data-tabs="debts">
+      <span class="lbl" id="t_history"></span>
+      <div class="card" id="dList"></div>
+    </section>
+
+    <!-- RULETA -->
+    <section data-tabs="spin" style="display:flex;flex-direction:column;gap:14px">
+      <div class="bigmsg" id="spinMsg"></div>
+      <div class="wheel" id="wheel"></div>
+      <button class="btn dark" id="spinBtn" style="padding:14px;font-size:15px"></button>
+    </section>
+    <section data-tabs="spin" style="display:flex;flex-direction:column;align-items:center;gap:10px;border-top:1px solid var(--line);padding-top:16px">
+      <div class="bigmsg" id="dieTurn" style="font-size:15px;color:var(--blue2)"></div>
+      <div class="scene"><div class="cube" id="cube">
+        <div class="f f1"></div><div class="f f2"></div><div class="f f3"></div><div class="f f4"></div><div class="f f5"></div><div class="f f6"></div>
+      </div></div>
+      <div class="bigmsg" id="dieMsg" style="font-size:16px" aria-live="polite"></div>
+      <button class="btn" id="dieBtn" style="padding:14px;font-size:15px;width:100%"></button>
+    </section>
+    <section data-tabs="spin">
+      <div class="row"><span class="lbl" id="t_diceLog" style="margin:0"></span><button class="link" id="dieNew"></button></div>
+      <div class="card" id="dieLog" style="margin-top:8px"></div>
+    </section>
+
+    <!-- DÓNDE COMER -->
+    <section data-tabs="eat">
+      <span class="lbl" id="t_eatTitle"></span>
+      <div class="chips" id="placeFilter" style="margin:0 0 10px"></div>
+      <div style="display:flex;flex-direction:column;gap:8px" id="places"></div>
+      <p class="hint" id="t_eatNote"></p>
+    </section>
+    <section data-tabs="eat">
+      <span class="lbl" id="t_addPlace"></span>
+      <div class="card" style="display:flex;flex-direction:column;gap:8px">
+        <input class="txt" id="pName" maxlength="40">
+        <input class="txt" id="pZone" maxlength="40">
+        <input class="txt" id="pUrl" type="url" inputmode="url" maxlength="300">
+        <select class="txt" id="pTag"></select>
+        <button class="btn" id="pAdd"></button>
+      </div>
+    </section>
+  </main>
+
+  <footer id="foot">
+    <div class="lines">
+      <div class="row"><span id="t_sub"></span><span id="rSub">0,00 €</span></div>
+      <div class="row"><span id="t_tipTot"></span><span id="rTip">0,00 €</span></div>
+      <div class="row tot"><span id="t_pay"></span><span id="rTot">0,00 €</span></div>
+    </div>
+    <div class="pp" id="ppBox">
+      <div><h3 id="t_per"></h3><small id="rNote"></small></div>
+      <div class="big"><span id="rPer">0,00</span><i>€</i></div>
+    </div>
+    <div class="each" id="eachBox" hidden></div>
+    <div class="live" id="live" hidden><span id="t_live"></span><a id="liveLink" target="_blank" rel="noopener"></a></div>
+    <div class="btns">
+      <button class="share" id="share"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg><span id="t_share"></span></button>
+      <a class="arcade" href="https://www.stelamarerealestate.com/juegos/" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4M8 10v4M15 13h.01M18 11h.01"/></svg>Arcade</a>
+    </div>
+  </footer>
+
+  <div class="sheet" id="tipSheet" hidden><div><div class="row"><h2 id="t_tipsGuide2"></h2><button class="btn ghost" id="tipClose"></button></div><div id="tipTable"></div></div></div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script src="textos.js"></script>
+<script>
+// ===== Restaurantes de Stela Mare: EDITAR AQUÍ (nombre, zona, etiquetas: paella fish tapas views fine) =====
+const PLACES=[
+  {n:'Paco el Churretero',z:'Nerja',t:['meat']},
+  {n:'Puerta del Mar',z:'Nerja',t:['fish']},
+  {n:'Botanic',z:'Nerja',t:['fusion']},
+  {n:'Pata Negra 67',z:'Nerja',t:['meat']},
+  {n:'Café Bar Las Cuatro Esquinas',z:'Nerja',t:['churros']},
+  {n:'Café Ibérico',z:'Nerja',t:['breakfast']},
+  {n:'Restaurante Jamaica',z:'Nerja',t:['breakfast','varied','dinner']},
+  {n:'Restaurante-Cafetería Mirasol',z:'Nerja',t:['breakfast','varied','dinner']},
+  {n:'ALBI Urban Café',z:'Balcón de Europa',t:['ice']},
+  {n:'Heladería La Ibense',z:'Nerja',t:['ice']}
+];
+const TAGS=['meat','fish','fusion','breakfast','churros','ice','varied','dinner','tapas','paella','views','fine'];
+const TAG_IC={meat:'🥩',fish:'🐟',fusion:'🥢',breakfast:'☕',churros:'🥐',ice:'🍨',varied:'🍽️',dinner:'🌙',tapas:'🫒',paella:'🥘',views:'🌊',fine:'🍷'};
+const HOUSES_URL='https://www.stelamarerealestate.com/propiedades';
+
+const $=id=>document.getElementById(id);
+const store={get(k){try{return JSON.parse(localStorage.getItem('lacuenta_'+k))}catch(e){return null}},set(k,v){try{localStorage.setItem('lacuenta_'+k,JSON.stringify(v))}catch(e){}}};
+const S={tab:'eq',vat:0,mode:'pct',people:2,lang:'es',
+  names:store.get('names')||[],noTip:store.get('noTip')||[],items:[],itemWho:[],
+  debts:store.get('debts')||[],dWho:[]};
+const T=k=>(I18N[S.lang]&&I18N[S.lang][k])||I18N.en[k]||k;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function fmt(n){return new Intl.NumberFormat(T('loc'),{minimumFractionDigits:2,maximumFractionDigits:2}).format(n)}
+function eur(n){return fmt(n)+' €'}
+function num(v){const n=parseFloat(String(v).replace(',','.'));return isFinite(n)&&n>0?n:0}
+function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(toast.h);toast.h=setTimeout(()=>el.classList.remove('show'),2000);}
+
+// ---------- idioma ----------
+function pickLang(){
+  const q=new URLSearchParams(location.search).get('lang');
+  for(const c of [q,store.get('lang'),...(navigator.languages||[navigator.language])]){
+    if(!c) continue; let k=c.slice(0,2).toLowerCase(); if(k==='nb'||k==='nn') k='no'; if(I18N[k]) return k;
+  }
+  return 'es';
+}
+const sel=$('lang');
+for(const k in I18N){const o=document.createElement('option');o.value=k;o.textContent=k.toUpperCase();o.title=I18N[k].n;sel.appendChild(o);}
+const KEYS=['title','tabEq','tabItems','tabDebts','tabSpin','tabEat','total','scan','names','perDiner','shared','addPlace','vat','vatIncl','vatHint','tip','tipsGuide','people','round','payer','newDebt','paid','among','balances','history','eatTitle','eatNote','sub','tipTot','pay','per','share','live'];
+function applyLang(){
+  document.documentElement.lang=S.lang;
+  document.title=T('title')+' · Stela Mare';
+  KEYS.forEach(k=>{const el=$('t_'+k);if(el) el.textContent=T(k);});
+  $('t_tipsGuide2').textContent=T('tipsGuide'); $('tipClose').textContent=T('close');
+  $('prov').textContent='«'+T('prov')+'»';
+  $('nameIn').placeholder=T('namePh'); $('nameAdd').textContent=T('add');
+  $('itemName').placeholder=T('itemPh'); $('itemAdd').textContent=T('addItem');
+  $('payer').placeholder=T('payerPh'); $('dDesc').placeholder=T('desc');
+  $('dSave').textContent=T('save'); $('dShare').textContent=T('share'); $('dClear').textContent=T('clear');
+  $('pName').placeholder=T('placeName'); $('pZone').placeholder=T('placeZone'); $('pUrl').placeholder=T('placeUrl'); $('pAdd').textContent=T('add');
+  $('newBill').textContent='↺ '+T('newBill');
+  $('t_diceLog').textContent=T('diceLog'); $('dieNew').textContent='↺ '+T('diceNew');
+  $('spinBtn').textContent=T('spin'); $('dieBtn').textContent='🎲 '+T('dice'); $('noTipHint').textContent=T('noTipHint');
+  $('liveLink').textContent=T('liveLink')+' →'; $('liveLink').href=HOUSES_URL;
+  sel.value=S.lang;
+  renderAll();
+}
+
+// ---------- pestañas ----------
+function showTab(t){
+  S.tab=t;
+  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+  document.querySelectorAll('[data-tabs]').forEach(el=>el.hidden=!el.dataset.tabs.split(' ').includes(t));
+  $('foot').hidden=!(t==='eq'||t==='items');
+  $('ppBox').hidden=t!=='eq'; $('eachBox').hidden=t!=='items';
+  $('spinMsg').textContent=T('spinWho');
+  renderAll();
+}
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>showTab(b.dataset.t));
+
+// ---------- personas ----------
+function saveNames(){store.set('names',S.names);store.set('noTip',S.noTip);}
+function renderNames(){
+  $('nameList').innerHTML=S.names.map((n,i)=>`<span class="person">${esc(n)}${S.tab==='items'?`<label><input type="checkbox" data-nt="${i}" ${S.noTip.includes(n)?'checked':''}>${esc(T('noTip'))}</label>`:''}<button class="x" data-rm="${i}" aria-label="x">×</button></span>`).join('')||`<p class="empty">${esc(T('needNames'))}</p>`;
+  $('nameList').querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{const n=S.names[+b.dataset.rm];S.names.splice(+b.dataset.rm,1);S.noTip=S.noTip.filter(x=>x!==n);saveNames();renderAll();});
+  $('nameList').querySelectorAll('[data-nt]').forEach(c=>c.onchange=()=>{const n=S.names[+c.dataset.nt];S.noTip=c.checked?[...S.noTip,n]:S.noTip.filter(x=>x!==n);saveNames();calc();});
+}
+function addName(){const v=$('nameIn').value.trim();if(!v||S.names.includes(v))return;S.names.push(v);$('nameIn').value='';saveNames();renderAll();}
+$('nameAdd').onclick=addName; $('nameIn').onkeydown=e=>{if(e.key==='Enter')addName();};
+
+// chips de "entre quién" (vacío = todos)
+function whoChips(box,arr,cb){
+  box.innerHTML=`<button data-w="*" class="${arr.length?'':'on'}">${esc(T('everyone'))}</button>`+S.names.map(n=>`<button data-w="${esc(n)}" class="${arr.includes(n)?'on':''}">${esc(n)}</button>`).join('');
+  box.querySelectorAll('button').forEach(b=>b.onclick=()=>{const w=b.dataset.w;
+    if(w==='*') arr.length=0; else { const i=arr.indexOf(w); i<0?arr.push(w):arr.splice(i,1); if(arr.length===S.names.length) arr.length=0; }
+    cb();});
+}
+
+// ---------- por platos ----------
+function renderItems(){
+  const own=(it,n)=>it.who.length===1&&it.who[0]===n;
+  $('diners').innerHTML=S.names.length?S.names.map((n,k)=>{const mine=S.items.map((it,i)=>[it,i]).filter(([it])=>own(it,n));
+    const sum=mine.reduce((a,[it])=>a+it.price,0);
+    return `<div class="card"><div class="row" style="margin-bottom:4px"><b>${esc(n)}</b><span style="color:var(--mute);font-size:12px">${eur(sum)}</span></div>`+
+      mine.map(([it,i])=>`<div class="item"><div>${esc(it.name||'—')}</div><div style="display:flex;gap:6px;align-items:center"><b>${eur(it.price)}</b><button class="x" data-ri="${i}">×</button></div></div>`).join('')+
+      `<div class="add" style="margin-top:6px"><input class="txt" data-dn="${k}" placeholder="${esc(T('itemPh'))}" maxlength="40"><div class="money sm" style="max-width:96px;flex:none"><span>€</span><input type="number" data-dp="${k}" inputmode="decimal" placeholder="0" min="0" step="0.1"></div><button class="btn" data-da="${k}">+</button></div></div>`;}).join(''):`<p class="empty">${esc(T('needNames'))}</p>`;
+  $('diners').querySelectorAll('[data-da]').forEach(b=>{const k=b.dataset.da,nm=$('diners').querySelector(`[data-dn="${k}"]`),pr=$('diners').querySelector(`[data-dp="${k}"]`);
+    const go=()=>{const price=num(pr.value); if(!price){pr.focus();return;} S.items.push({name:nm.value.trim(),price,who:[S.names[+k]]}); renderAll(); const f=$('diners').querySelector(`[data-dn="${k}"]`); if(f) f.focus();};
+    b.onclick=go; nm.onkeydown=pr.onkeydown=e=>{if(e.key==='Enter'){ if(e.target===nm) pr.focus(); else go(); }};});
+  $('diners').querySelectorAll('[data-ri]').forEach(b=>b.onclick=()=>{S.items.splice(+b.dataset.ri,1);renderAll();});
+  $('itemList').innerHTML=S.items.map((it,i)=>[it,i]).filter(([it])=>!(it.who.length===1)).map(([it,i])=>`<div class="item"><div>${esc(it.name||'—')}<small>${it.who.length?it.who.map(esc).join(', '):esc(T('everyone'))}</small></div><div style="display:flex;gap:6px;align-items:center"><b>${eur(it.price)}</b><button class="x" data-ri="${i}">×</button></div></div>`).join('')||`<p class="empty">${esc(T('noItems'))}</p>`;
+  $('itemList').querySelectorAll('[data-ri]').forEach(b=>b.onclick=()=>{S.items.splice(+b.dataset.ri,1);renderAll();});
+  whoChips($('itemWho'),S.itemWho,renderItems);
+}
+$('itemAdd').onclick=()=>{
+  if(!S.names.length){toast(T('needNames'));return;}
+  const price=num($('itemPrice').value); if(!price) return;
+  S.items.push({name:$('itemName').value.trim(),price,who:[...S.itemWho]});
+  $('itemName').value='';$('itemPrice').value='';S.itemWho.length=0;renderAll();$('itemName').focus();
+};
+
+// ---------- cálculo ----------
+let last={};
+function tipPct(){return +$('pct').value/100}
+function calc(){
+  const k=1+S.vat/100, round=$('round').checked;
+  let sub,tip,tot,note='';
+  if(S.tab==='items'){
+    const share={}; S.names.forEach(n=>share[n]=0);
+    S.items.forEach(it=>{const w=it.who.length?it.who.filter(n=>n in share):S.names; if(!w.length)return; w.forEach(n=>share[n]+=it.price*k/w.length);});
+    sub=Object.values(share).reduce((a,b)=>a+b,0);
+    const payers=S.names.filter(n=>!S.noTip.includes(n)), base=payers.reduce((a,n)=>a+share[n],0);
+    tip=S.mode==='pct'?base*tipPct():num($('man').value);
+    const each=S.names.map(n=>{let v=share[n]; if(payers.includes(n)&&base>0) v+=tip*share[n]/base; return [n,round&&v>0?Math.ceil(v-1e-9):v];});
+    tot=sub+tip;
+    $('eachBox').innerHTML=each.length?each.map(([n,v])=>`<div class="owe"><span>${esc(n)}${S.noTip.includes(n)?` <small style="color:var(--mute)">(${esc(T('noTip'))})</small>`:''}</span><b>${eur(v)}</b></div>`).join(''):`<p class="empty">${esc(T('needNames'))}</p>`;
+    last={tot,each};
+  }else{
+    const base=num($('total').value); sub=base*k;
+    tip=S.mode==='pct'?sub*tipPct():num($('man').value);
+    tot=sub+tip; let per=tot/S.people;
+    if(round&&tot>0){const up=Math.ceil(per-1e-9),extra=up*S.people-tot; if(extra>0.004) note=T('extra').replace('{x}',fmt(extra)); per=up;}
+    $('rPer').textContent=fmt(per); $('rNote').textContent=note;
+    last={tot,per};
+  }
+  $('rSub').textContent=eur(sub); $('rTip').textContent=eur(tip); $('rTot').textContent=eur(tot);
+  $('pctVal').textContent=$('pct').value+'%'; $('people').textContent=S.people;
+  saveBill();
+  document.querySelectorAll('#chips button').forEach(b=>b.classList.toggle('on',b.dataset.p===$('pct').value));
+}
+$('total').oninput=calc;$('man').oninput=calc;$('pct').oninput=calc;$('round').onchange=calc;
+document.querySelectorAll('#vat button').forEach(b=>b.onclick=()=>{S.vat=+b.dataset.v;document.querySelectorAll('#vat button').forEach(x=>x.classList.toggle('on',x===b));calc();});
+document.querySelectorAll('#chips button').forEach(b=>b.onclick=()=>{$('pct').value=b.dataset.p;calc();});
+function setMode(m){S.mode=m;$('modePct').classList.toggle('on',m==='pct');$('modeMan').classList.toggle('on',m==='man');$('pctBox').hidden=m!=='pct';$('manBox').hidden=m!=='man';calc();}
+$('modePct').onclick=()=>setMode('pct');$('modeMan').onclick=()=>setMode('man');
+$('minus').onclick=()=>{if(S.people>1){S.people--;calc();}};
+$('plus').onclick=()=>{if(S.people<30){S.people++;calc();}};
+
+// ---------- compartir (+ Bizum) ----------
+async function shareText(text){
+  try{ if(navigator.share){await navigator.share({text});} else {await navigator.clipboard.writeText(text);toast(T('copied'));} }catch(e){}
+  $('live').hidden=false;
+}
+$('share').onclick=()=>{
+  const payer=$('payer').value.trim(); let text;
+  if(S.tab==='items'){
+    text=T('title')+': '+eur(last.tot)+'\n'+(last.each||[]).map(([n,v])=>'• '+n+': '+eur(v)).join('\n');
+    if(payer) text+='\n'+T('bizum').replace('{pp}','').replace('{n}',payer).replace(/\s+/g,' ');
+  }else{
+    text=T('msg').replace('{t}',eur(last.tot)).replace('{p}',S.people).replace('{pp}',eur(last.per));
+    if(payer) text+='\n'+T('bizum').replace('{pp}',eur(last.per)).replace('{n}',payer);
+  }
+  shareText(text+'\n— Stela Mare');
+};
+
+// ---------- deudas ----------
+function renderDebts(){
+  $('dPayer').innerHTML=S.names.map(n=>`<option>${esc(n)}</option>`).join('');
+  whoChips($('dWho'),S.dWho,renderDebts);
+  const bal={}; S.debts.forEach(d=>{bal[d.p]=(bal[d.p]||0)+d.a; const w=d.w.length?d.w:[d.p]; w.forEach(n=>bal[n]=(bal[n]||0)-d.a/w.length);});
+  // quién paga a quién, con el mínimo de pagos
+  const cr=[],db=[]; for(const n in bal){const v=Math.round(bal[n]*100)/100; if(v>0)cr.push([n,v]); else if(v<0)db.push([n,-v]);}
+  cr.sort((a,b)=>b[1]-a[1]); db.sort((a,b)=>b[1]-a[1]);
+  const tr=[]; let i=0,j=0; while(i<db.length&&j<cr.length){const x=Math.min(db[i][1],cr[j][1]); tr.push([db[i][0],cr[j][0],x]); db[i][1]-=x; cr[j][1]-=x; if(db[i][1]<0.005)i++; if(cr[j][1]<0.005)j++;}
+  last.tr=tr;
+  $('dBal').innerHTML=tr.length?tr.map(([a,b,x])=>`<div class="owe"><span>${esc(T('owes').replace('{a}',a).replace('{b}',b).replace('{x}',''))}</span><span class="neg">${eur(x)}</span></div>`).join(''):`<p class="empty">✓ ${esc(T('settled'))}</p>`;
+  $('dList').innerHTML=S.debts.map((d,k)=>`<div class="item"><div>${esc(d.d||'—')}<small>${esc(d.p)} → ${d.w.length?d.w.map(esc).join(', '):esc(T('everyone'))} · ${new Date(d.t).toLocaleDateString(T('loc'))}</small></div><div style="display:flex;gap:6px;align-items:center"><b>${eur(d.a)}</b><button class="x" data-rd="${k}">×</button></div></div>`).join('')||`<p class="empty">—</p>`;
+  $('dList').querySelectorAll('[data-rd]').forEach(b=>b.onclick=()=>{S.debts.splice(+b.dataset.rd,1);store.set('debts',S.debts);renderDebts();});
+}
+$('dSave').onclick=()=>{
+  if(S.names.length<2){toast(T('needNames'));return;}
+  const a=num($('dAmount').value); if(!a) return;
+  S.debts.unshift({p:$('dPayer').value,a,w:S.dWho.length?[...S.dWho]:[...S.names],d:$('dDesc').value.trim(),t:Date.now()});
+  store.set('debts',S.debts); $('dAmount').value='';$('dDesc').value='';S.dWho.length=0; renderDebts();
+};
+$('dClear').onclick=()=>{ if(S.debts.length&&confirm(T('confirmClear'))){S.debts=[];store.set('debts',S.debts);renderDebts();} };
+$('dShare').onclick=()=>{ const tr=last.tr||[]; shareText(T('balances')+':\n'+(tr.length?tr.map(([a,b,x])=>'• '+T('owes').replace('{a}',a).replace('{b}',b).replace('{x}',eur(x))).join('\n'):T('settled'))+'\n— Stela Mare'); };
+
+// ---------- ruleta ----------
+function renderWheel(){ $('wheel').innerHTML=S.names.map(n=>`<div>${esc(n)}</div>`).join('')||`<p class="empty" style="grid-column:1/-1">${esc(T('needNames'))}</p>`; }
+$('spinBtn').onclick=()=>{
+  const cells=[...$('wheel').children].filter(c=>c.tagName==='DIV'); if(cells.length<2){toast(T('needNames'));return;}
+  $('spinBtn').disabled=true; const win=Math.floor(Math.random()*cells.length);
+  const steps=cells.length*3+win+Math.floor(Math.random()*3)*0; let s=0,delay=50;
+  cells.forEach(c=>c.className='');
+  (function tick(){ cells.forEach(c=>c.className=''); const cur=s%cells.length; cells[cur].className='hot';
+    if(s>=steps){cells[cur].className='win';$('spinMsg').textContent=T('pays').replace('{n}',S.names[cur]);$('spinBtn').disabled=false;if(navigator.vibrate)navigator.vibrate(120);return;}
+    s++; delay*=1.09; setTimeout(tick,delay); })();
+};
+
+// ---------- dado ----------
+// puntos de cada cara en una rejilla 3×3 (1..9)
+const PIPS={1:[5],2:[1,9],3:[1,5,9],4:[1,3,7,9],5:[1,3,5,7,9],6:[1,3,4,6,7,9]};
+for(let v=1;v<=6;v++){ const f=document.querySelector('.f'+v); f.innerHTML=PIPS[v].map(p=>`<i style="grid-area:${Math.ceil(p/3)}/${(p-1)%3+1}"></i>`).join(''); }
+// giro que deja cada cara de frente
+const FACE_ROT={1:[0,0],2:[0,-90],3:[-90,0],4:[90,0],5:[0,90],6:[0,180]};
+let rx=-20, ry=25;
+S.dice=store.get('dice')||[];
+S.dieWho=null; // si se toca un nombre, tira ese
+// por turnos: le toca al que menos veces ha tirado (vuelve a empezar la vuelta sin parar)
+function nextRoller(){ if(!S.names.length) return null; if(S.dieWho&&S.names.includes(S.dieWho)) return S.dieWho;
+  const c=n=>S.dice.filter(d=>d.n===n).length; return S.names.reduce((a,n)=>c(n)<c(a)?n:a,S.names[0]); }
+function renderDice(){
+  const who=nextRoller();
+  $('dieTurn').innerHTML=S.names.length?`${esc(T('diceTurn').replace('{n}',who))}<div class="chips" style="justify-content:center">${S.names.map(n=>`<button data-dw="${esc(n)}" class="${n===who?'on':''}">${esc(n)}</button>`).join('')}</div>`:'';
+  $('dieTurn').querySelectorAll('[data-dw]').forEach(b=>b.onclick=()=>{S.dieWho=b.dataset.dw;renderDice();});
+  // el más alto / bajo según la última tirada de cada uno
+  const lastIdx={}; S.dice.forEach((d,k)=>{lastIdx[d.n||('#'+k)]=k;});
+  const latest=Object.values(lastIdx).map(k=>S.dice[k].v), hi=Math.max(...latest), lo=Math.min(...latest), many=latest.length>1&&hi!==lo;
+  const isLast=k=>Object.values(lastIdx).includes(k);
+  $('dieLog').innerHTML=S.dice.length?S.dice.map((d,k)=>[d,k]).reverse().map(([d,k])=>{const H=many&&isLast(k)&&d.v===hi,L=many&&isLast(k)&&d.v===lo;
+    return `<div class="dl ${H?'hi':''} ${L?'lo':''}"><span><small style="color:var(--mute)">${k+1}.</small> ${esc(d.n||T('diceRoll').replace('{k}',k+1))}${H?' · '+esc(T('diceHigh')):''}${L?' · '+esc(T('diceLow')):''}</span><b>${d.v}</b></div>`;}).join(''):`<p class="empty">—</p>`;
+}
+$('dieBtn').onclick=()=>{
+  const cube=$('cube'); $('dieBtn').disabled=true; $('dieMsg').textContent='';
+  const who=nextRoller(), res=1+Math.floor(Math.random()*6), [fx,fy]=FACE_ROT[res];
+  // varias vueltas completas y termina en la cara que ha salido
+  const turns=2+Math.floor(Math.random()*2);
+  rx=Math.ceil(rx/360)*360+360*turns+fx; ry=Math.ceil(ry/360)*360+360*turns+fy;
+  cube.classList.remove('bounce'); void cube.offsetWidth; cube.classList.add('bounce');
+  cube.style.transform=`rotateX(${rx}deg) rotateY(${ry}deg)`;
+  setTimeout(()=>{
+    S.dice.push({n:who,v:res}); store.set('dice',S.dice); S.dieWho=null;
+    $('dieMsg').textContent=(who?who+': ':'')+T('dieRes').replace('{n}',res);
+    $('dieBtn').disabled=false; renderDice(); if(navigator.vibrate)navigator.vibrate(80);
+  },1650);
+};
+$('dieNew').onclick=()=>{S.dice=[];store.set('dice',S.dice);$('dieMsg').textContent='';renderDice();};
+
+// ---------- dónde comer ----------
+S.myPlaces=store.get('places')||[]; S.filter='';
+S.order=store.get('order')||[];
+function placeList(){
+  const all=[...PLACES.map(p=>({...p,mine:false,key:'f:'+p.n})),...S.myPlaces.map((p,i)=>({...p,mine:true,i,key:'m:'+p.n}))];
+  const pos=k=>{const i=S.order.indexOf(k);return i<0?1e6:i;};
+  return all.map((p,j)=>[p,j]).sort((a,b)=>(pos(a[0].key)-pos(b[0].key))||(a[1]-b[1])).map(x=>x[0]);
+}
+function movePlace(key,dir){
+  const keys=placeList().map(p=>p.key), i=keys.indexOf(key), j=i+dir;
+  if(i<0||j<0||j>=keys.length) return;
+  [keys[i],keys[j]]=[keys[j],keys[i]]; S.order=keys; store.set('order',S.order); renderPlaces();
+}
+function renderPlaces(){
+  const all=placeList();
+  const used=TAGS.filter(t=>all.some(p=>p.t.includes(t)));
+  $('placeFilter').innerHTML=`<button data-f="" class="${S.filter?'':'on'}">${esc(T('everyone'))}</button>`+used.map(t=>`<button data-f="${t}" class="${S.filter===t?'on':''}">${TAG_IC[t]} ${esc(T('tag_'+t))}</button>`).join('');
+  $('placeFilter').querySelectorAll('button').forEach(b=>b.onclick=()=>{S.filter=b.dataset.f;renderPlaces();});
+  const q=p=>encodeURIComponent(p.n+' '+(p.z&&p.z!=='Nerja'?p.z+' ':'')+'Nerja');
+  const mapUrl=p=>/^https:\/\/(www\.)?(google\.[a-z.]+\/maps|maps\.app\.goo\.gl|goo\.gl\/maps|maps\.google\.)/i.test(p.u||'')?p.u:`https://www.google.com/maps/search/?api=1&query=${q(p)}`;
+  $('places').innerHTML=all.filter(p=>!S.filter||p.t.includes(S.filter)).map(p=>`<div class="card place"><div class="mv"><button data-up="${esc(p.key)}" aria-label="↑">▲</button><button data-dn="${esc(p.key)}" aria-label="↓">▼</button></div><div class="ic">${TAG_IC[p.t[0]]||'🍴'}</div><div><h4>${esc(p.n)}</h4><p>${esc(p.z)}${p.mine?' · '+esc(T('mine')):''}</p>${p.t.map(t=>`<span class="tag">${esc(T('tag_'+t))}</span>`).join('')}</div><a href="${esc(mapUrl(p))}" target="_blank" rel="noopener">${esc(T('map'))} ↗</a>${p.mine?`<button class="x" style="border:0;background:none;color:var(--mute);font-size:16px;cursor:pointer" data-rp="${p.i}">×</button>`:''}</div>`).join('');
+  $('places').querySelectorAll('[data-rp]').forEach(b=>b.onclick=()=>{S.myPlaces.splice(+b.dataset.rp,1);store.set('places',S.myPlaces);renderPlaces();});
+  $('places').querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>movePlace(b.dataset.up,-1));
+  $('places').querySelectorAll('[data-dn]').forEach(b=>b.onclick=()=>movePlace(b.dataset.dn,1));
+  $('pTag').innerHTML=TAGS.map(t=>`<option value="${t}">${TAG_IC[t]} ${esc(T('tag_'+t))}</option>`).join('');
+}
+$('pAdd').onclick=()=>{const n=$('pName').value.trim(); if(!n) return;
+  const u=$('pUrl').value.trim();
+  if(u&&!/^https:\/\/(www\.)?(google\.[a-z.]+\/maps|maps\.app\.goo\.gl|goo\.gl\/maps|maps\.google\.)/i.test(u)){toast(T('badMap'));return;}
+  S.myPlaces.push({n,z:$('pZone').value.trim()||'Nerja',t:[$('pTag').value],u}); store.set('places',S.myPlaces);
+  $('pName').value='';$('pZone').value='';$('pUrl').value='';renderPlaces();};
+
+// ---------- propinas por país ----------
+const TIPS=[['ES','0–10%'],['GB','10–12,5%',1],['DE','5–10%'],['FR','0–5%',1],['IT','0–10%',1],['PT','5–10%'],['NL','5–10%'],['SE','0–10%'],['NO','0–10%'],['DK','0–10%',1],['FI','0–5%'],['PL','10%'],['CZ','10%'],['RO','10%'],['US','15–20%']];
+const HOME={es:'ES',en:'GB',de:'DE',fr:'FR',it:'IT',pt:'PT',nl:'NL',sv:'SE',no:'NO',da:'DK',fi:'FI',pl:'PL',cs:'CZ',ro:'RO'};
+function openTips(){
+  let dn; try{dn=new Intl.DisplayNames([T('loc')],{type:'region'});}catch(e){dn={of:x=>x};}
+  $('tipTable').innerHTML=TIPS.map(([c,r,inc])=>`<div class="tiprow ${HOME[S.lang]===c?'me':''}"><div>${dn.of(c)}${inc?`<small>${esc(T('oftenIncl'))}</small>`:''}</div><b>${r}</b></div>`).join('')+`<p class="hint">${esc(T('tipsNote'))}</p>`;
+  $('tipSheet').hidden=false;
+}
+$('t_tipsGuide').onclick=openTips; $('tipClose').onclick=()=>$('tipSheet').hidden=true;
+$('tipSheet').onclick=e=>{if(e.target.id==='tipSheet')$('tipSheet').hidden=true;};
+
+// ---------- foto del tique (se lee en el propio móvil, nada sale fuera) ----------
+$('camBtn').onclick=()=>$('camFile').click();
+$('camFile').onchange=async e=>{
+  const f=e.target.files[0]; if(!f) return; e.target.value='';
+  toast(T('scanning'));
+  try{
+    if(!window.Tesseract) await new Promise((ok,ko)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';s.onload=ok;s.onerror=ko;document.head.appendChild(s);});
+    const {data}=await Tesseract.recognize(f,'eng');
+    const v=pickTotal(data.text);
+    if(v){$('total').value=v.toFixed(2);calc();toast(T('scanOk').replace('{x}',eur(v)));} else toast(T('scanFail'));
+  }catch(err){toast(T('scanFail'));}
+};
+function pickTotal(text){
+  const toN=s=>{s=s.replace(/\s/g,''); if(/,\d{2}$/.test(s)) s=s.replace(/\./g,'').replace(',','.'); else s=s.replace(/,/g,''); return parseFloat(s);};
+  const re=/(\d{1,4}(?:[.,\s]\d{3})*[.,]\d{2})(?!\d)/g;
+  const lines=text.split(/\n/); let best=0;
+  for(const l of lines){ if(/total|importe|a pagar|summe|betrag|amount|montant/i.test(l)&&!/sub/i.test(l)){ const m=[...l.matchAll(re)].map(x=>toN(x[1])).filter(x=>x>0); if(m.length) best=Math.max(best,m[m.length-1]); } }
+  if(best) return best;
+  const all=[...text.matchAll(re)].map(x=>toN(x[1])).filter(x=>x>0&&x<10000);
+  return all.length?Math.max(...all):0;
+}
+
+// ---------- la cuenta en curso se guarda sola en el móvil (sobrevive a cerrar la web) ----------
+let restoring=true;
+function saveBill(){ if(restoring) return;
+  store.set('bill',{total:$('total').value,vat:S.vat,mode:S.mode,pct:$('pct').value,man:$('man').value,people:S.people,round:$('round').checked,payer:$('payer').value,items:S.items,tab:S.tab}); }
+function loadBill(){ const b=store.get('bill'); if(!b) return;
+  $('total').value=b.total||''; $('pct').value=b.pct||5; $('man').value=b.man||''; $('round').checked=!!b.round; $('payer').value=b.payer||'';
+  S.people=b.people||2; S.items=Array.isArray(b.items)?b.items:[]; S.vat=+b.vat||0; S.tab=b.tab||'eq';
+  document.querySelectorAll('#vat button').forEach(x=>x.classList.toggle('on',+x.dataset.v===S.vat));
+  setMode(b.mode==='man'?'man':'pct'); }
+$('payer').oninput=saveBill;
+$('newBill').onclick=()=>{ if(!confirm(T('confirmNew'))) return;
+  $('total').value='';$('man').value='';$('pct').value=5;$('round').checked=false;$('payer').value='';S.items=[];S.people=2;S.vat=0;
+  document.querySelectorAll('#vat button').forEach(x=>x.classList.toggle('on',x.dataset.v==='0')); setMode('pct'); renderAll(); };
+
+function renderAll(){ renderNames(); renderItems(); renderDebts(); renderWheel(); renderDice(); renderPlaces(); calc(); }
+sel.onchange=()=>{S.lang=sel.value;store.set('lang',S.lang);applyLang();};
+
+S.lang=pickLang();
+loadBill();
+applyLang();
+showTab(S.tab||'eq');
+restoring=false; saveBill();
+if('serviceWorker' in navigator && location.protocol==='https:') navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
